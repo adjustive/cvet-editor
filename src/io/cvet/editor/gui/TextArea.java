@@ -1,6 +1,7 @@
 package io.cvet.editor.gui;
 
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 
@@ -13,6 +14,7 @@ public class TextArea extends Component {
 
 	private List<Character> buffer;
 	private int xOffset, yOffset;
+	private Cursor caret;
 	
 	int charWidth = Render.MONOSPACED_FONT.getWidth("a");
 	int charHeight = Render.MONOSPACED_FONT.getHeight();
@@ -29,6 +31,7 @@ public class TextArea extends Component {
 			}
 			buffer.add((char) RNG.range(97, 122));
 		}
+		caret = new Cursor(this, CursorStyle.Block);
 	}
 	
 	@Override
@@ -42,8 +45,10 @@ public class TextArea extends Component {
 		
 		// only scroll if we are inside of the textarea
 		if (Input.intersects(this) && wheelDelta != 0) {
-			yOffset += wheelDelta * 0.1;
+			y += wheelDelta * 0.1;
 		}
+		
+		caret.update();
 	}
 
 	public String[] getBufferString() {
@@ -59,11 +64,25 @@ public class TextArea extends Component {
 		Render.colour(125, 0, 255);
 		Render.rect(x, y, w, h);
 
-		int line = -1; // TODO: fix this
+		caret.render();
+
+		int line = 0;
 		for (String s : getBufferString()) {
 			Render.drawString(s, x + xOffset, y + yOffset + (line * charHeight));
 			line++;
 		}
 	}
 
+	public void append(char c) {
+		buffer.add(c);
+	}
+	
+	public void insert(char c, int where) {
+		buffer.set(where, c);
+	}
+	
+	public void place(char c, int where) {
+		buffer.add(where, c);
+	}
+	
 }

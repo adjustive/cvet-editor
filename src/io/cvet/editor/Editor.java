@@ -23,6 +23,7 @@ public class Editor extends Component implements Runnable {
 	private Thread thread;
 
 	public static Panel DEBUG_INTERFACE;
+	private Label fps;
 	
 	public void init() {
 		// setup the display
@@ -43,7 +44,7 @@ public class Editor extends Component implements Runnable {
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 
 		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
 		
 		// this is the debug user interface...
 		// eventually toggle this from keypress or a setting
@@ -51,8 +52,8 @@ public class Editor extends Component implements Runnable {
 		addChild(DEBUG_INTERFACE, Layout.Free);
 		DEBUG_INTERFACE.setFocusable(false);
 
-		DEBUG_INTERFACE.addChild(new Label("Hey sir!"), Layout.Child);
-		DEBUG_INTERFACE.addChild(new Label("fuck u!"), Layout.Child);
+		fps = new Label("fps: ????????");
+		DEBUG_INTERFACE.addChild(fps, Layout.Child);
 	}
 	
 	public void update() {
@@ -95,9 +96,19 @@ public class Editor extends Component implements Runnable {
 	public void run() {
 		init();
 		
+		long timer = System.currentTimeMillis();
+		int frames = 0;
+		
 		while (!Display.isCloseRequested()) {
-			update();
 			render();
+			update();
+			frames++;
+			
+			if (System.currentTimeMillis() - timer > 1000) {
+				timer += 1000;
+				fps.setValue("fps: " + frames);
+				frames = 0;
+			}
 		}
 		
 		Display.destroy();

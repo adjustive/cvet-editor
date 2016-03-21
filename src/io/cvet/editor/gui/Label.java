@@ -28,4 +28,8 @@ public class Label extends Component {
 		Render.drawString(value, x, y);
 	}
 
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 }
