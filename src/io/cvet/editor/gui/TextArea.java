@@ -12,7 +12,7 @@ import org.lwjgl.input.Mouse;
 
 public class TextArea extends Component {
 
-	private List<Character> buffer;
+	private List<StringBuilder> buffer;
 	private int xOffset, yOffset;
 	private Cursor caret;
 	
@@ -23,14 +23,8 @@ public class TextArea extends Component {
 	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;
-		this.buffer = new ArrayList<Character>();
-		for (int i = 0; i < h * charHeight; i++) {
-			int bufferWidth = (this.w / charWidth) - 10;
-			if (i % bufferWidth == 0) {
-				buffer.add('\n');
-			}
-			buffer.add((char) RNG.range(97, 122));
-		}
+		this.buffer = new ArrayList<StringBuilder>();
+		buffer.add(new StringBuilder());
 		caret = new Cursor(this, CursorStyle.Block);
 	}
 	
@@ -50,14 +44,6 @@ public class TextArea extends Component {
 		
 		caret.update();
 	}
-
-	public String[] getBufferString() {
-		StringBuilder res = new StringBuilder(buffer.size());
-		for (int i = 0; i < buffer.size(); i++) {
-			res.append(buffer.get(i));
-		}
-		return res.toString().split("\n");
-	}
 	
 	@Override
 	public void render() {
@@ -67,22 +53,37 @@ public class TextArea extends Component {
 		caret.render();
 
 		int line = 0;
-		for (String s : getBufferString()) {
-			Render.drawString(s, x + xOffset, y + yOffset + (line * charHeight));
+		for (StringBuilder s : buffer) {
+			Render.drawString(s.toString(), x + xOffset, y + yOffset + (line * charHeight));
 			line++;
 		}
 	}
 
 	public void append(char c) {
-		buffer.add(c);
+	}
+
+	public StringBuilder getLine(int lineNum) {
+		return buffer.get(lineNum);
 	}
 	
-	public void insert(char c, int where) {
-		buffer.set(where, c);
+	public void setLine(StringBuilder to, int lineNum) {
+		buffer.set(lineNum, to);
 	}
 	
-	public void place(char c, int where) {
-		buffer.add(where, c);
+	public void insert(char c, int ix, int iy) {
+		StringBuilder line = getLine(iy);
+		line.setCharAt(ix, c);
+		setLine(line, iy);
+	}
+	
+	public void place(char c, int ix, int iy) {
+		StringBuilder line = getLine(iy);
+		line.insert(ix, c);
+		setLine(line, iy);
+	}
+
+	public void newline() {
+		buffer.add(new StringBuilder());
 	}
 
 }

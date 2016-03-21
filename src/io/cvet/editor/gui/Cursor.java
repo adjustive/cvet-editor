@@ -13,8 +13,9 @@ public class Cursor extends Component {
 	private TextArea owner;
 	
 	// where the cursor is positioned in the buffer
-	private int insertionPoint; // ;)
-
+	// insertion x, y
+	private int ix, iy;
+	
 	private CursorStyle cursorStyle;
 	private int xOffset, yOffset;
 	private int charWidth, charHeight;
@@ -22,7 +23,7 @@ public class Cursor extends Component {
 	public Cursor(TextArea owner, CursorStyle style) {
 		this.owner = owner;
 		this.cursorStyle = style;
-		this.insertionPoint = 0;
+		this.ix = iy = 0;
 		charWidth = Render.MONOSPACED_FONT.getWidth("a");
 		charHeight = Render.MONOSPACED_FONT.getHeight();
 		this.h = charHeight;
@@ -56,11 +57,9 @@ public class Cursor extends Component {
 					break;
 				case Keyboard.KEY_LEFT:
 					move(-1, 0);
-					insertionPoint--;
 					break;
 				case Keyboard.KEY_RIGHT:
 					move(1, 0);
-					insertionPoint++;
 					break;
 				case Keyboard.KEY_UP:
 					move(0, -1);
@@ -69,12 +68,13 @@ public class Cursor extends Component {
 					move(0, 1);
 					break;
 				case Keyboard.KEY_RETURN:
-					place('\n');
+					owner.newline();
 					move(0, 1);
 					reset();
 					break;
 				default:
-					place(Keyboard.getEventCharacter());
+					owner.place(Keyboard.getEventCharacter(), ix, iy);
+					move(1, 0);
 					break;
 				}
 			}
@@ -87,23 +87,17 @@ public class Cursor extends Component {
 		Render.rect(x + xOffset, y + yOffset, w, h);
 	}
 	
-	public void insert(char c) {
-		owner.insert(c, insertionPoint);
-	}
-	
 	public void reset() {
 		xOffset = 0;
+		ix = 0;
 	}
 	
 	public void move(int x, int y) {
+		System.out.println(Math.signum(y));
+		ix += Math.signum(x);
+		iy += Math.signum(y);
 		xOffset += charWidth * x;
 		yOffset += charHeight * y;
-	}
-	
-	public void place(char c) {
-		owner.place(c, insertionPoint);
-		insertionPoint++;
-		move(1, 0);
 	}
 	
 }
