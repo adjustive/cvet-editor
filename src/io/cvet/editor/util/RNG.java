@@ -17,5 +17,9 @@ public class RNG {
 	public static int cap(int cap) {
 		return r.nextInt(cap);
 	}
+
+	public static boolean maybe() {
+		return r.nextBoolean();
+	}
 	
 }

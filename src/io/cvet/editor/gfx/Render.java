@@ -2,6 +2,10 @@ package io.cvet.editor.gfx;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.awt.Font;
+
+import org.newdawn.slick.TrueTypeFont;
+
 /*
  * An abstraction over OpenGL to simplify
  * supporting different versions, backends,
@@ -10,7 +14,13 @@ import static org.lwjgl.opengl.GL11.*;
 public class Render {
 	
 	private static float r, g, b, a;
-
+	public static TrueTypeFont MONOSPACED_FONT;
+	
+	static {
+		MONOSPACED_FONT = new TrueTypeFont(new Font("Inconsolata", Font.PLAIN, 21), true);
+		System.out.println("Loaded Fonts");
+	}
+	
 	public static void showPolygons() {
 		glEnable(GL_POLYGON_MODE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -48,6 +58,23 @@ public class Render {
 			glVertex2f(x + w, y + h);
 			glVertex2f(x, y + h);
 		glEnd();
+	}
+
+	public static void drawString(String s, int x, int y) {
+		applyColour();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		MONOSPACED_FONT.drawString(x, y, s);
+		glDisable(GL_BLEND);
+	}
+
+	public static void startClip(int x, int y, int w, int h) {
+		glEnable(GL_SCISSOR_BOX);
+		glScissor(x, y, w, h);
+	}
+
+	public static void endClip() {
+		glDisable(GL_SCISSOR_BOX);
 	}
 	
 }

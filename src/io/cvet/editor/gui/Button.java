@@ -33,11 +33,6 @@ public class Button extends Component {
 	public void render() {
 		Render.colour(r, g, b);
 		Render.rect(x, y, w, h);
-		
-		if (getFocus()) {
-			Render.colour(255, 0, 255);
-			Render.rect(x, y, 5, 5);
-		}
 	}
 
 }

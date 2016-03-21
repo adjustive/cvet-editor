@@ -75,6 +75,7 @@ public abstract class Component {
 		return children.get(0);
 	}
 	
+	// todo: modular layout?
 	public void addChild(Component c, Layout layout) {
 		switch (layout) {
 		case Left:
