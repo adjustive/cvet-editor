@@ -5,4 +5,5 @@ public enum Layout {
 	Halves,
 	VerticalHalves,
 	Free,
+	Child,
 }

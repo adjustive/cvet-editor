@@ -27,10 +27,11 @@ public abstract class Component {
 	public abstract void render();
 
 	public Component() {
-		
+		this.focusable = true;
 	}
 	
 	public Component(int x, int y, int w, int h) {
+		this.focusable = true;
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -113,6 +114,11 @@ public abstract class Component {
 				getLastComponent().h = newH;
 			}
 			break;
+		case Child:
+			c.x = this.x;
+			c.y = children.size() != 0 ? c.y += getLastComponent().h : this.y;
+			children.add(c);
+			break;
 		default:
 			children.add(c);
 			break;
@@ -122,7 +128,7 @@ public abstract class Component {
 	public void checkFocus() {
 		for (Component c : children) {
 			if (Input.intersects(c)) {
-				if (Mouse.isButtonDown(0)) {
+				if (getFocusable() && Mouse.isButtonDown(0)) {
 					clearFocus();
 					c.setFocus(true);
 				}

@@ -59,6 +59,40 @@ public class Render {
 			glVertex2f(x, y + h);
 		glEnd();
 	}
+	
+	public static void texture(Texture t, int x, int y) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		int w = t.getWidth();
+		int h = t.getHeight();
+		
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, t.getHandle());
+		
+			glBegin(GL_TRIANGLES);
+				glTexCoord2f(0, 0);
+				glVertex2f(x, y);
+				
+				glTexCoord2f(1, 0);
+				glVertex2f(x + w, y);
+
+				glTexCoord2f(1, 1);
+				glVertex2f(x + w, y + h);
+				
+				glTexCoord2f(0, 0);
+				glVertex2f(x, y);
+				
+				glTexCoord2f(1, 1);
+				glVertex2f(x + w, y + h);
+				
+				glTexCoord2f(0, 1);
+				glVertex2f(x, y + h);
+			glEnd();
+		
+		glPopMatrix();
+		glDisable(GL_BLEND);
+	}
 
 	public static void drawString(String s, int x, int y) {
 		applyColour();

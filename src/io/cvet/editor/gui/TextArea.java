@@ -1,10 +1,13 @@
 package io.cvet.editor.gui;
 
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.lwjgl.input.Mouse;
 
 public class TextArea extends Component {
 
@@ -13,6 +16,7 @@ public class TextArea extends Component {
 	
 	int charWidth = Render.MONOSPACED_FONT.getWidth("a");
 	int charHeight = Render.MONOSPACED_FONT.getHeight();
+	int wheelDelta = 0;
 	
 	public TextArea(int w, int h) {
 		this.w = w;
@@ -34,7 +38,12 @@ public class TextArea extends Component {
 
 	@Override
 	public void update() {
+		wheelDelta = Mouse.getDWheel();
 		
+		// only scroll if we are inside of the textarea
+		if (Input.intersects(this) && wheelDelta != 0) {
+			yOffset += wheelDelta * 0.1;
+		}
 	}
 
 	public String[] getBufferString() {

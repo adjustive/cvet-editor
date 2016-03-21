@@ -1,9 +1,17 @@
 package io.cvet.editor;
 
-import static org.lwjgl.opengl.GL11.*;
-
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.Label;
+import io.cvet.editor.gui.Panel;
 import io.cvet.editor.gui.TextArea;
 import io.cvet.editor.util.Input;
 
@@ -13,6 +21,8 @@ import org.lwjgl.opengl.DisplayMode;
 public class Editor extends Component implements Runnable {
 	
 	private Thread thread;
+
+	public static Panel DEBUG_INTERFACE;
 	
 	public void init() {
 		// setup the display
@@ -31,9 +41,18 @@ public class Editor extends Component implements Runnable {
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
+
+		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
 		
-		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+		// this is the debug user interface...
+		// eventually toggle this from keypress or a setting
+		DEBUG_INTERFACE = new Panel(Display.getWidth() - 150, 15);
+		addChild(DEBUG_INTERFACE, Layout.Free);
+		DEBUG_INTERFACE.setFocusable(false);
+
+		DEBUG_INTERFACE.addChild(new Label("Hey sir!"), Layout.Child);
+		DEBUG_INTERFACE.addChild(new Label("fuck u!"), Layout.Child);
 	}
 	
 	public void update() {
@@ -45,11 +64,11 @@ public class Editor extends Component implements Runnable {
 
 			// only update if
 			// the component is focused on
-			if (c.getFocus()) {
+			if (!c.getFocusable() || c.getFocus()) {
 				c.update();
 			}
 		}
-		
+			
 		Display.update();
 	}
 	
@@ -64,7 +83,7 @@ public class Editor extends Component implements Runnable {
 			c.render();
 			Render.endClip();
 			
-			if (c.getFocus()) {
+			if (c.getFocusable() && c.getFocus()) {
 				Render.colour(125, 255, 50);
 				Render.rect(c.x, c.y + c.h - 2, c.w, 2);
 			}
