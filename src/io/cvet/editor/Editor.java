@@ -44,7 +44,7 @@ public class Editor extends Component implements Runnable {
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 
 		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
 		
 		// this is the debug user interface...
 		// eventually toggle this from keypress or a setting

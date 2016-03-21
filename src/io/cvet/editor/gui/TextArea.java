@@ -45,7 +45,7 @@ public class TextArea extends Component {
 		
 		// only scroll if we are inside of the textarea
 		if (Input.intersects(this) && wheelDelta != 0) {
-			y += wheelDelta * 0.1;
+			yOffset += wheelDelta * 0.1;
 		}
 		
 		caret.update();
@@ -84,5 +84,5 @@ public class TextArea extends Component {
 	public void place(char c, int where) {
 		buffer.add(where, c);
 	}
-	
+
 }

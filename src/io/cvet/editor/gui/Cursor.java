@@ -39,9 +39,35 @@ public class Cursor extends Component {
 		this.x = owner.x;
 		this.y = owner.y;
 		
+		// todo we go out of buffer bounds
+		
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				switch (Keyboard.getEventKey()) {
+				case Keyboard.KEY_LSHIFT:
+				case Keyboard.KEY_RSHIFT:
+				case Keyboard.KEY_LCONTROL:
+				case Keyboard.KEY_RCONTROL:
+				case Keyboard.KEY_LMETA:
+				case Keyboard.KEY_RMETA:
+				case Keyboard.KEY_LMENU:
+				case Keyboard.KEY_RMENU:
+					// nothing
+					break;
+				case Keyboard.KEY_LEFT:
+					move(-1, 0);
+					insertionPoint--;
+					break;
+				case Keyboard.KEY_RIGHT:
+					move(1, 0);
+					insertionPoint++;
+					break;
+				case Keyboard.KEY_UP:
+					move(0, -1);
+					break;
+				case Keyboard.KEY_DOWN:
+					move(0, 1);
+					break;
 				case Keyboard.KEY_RETURN:
 					place('\n');
 					move(0, 1);
@@ -57,7 +83,7 @@ public class Cursor extends Component {
 
 	@Override
 	public void render() {
-		Render.colour(255, 0, 255);
+		Render.colour(30, 30, 30);
 		Render.rect(x + xOffset, y + yOffset, w, h);
 	}
 	
