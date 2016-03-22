@@ -20,7 +20,7 @@ public class Render {
 	
 	public static TrueTypeFont EDITING_FONT;
 	public static TrueTypeFont INTERFACE_FONT;
-	private static TrueTypeFont CURRENT_FONT;
+	public static TrueTypeFont CURRENT_FONT;
 	
 	public static int CHARACTER_WIDTH, CHARACTER_HEIGHT;
 	private static boolean ANTI_ALIAS;

@@ -149,7 +149,13 @@ public class Cursor extends Component {
 					if (ix > 0) {
 						last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
 					} else {
-						last = "";
+						for (int i = 0; i < owner.getLineCount(); i++) {
+							String line = owner.getLine(iy - i).toString();
+							if (line.length() != 0) {
+								last = String.valueOf(line.charAt(line.length() - 1));
+								break;
+							}
+						}
 					}
 				}
 				owner.backspace(this, ix, iy);
@@ -212,8 +218,13 @@ public class Cursor extends Component {
 			}
 			break;
 		case Keyboard.KEY_END:
-			if (ix < owner.getLine(iy).length()) {
-				move(owner.getLine(iy).length() - ix, 0);
+			String line = owner.getLine(iy).toString();
+			int initialX = ix;
+			if (ix < line.length()) {
+				for (int i = 0; i < line.length() - initialX; i++) {
+					last = String.valueOf(line.charAt(ix));
+					move(1, 0);
+				}
 			}
 			break;
 		case Keyboard.KEY_RETURN:

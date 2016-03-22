@@ -105,7 +105,7 @@ public class Editor extends Component implements Runnable {
 		renderChildren(children);
 
 		if (children.size() == 0) {
-			int x = Render.EDITING_FONT.getWidth(intro);
+			int x = Render.CURRENT_FONT.getWidth(intro);
 			Render.drawString(intro, (Display.getWidth() / 2) - (x / 2), (Display.getHeight() / 2) - (Render.EDITING_FONT.getHeight() / 2));
 		}
 		
