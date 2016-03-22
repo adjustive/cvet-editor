@@ -84,9 +84,8 @@ public class Editor extends Component implements Runnable {
 			updateChildren(children);
 		}
 		
-		while (Keyboard.next()) {
-			
-		}
+		// this is here to eat up input if we have nothing focused.
+		while (Keyboard.next()) {}
 		
 		Input.update();
 		Display.update();
