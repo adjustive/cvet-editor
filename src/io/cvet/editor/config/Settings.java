@@ -13,7 +13,7 @@ import me.grison.jtoml.impl.Toml;
 public class Settings {
 
 	private static Toml toml;
-	private static File editorDir = new File(System.getenv("HOME") + "/.editor");
+	private static File editorDir = new File(System.getenv("HOME") + "/.nate-editor");
 	private static File defaultEditorConfig = new File(editorDir + "/config.toml");
 	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
 	
@@ -102,6 +102,10 @@ public class Settings {
 	            (l + " cannot be cast to int without changing its value.");
 	    }
 	    return (int) l;
+	}
+
+	public static File getUserConfigFile() {
+		return userEditorConfig;
 	}
 	
 }

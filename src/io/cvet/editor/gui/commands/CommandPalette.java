@@ -27,7 +27,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("close", new CloseFileCommand());
 		commands.put("exit", new ExitCommand());
 		commands.put("save", new SaveFileCommand());
-		commands.put("reload", new ReloadCommand());
+		commands.put("configure", new EditSettingsCommand());
 	}
 	
 	public CommandPalette() {
@@ -90,11 +90,7 @@ public class CommandPalette extends Component implements CursorAction {
 		switch (keyCode) {
 		case Keyboard.KEY_RETURN:
 			String command = buffer.getBuffer().get(0).toString();
-			String[] args = command.split(" ");
-			for (String a : args) {
-				System.out.println(a + ", ");
-			}
-			processCommand(args);
+			processCommand(command.split(" "));
 			hide();
 			break;
 		case Keyboard.KEY_ESCAPE:
