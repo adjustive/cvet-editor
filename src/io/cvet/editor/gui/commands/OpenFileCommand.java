@@ -2,8 +2,8 @@ package io.cvet.editor.gui.commands;
 
 public class OpenFileCommand extends Command {
 
-	public OpenFileCommand(String name, int argumentCount) {
-		super(name, argumentCount);
+	public OpenFileCommand() {
+		super("open file", 1);
 	}
 
 	@Override

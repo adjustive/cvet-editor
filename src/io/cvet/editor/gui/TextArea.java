@@ -1,5 +1,6 @@
 package io.cvet.editor.gui;
 
+import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
@@ -11,20 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 public class TextArea extends Component {
 
+	private String name;
 	private List<StringBuilder> buffer;
 	private int xOffset, yOffset;
 	private Cursor caret;
 	
-	int tabSize = 4;
-	int charWidth = Render.MONOSPACED_FONT.getWidth("a");
-	int charHeight = Render.MONOSPACED_FONT.getHeight();
-	int wheelDelta = 0;
-	private int padding = 5;
+	private Colour background = Colour.WHITE;
+	private Colour foreground = Colour.BLACK;
 	
-	public TextArea(int w, int h) {
+	private int padding = 5;
+	private int tabSize = 4;
+	private int charWidth = Render.MONOSPACED_FONT.getWidth("a");
+	private int charHeight = Render.MONOSPACED_FONT.getHeight();
+	private int wheelDelta = 0;
+	
+	public TextArea(String name, int w, int h) {
+		this.name = name;
 		this.w = w;
 		this.h = h;
 		this.buffer = new ArrayList<StringBuilder>();
@@ -32,6 +39,14 @@ public class TextArea extends Component {
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
+	}
+	
+	public TextArea(int w, int h) {
+		this("", w, h);
+	}
+	
+	public TextArea(String name) {
+		this(name, Display.getWidth(), Display.getHeight());
 	}
 	
 	@Override
@@ -53,11 +68,12 @@ public class TextArea extends Component {
 	
 	@Override
 	public void render() {
-		Render.colour(125, 0, 255);
+		Render.colour(foreground);
 		Render.rect(x, y, w, h);
 
 		renderChildren(children);
 		
+		Render.colour(background);
 		int line = 0;
 		for (StringBuilder s : buffer) {
 			Render.drawString(s.toString(), x + xOffset + padding, y + yOffset + padding + (line * charHeight));
@@ -173,6 +189,14 @@ public class TextArea extends Component {
 		return caret;
 	}
 
+	public void setBackground(Colour background) {
+		this.background = background;
+	}
+	
+	public void setForeground(Colour foreground) {
+		this.foreground = foreground;
+	}
+	
 	public List<StringBuilder> getBuffer() {
 		return buffer;
 	}
@@ -181,6 +205,10 @@ public class TextArea extends Component {
 		caret.carriageReturn();
 		buffer.clear();
 		buffer.add(new StringBuilder());
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 }

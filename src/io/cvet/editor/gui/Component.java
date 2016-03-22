@@ -138,7 +138,9 @@ public abstract class Component {
 	
 	public void updateChildren(List<Component> children) {
 		checkFocus();
-		for (Component c : children) {
+		for (int i = 0; i < children.size(); i++) {
+			Component c = children.get(i);
+
 			c.checkFocus();
 
 			// only update if
@@ -150,7 +152,9 @@ public abstract class Component {
 	}
 	
 	public void renderChildren(List<Component> children) {
-		for (Component c : children) {
+		for (int i = 0; i < children.size(); i++) {
+			Component c = children.get(i);
+
 			Render.startClip(c.x, c.y, c.w, c.h);
 			if (c.isVisible()) {
 				c.render();
@@ -181,6 +185,5 @@ public abstract class Component {
 	public boolean isVisible() {
 		return visible;
 	}
-
 	
 }

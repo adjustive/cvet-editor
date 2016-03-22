@@ -5,9 +5,11 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
+import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.TextArea;
@@ -26,9 +28,15 @@ import org.lwjgl.opengl.DisplayMode;
 
 public class Editor extends Component implements Runnable {
 	
+	private static Editor instance;
 	private Thread thread;
 	private CommandPalette palette;
 	private int frames = 0;
+	private TextArea currentArea;
+	
+	public Editor() {
+		instance = this;
+	}
 	
 	public void init() {
 		// setup the display
@@ -55,12 +63,12 @@ public class Editor extends Component implements Runnable {
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
-		addChild(palette);
 	}
 	
 	public void update() {
 		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
 			palette.setVisible(true);
+			palette.setFocus(true);
 		} else if (Input.getKeyPressed(Keyboard.KEY_F2)) {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setVisible(true);
@@ -72,7 +80,12 @@ public class Editor extends Component implements Runnable {
 			}
 		}
 		
-		updateChildren(children);
+		
+		if (palette.isVisible() && palette.getFocus()) {
+			palette.update();
+		} else {
+			updateChildren(children);
+		}
 		
 		Input.update();
 		Display.update();
@@ -81,10 +94,14 @@ public class Editor extends Component implements Runnable {
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		Render.colour(255, 255, 255, 255);
+		Render.colour(Colour.BLACK);
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
+
+		if (palette.isVisible()) {
+			palette.render();
+		}
 		
 		Input.render();
 
@@ -123,11 +140,25 @@ public class Editor extends Component implements Runnable {
 		thread.interrupt();
 	}
 	
+	// TODO: hashmap for this for them O(1)s...
+	public void closeCurrentBuffer() {
+		children.remove(currentArea);
+	}
+	
+	public void setCurrentTextArea(TextArea area) {
+		addChild(area);
+		this.currentArea = area;
+	}
+	
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) { }
 		new Editor().start();
+	}
+	
+	public static Editor getInstance() {
+		return instance;
 	}
 	
 }

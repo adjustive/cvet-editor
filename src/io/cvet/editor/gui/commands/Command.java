@@ -11,5 +11,9 @@ public abstract class Command {
 	}
 
 	public abstract void action(String[] arguments);
-	
+
+	public int getArgumentCount() {
+		return argumentCount;
+	}
+
 }

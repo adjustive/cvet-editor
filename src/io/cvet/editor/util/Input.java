@@ -1,5 +1,6 @@
 package io.cvet.editor.util;
 
+import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 
@@ -32,7 +33,7 @@ public class Input {
 	}
 	
 	public static void render() {
-		Render.colour(255, 255, 0);
+		Render.colour(Colour.BLACK);
 		Render.rect(x, y, w, h);
 	}
 
