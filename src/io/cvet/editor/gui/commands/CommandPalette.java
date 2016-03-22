@@ -52,7 +52,6 @@ public class CommandPalette extends Component implements CursorAction {
 	public void update() {
 		updateChildren(children);
 		hack++;
-		System.out.println(hack);
 	}
 
 	@Override
@@ -90,7 +89,11 @@ public class CommandPalette extends Component implements CursorAction {
 		switch (keyCode) {
 		case Keyboard.KEY_RETURN:
 			String command = buffer.getBuffer().get(0).toString();
-			processCommand(command.split(" "));
+			String[] args = command.split(" ");
+			for (String a : args) {
+				System.out.println(a + ", ");
+			}
+			processCommand(args);
 			hide();
 			break;
 		case Keyboard.KEY_ESCAPE:

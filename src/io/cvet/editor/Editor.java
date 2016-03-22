@@ -123,17 +123,31 @@ public class Editor extends Component implements Runnable {
 		
 		long timer = System.currentTimeMillis();
 		int frames = 0;
+		double ns = 1000000000.0 / 60.0;
+		double delta = 0;
+		long last = System.nanoTime();
 		
 		while (!Display.isCloseRequested()) {
-			render();
-			update();
-			frames++;
+			long now = System.nanoTime();
+			delta += (now - last) / ns;
+			last = now;
+			
+			if (delta >= 1) {
+				render();
+				update();
+				frames++;
+				delta--;
+			}
 			
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
 				this.frames = frames;
 				frames = 0;
 			}
+			
+			try {
+				Thread.sleep(2);
+			} catch (Exception e) {}
 		}
 		
 		Display.destroy();

@@ -38,6 +38,7 @@ public class TextArea extends Component {
 		setBackground(new Colour(0x3D3331));
 		setCursorColour(new Colour(0x61A598));
 		setForeground(Colour.PINK);
+		this.buffer.add(new StringBuilder());
 	}
 	
 	public TextArea() {

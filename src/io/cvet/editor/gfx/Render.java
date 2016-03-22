@@ -17,7 +17,7 @@ public class Render {
 	public static TrueTypeFont MONOSPACED_FONT;
 
 	static {
-		MONOSPACED_FONT = new TrueTypeFont(new Font("Inconsolata", Font.PLAIN,
+		MONOSPACED_FONT = new TrueTypeFont(new Font("Monospaced", Font.PLAIN,
 				21), true);
 	}
 

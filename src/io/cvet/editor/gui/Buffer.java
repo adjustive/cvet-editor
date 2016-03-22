@@ -18,6 +18,7 @@ public class Buffer extends TextArea {
 	
 	public Buffer(String name, String contents) {
 		this.name = name;
+		buffer.clear();
 		for (String s : contents.split("\n")) {
 			buffer.add(new StringBuilder(s));
 		}
@@ -29,6 +30,7 @@ public class Buffer extends TextArea {
 		this.file = file;
 		this.loadFile(file);
 		this.saved = true;
+		buffer.clear();
 	}
 
 	public void save() {
