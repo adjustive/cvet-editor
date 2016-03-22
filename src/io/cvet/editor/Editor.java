@@ -10,9 +10,8 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.Label;
-import io.cvet.editor.gui.Panel;
 import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 
@@ -28,9 +27,8 @@ import org.lwjgl.opengl.DisplayMode;
 public class Editor extends Component implements Runnable {
 	
 	private Thread thread;
-
-	public static Panel DEBUG_INTERFACE;
-	private Label fps;
+	private CommandPalette palette;
+	private int frames = 0;
 	
 	public void init() {
 		// setup the display
@@ -50,28 +48,20 @@ public class Editor extends Component implements Runnable {
 		glMatrixMode(GL_MODELVIEW);
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 
-//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-		
 		// pick a random child to focus lol
 		if (children.size() != 0) {
 			children.get(RNG.cap(children.size())).setFocus(true);
 		}
 		
-		// this is the debug user interface...
-		// eventually toggle this from keypress or a setting
-		DEBUG_INTERFACE = new Panel(Display.getWidth() - 150, 15);
-		addChild(DEBUG_INTERFACE, Layout.Free);
-		DEBUG_INTERFACE.setFocusable(false);
-
-		fps = new Label("fps: ????????");
-//		DEBUG_INTERFACE.addChild(fps, Layout.Child);
+		palette = new CommandPalette();
+		palette.setVisible(false);
+		addChild(palette);
 	}
 	
 	public void update() {
-		Input.update();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_F2)) {
+		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
+			palette.setVisible(true);
+		} else if (Input.getKeyPressed(Keyboard.KEY_F2)) {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setVisible(true);
 			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -82,17 +72,9 @@ public class Editor extends Component implements Runnable {
 			}
 		}
 		
-		checkFocus();
-		for (Component c : children) {
-			c.checkFocus();
-
-			// only update if
-			// the component is focused on
-			if (!c.getFocusable() || c.getFocus()) {
-				c.update();
-			}
-		}
-			
+		updateChildren(children);
+		
+		Input.update();
 		Display.update();
 	}
 	
@@ -102,18 +84,12 @@ public class Editor extends Component implements Runnable {
 		Render.colour(255, 255, 255, 255);
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
-		for (Component c : children) {
-			Render.startClip(c.x, c.y, c.w, c.h);
-			c.render();
-			Render.endClip();
-			
-			if (c.getFocusable() && c.getFocus()) {
-				Render.colour(125, 255, 50);
-				Render.rect(c.x, c.y + c.h - 2, c.w, 2);
-			}
-		}
+		renderChildren(children);
 		
 		Input.render();
+
+		Render.colour(255, 0, 0);
+		Render.drawString("fps: " + frames, Display.getWidth() - 100, 20);
 	}
 	
 	public void run() {
@@ -129,7 +105,7 @@ public class Editor extends Component implements Runnable {
 			
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				fps.setValue("fps: " + frames);
+				this.frames = frames;
 				frames = 0;
 			}
 		}

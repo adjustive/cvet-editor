@@ -19,6 +19,9 @@ public class Cursor extends Component {
 	private CursorStyle cursorStyle;
 	private int xOffset, yOffset;
 	private int charWidth, charHeight;
+	private int padding;
+	
+	private CursorAction cursorAction = null;
 	
 	public Cursor(TextArea owner, CursorStyle style) {
 		this.owner = owner;
@@ -39,12 +42,12 @@ public class Cursor extends Component {
 	public void update() {
 		this.x = owner.x;
 		this.y = owner.y;
+		this.visible = owner.visible;
 		
-		// todo we go out of buffer bounds
-		
-		while (Keyboard.next()) {
+		while (this.visible && Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
-				switch (Keyboard.getEventKey()) {
+				int keyCode = Keyboard.getEventKey();
+				switch (keyCode) {
 				case Keyboard.KEY_LSHIFT:
 				case Keyboard.KEY_RSHIFT:
 				case Keyboard.KEY_LCONTROL:
@@ -54,6 +57,7 @@ public class Cursor extends Component {
 				case Keyboard.KEY_LMENU:
 				case Keyboard.KEY_RMENU:
 				case Keyboard.KEY_F2:
+				case Keyboard.KEY_ESCAPE:
 					// nothing
 					break;
 				case Keyboard.KEY_BACK:
@@ -86,7 +90,6 @@ public class Cursor extends Component {
 						if (ix <= nextLineLen) {
 							move(nextLineLen - ix, 1);
 						} else if (ix >= nextLineLen) {
-							System.out.println("Ye?");
 							move(nextLineLen - ix, 1);
 						}
 					} else if (iy < owner.getLineCount() - 1){
@@ -106,7 +109,7 @@ public class Cursor extends Component {
 				case Keyboard.KEY_RETURN:
 					owner.newline(ix, iy);
 					move(-ix, 1);
-					reset();
+					carriageReturn();
 					break;
 				case Keyboard.KEY_TAB:
 					int tabSize = owner.tab(ix, iy);
@@ -117,6 +120,9 @@ public class Cursor extends Component {
 					move(1, 0);
 					break;
 				}
+				if (cursorAction != null) {
+					cursorAction.keyPress(keyCode);
+				}
 			}
 		}
 	}
@@ -124,20 +130,31 @@ public class Cursor extends Component {
 	@Override
 	public void render() {
 		Render.colour(30, 30, 30);
-		Render.rect(x + xOffset, y + yOffset, w, h);
+		Render.rect(x + xOffset + padding, y + yOffset + padding, w, h);
 	}
 	
-	public void reset() {
+	public void carriageReturn() {
 		xOffset = 0;
 		ix = 0;
 	}
 	
+	public void setCursorAction(CursorAction action) {
+		this.cursorAction = action;
+	}
+	
 	public void move(int x, int y) {
-		System.out.println(Math.signum(y));
 		ix += x;
 		iy += y;
 		xOffset += charWidth * x;
 		yOffset += charHeight * y;
+	}
+
+	public void setOffset(int padding) {
+		this.padding = padding;
+	}
+
+	public void reset() {
+		yOffset = xOffset = ix = iy = 0;
 	}
 	
 }

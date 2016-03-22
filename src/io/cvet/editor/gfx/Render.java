@@ -12,26 +12,26 @@ import org.newdawn.slick.TrueTypeFont;
  * etc..
  */
 public class Render {
-	
+
 	private static float r, g, b, a;
 	public static TrueTypeFont MONOSPACED_FONT;
-	
+
 	static {
-		MONOSPACED_FONT = new TrueTypeFont(new Font("Inconsolata", Font.PLAIN, 21), true);
-		System.out.println("Loaded Fonts");
+		MONOSPACED_FONT = new TrueTypeFont(new Font("Inconsolata", Font.PLAIN,
+				21), true);
 	}
-	
+
 	public static void showPolygons() {
 		glEnable(GL_POLYGON_MODE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
-	
+
 	public static void hidePolygons() {
 		glDisable(GL_POLYGON_MODE);
 		// reset old colours
 		glColor4f(r, g, b, a);
 	}
-	
+
 	public static void colour(float r, float g, float b, float a) {
 		Render.r = r / 255;
 		Render.g = g / 255;
@@ -39,57 +39,61 @@ public class Render {
 		Render.a = a / 255;
 	}
 	
+	public static void colour(Colour c) {
+		colour(c.r, c.g, c.b, c.a);
+	}
+
 	public static void colour(float r, float g, float b) {
 		colour(r, g, b, 255);
 	}
-	
+
 	private static void applyColour() {
 		glColor4f(r, g, b, a);
 	}
-	
+
 	public static void rect(int x, int y, int w, int h) {
 		applyColour();
 		glBegin(GL_TRIANGLES);
-			glVertex2f(x, y);
-			glVertex2f(x + w, y);
-			glVertex2f(x + w, y + h);
-			
-			glVertex2f(x, y);
-			glVertex2f(x + w, y + h);
-			glVertex2f(x, y + h);
+		glVertex2f(x, y);
+		glVertex2f(x + w, y);
+		glVertex2f(x + w, y + h);
+
+		glVertex2f(x, y);
+		glVertex2f(x + w, y + h);
+		glVertex2f(x, y + h);
 		glEnd();
 	}
-	
+
 	public static void texture(Texture t, int x, int y) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
+
 		int w = t.getWidth();
 		int h = t.getHeight();
-		
+
 		glPushMatrix();
 		glBindTexture(GL_TEXTURE_2D, t.getHandle());
-		
-			glBegin(GL_TRIANGLES);
-				glTexCoord2f(0, 0);
-				glVertex2f(x, y);
-				
-				glTexCoord2f(1, 0);
-				glVertex2f(x + w, y);
 
-				glTexCoord2f(1, 1);
-				glVertex2f(x + w, y + h);
-				
-				glTexCoord2f(0, 0);
-				glVertex2f(x, y);
-				
-				glTexCoord2f(1, 1);
-				glVertex2f(x + w, y + h);
-				
-				glTexCoord2f(0, 1);
-				glVertex2f(x, y + h);
-			glEnd();
-		
+		glBegin(GL_TRIANGLES);
+		glTexCoord2f(0, 0);
+		glVertex2f(x, y);
+
+		glTexCoord2f(1, 0);
+		glVertex2f(x + w, y);
+
+		glTexCoord2f(1, 1);
+		glVertex2f(x + w, y + h);
+
+		glTexCoord2f(0, 0);
+		glVertex2f(x, y);
+
+		glTexCoord2f(1, 1);
+		glVertex2f(x + w, y + h);
+
+		glTexCoord2f(0, 1);
+		glVertex2f(x, y + h);
+		glEnd();
+
 		glPopMatrix();
 		glDisable(GL_BLEND);
 	}
@@ -110,5 +114,5 @@ public class Render {
 	public static void endClip() {
 		glDisable(GL_SCISSOR_BOX);
 	}
-	
+
 }

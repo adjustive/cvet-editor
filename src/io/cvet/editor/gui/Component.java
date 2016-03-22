@@ -1,6 +1,7 @@
 package io.cvet.editor.gui;
 
 import io.cvet.editor.Layout;
+import io.cvet.editor.gfx.Render;
 import io.cvet.editor.util.Input;
 
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ public abstract class Component {
 	// components dimensions
 	public int x, y, w, h;
 	
-	// if it has focus
-	protected boolean focus = false;
+	protected boolean focus = true;
+	protected boolean visible = true;
 	
 	// if the focus can be changed
 	protected boolean focusable;
@@ -27,7 +28,6 @@ public abstract class Component {
 	public abstract void render();
 
 	public Component() {
-		this.focusable = true;
 	}
 	
 	public Component(int x, int y, int w, int h) {
@@ -128,10 +128,39 @@ public abstract class Component {
 	public void checkFocus() {
 		for (Component c : children) {
 			if (Input.intersects(c)) {
-				if (getFocusable() && Mouse.isButtonDown(0)) {
+				if (isVisible() && getFocusable() && Mouse.isButtonDown(0)) {
 					clearFocus();
 					c.setFocus(true);
 				}
+			}
+		}
+	}
+	
+	public void updateChildren(List<Component> children) {
+		checkFocus();
+		for (Component c : children) {
+			c.checkFocus();
+
+			// only update if
+			// the component is focused on
+			if (c.isVisible() && c.getFocus()) {
+				c.update();
+			}
+		}
+	}
+	
+	public void renderChildren(List<Component> children) {
+		for (Component c : children) {
+			Render.startClip(c.x, c.y, c.w, c.h);
+			if (c.isVisible()) {
+				c.render();
+			}
+			Render.endClip();
+			
+			// render a strip at the bottom of focused components
+			if (c.getFocusable() && c.getFocus()) {
+				Render.colour(125, 255, 50);
+				Render.rect(c.x, c.y + c.h - 2, c.w, 2);
 			}
 		}
 	}
@@ -145,5 +174,13 @@ public abstract class Component {
 	public void addChild(Component c) {
 		addChild(c, Layout.Free);
 	}
+	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	public boolean isVisible() {
+		return visible;
+	}
+
 	
 }

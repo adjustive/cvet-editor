@@ -22,6 +22,7 @@ public class TextArea extends Component {
 	int charWidth = Render.MONOSPACED_FONT.getWidth("a");
 	int charHeight = Render.MONOSPACED_FONT.getHeight();
 	int wheelDelta = 0;
+	private int padding = 5;
 	
 	public TextArea(int w, int h) {
 		this.w = w;
@@ -29,6 +30,8 @@ public class TextArea extends Component {
 		this.buffer = new ArrayList<StringBuilder>();
 		buffer.add(new StringBuilder());
 		caret = new Cursor(this, CursorStyle.Block);
+		caret.setOffset(padding);
+		addChild(caret);
 	}
 	
 	@Override
@@ -42,10 +45,10 @@ public class TextArea extends Component {
 		
 		// only scroll if we are inside of the textarea
 		if (Input.intersects(this) && wheelDelta != 0) {
-			yOffset += wheelDelta * 0.1;
+			yOffset += wheelDelta ;
 		}
 		
-		caret.update();
+		updateChildren(children);
 	}
 	
 	@Override
@@ -53,11 +56,11 @@ public class TextArea extends Component {
 		Render.colour(125, 0, 255);
 		Render.rect(x, y, w, h);
 
-		caret.render();
-
+		renderChildren(children);
+		
 		int line = 0;
 		for (StringBuilder s : buffer) {
-			Render.drawString(s.toString(), x + xOffset, y + yOffset + (line * charHeight));
+			Render.drawString(s.toString(), x + xOffset + padding, y + yOffset + padding + (line * charHeight));
 			line++;
 		}
 	}
@@ -166,4 +169,18 @@ public class TextArea extends Component {
 		return tabSize;
 	}
 
+	public Cursor getCaret() {
+		return caret;
+	}
+
+	public List<StringBuilder> getBuffer() {
+		return buffer;
+	}
+
+	public void clear() {
+		caret.carriageReturn();
+		buffer.clear();
+		buffer.add(new StringBuilder());
+	}
+	
 }
