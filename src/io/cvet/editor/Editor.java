@@ -14,7 +14,14 @@ import io.cvet.editor.gui.Label;
 import io.cvet.editor.gui.Panel;
 import io.cvet.editor.gui.TextArea;
 import io.cvet.editor.util.Input;
+import io.cvet.editor.util.RNG;
 
+import java.io.File;
+
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -43,8 +50,13 @@ public class Editor extends Component implements Runnable {
 		glMatrixMode(GL_MODELVIEW);
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
 
-		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
-		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+//		addChild(new TextArea(Display.getWidth(), Display.getHeight()), Layout.Halves);
+		
+		// pick a random child to focus lol
+		if (children.size() != 0) {
+			children.get(RNG.cap(children.size())).setFocus(true);
+		}
 		
 		// this is the debug user interface...
 		// eventually toggle this from keypress or a setting
@@ -53,11 +65,22 @@ public class Editor extends Component implements Runnable {
 		DEBUG_INTERFACE.setFocusable(false);
 
 		fps = new Label("fps: ????????");
-		DEBUG_INTERFACE.addChild(fps, Layout.Child);
+//		DEBUG_INTERFACE.addChild(fps, Layout.Child);
 	}
 	
 	public void update() {
 		Input.update();
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_F2)) {
+			JFileChooser chooser = new JFileChooser();
+			chooser.setVisible(true);
+			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				File file = chooser.getSelectedFile();
+				TextArea buff = new TextArea(Display.getWidth(), Display.getHeight());
+				buff.loadFile(file);
+				addChild(buff);
+			}
+		}
 		
 		checkFocus();
 		for (Component c : children) {
@@ -125,6 +148,9 @@ public class Editor extends Component implements Runnable {
 	}
 	
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) { }
 		new Editor().start();
 	}
 	

@@ -1,8 +1,8 @@
 package io.cvet.editor.gui;
 
-import org.lwjgl.input.Keyboard;
-
 import io.cvet.editor.gfx.Render;
+
+import org.lwjgl.input.Keyboard;
 
 public class Cursor extends Component {
 	public static enum CursorStyle {
@@ -55,17 +55,33 @@ public class Cursor extends Component {
 				case Keyboard.KEY_RMENU:
 					// nothing
 					break;
+				case Keyboard.KEY_BACK:
+					owner.backspace(this, ix, iy);
+					break;
 				case Keyboard.KEY_LEFT:
-					move(-1, 0);
+					if (ix > 0) {
+						move(-1, 0);
+					}
 					break;
 				case Keyboard.KEY_RIGHT:
-					move(1, 0);
+					if (ix < owner.getLine(iy).length()) {
+						move(1, 0);
+					}
 					break;
 				case Keyboard.KEY_UP:
 					move(0, -1);
 					break;
 				case Keyboard.KEY_DOWN:
 					move(0, 1);
+					break;
+				case Keyboard.KEY_HOME:
+					move(-ix, 0);
+					break;
+				case Keyboard.KEY_END:
+					System.out.println(ix);
+					if (ix < owner.getLine(iy).length()) {
+						move(owner.getLine(iy).length(), 0);
+					}
 					break;
 				case Keyboard.KEY_RETURN:
 					owner.newline();
@@ -94,8 +110,8 @@ public class Cursor extends Component {
 	
 	public void move(int x, int y) {
 		System.out.println(Math.signum(y));
-		ix += Math.signum(x);
-		iy += Math.signum(y);
+		ix += x;
+		iy += y;
 		xOffset += charWidth * x;
 		yOffset += charHeight * y;
 	}

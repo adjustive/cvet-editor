@@ -3,8 +3,10 @@ package io.cvet.editor.gui;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
-import io.cvet.editor.util.RNG;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,10 +62,15 @@ public class TextArea extends Component {
 	}
 
 	public void append(char c) {
+		setLine(getLine().append(c), buffer.size() - 1);
 	}
 
 	public StringBuilder getLine(int lineNum) {
 		return buffer.get(lineNum);
+	}
+	
+	public StringBuilder getLine() {
+		return buffer.get(buffer.size() - 1);
 	}
 	
 	public void setLine(StringBuilder to, int lineNum) {
@@ -84,6 +91,50 @@ public class TextArea extends Component {
 
 	public void newline() {
 		buffer.add(new StringBuilder());
+	}
+
+	/*
+	 * Will remove the end of the line
+	 * returns if true if the cursor can
+	 * go left a spot, if not will return
+	 * false.
+	 */
+	public void backspace(Cursor caret, int ix, int iy) {
+		StringBuilder current = getLine(iy);
+		
+		if (ix == 0) {
+			// top left, nothing to do
+			if (iy == 0) {
+				return;
+			}
+			
+			StringBuilder above = getLine(iy - 1);
+			int aboveInitialLength = above.length();
+			above.append(current);
+			setLine(above, iy - 1);
+			buffer.remove(iy);
+			caret.move(aboveInitialLength, -1);
+			return;
+		}
+		
+		current.deleteCharAt(ix - 1);
+		setLine(current, iy);
+		caret.move(-1, 0);
+		return;
+	}
+
+	public void loadFile(File file) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				buffer.add(new StringBuilder(line));
+			}
+			br.close();
+		} 
+		catch (Exception e) {
+			System.err.println("todo");
+		}
 	}
 
 }
