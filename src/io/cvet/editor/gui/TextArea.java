@@ -18,6 +18,7 @@ public class TextArea extends Component {
 	private int xOffset, yOffset;
 	private Cursor caret;
 	
+	int tabSize = 4;
 	int charWidth = Render.MONOSPACED_FONT.getWidth("a");
 	int charHeight = Render.MONOSPACED_FONT.getHeight();
 	int wheelDelta = 0;
@@ -85,12 +86,29 @@ public class TextArea extends Component {
 	
 	public void place(char c, int ix, int iy) {
 		StringBuilder line = getLine(iy);
-		line.insert(ix, c);
+		if (ix >= line.length()) {
+			line.append(c);
+		} else {
+			line.insert(ix, c);
+		}
 		setLine(line, iy);
 	}
 
-	public void newline() {
-		buffer.add(new StringBuilder());
+	public void newline(int ix, int iy) {
+		StringBuilder currentLine = getLine(iy);
+		if (currentLine.length() == 0) {
+			buffer.add(iy + 1, new StringBuilder());
+			return;
+		}
+		
+		if (ix < 0 || ix > currentLine.length()) {
+			return;
+		}
+		
+		String first = currentLine.substring(0, ix);
+		String excess = currentLine.substring(ix);
+		buffer.set(iy, new StringBuilder(first));
+		buffer.add(iy + 1, new StringBuilder(excess));
 	}
 
 	/*
@@ -135,6 +153,17 @@ public class TextArea extends Component {
 		catch (Exception e) {
 			System.err.println("todo");
 		}
+	}
+
+	public int getLineCount() {
+		return buffer.size();
+	}
+
+	public int tab(int ix, int iy) {
+		for (int i = 0; i < tabSize; i++) {
+			place(' ', ix, iy);
+		}
+		return tabSize;
 	}
 
 }

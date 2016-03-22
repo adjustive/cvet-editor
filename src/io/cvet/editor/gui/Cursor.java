@@ -53,6 +53,7 @@ public class Cursor extends Component {
 				case Keyboard.KEY_RMETA:
 				case Keyboard.KEY_LMENU:
 				case Keyboard.KEY_RMENU:
+				case Keyboard.KEY_F2:
 					// nothing
 					break;
 				case Keyboard.KEY_BACK:
@@ -69,24 +70,47 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_UP:
-					move(0, -1);
+					if (iy >= 0) {
+						int prevLineLen = owner.getLine(iy - 1).length();
+						if (ix >= prevLineLen) {
+							move(prevLineLen - ix, -1);
+						} else {
+							move(0, -1);
+						}
+					}
 					break;
 				case Keyboard.KEY_DOWN:
-					move(0, 1);
+					if (ix >= owner.getLine(iy).length()
+						&& iy < owner.getLineCount() - 1) {
+						int nextLineLen = owner.getLine(iy + 1).length();
+						if (ix <= nextLineLen) {
+							move(nextLineLen - ix, 1);
+						} else if (ix >= nextLineLen) {
+							System.out.println("Ye?");
+							move(nextLineLen - ix, 1);
+						}
+					} else if (iy < owner.getLineCount() - 1){
+						move(0, 1);
+					}
 					break;
 				case Keyboard.KEY_HOME:
-					move(-ix, 0);
+					if (ix > 0) {
+						move(-ix, 0);
+					}
 					break;
 				case Keyboard.KEY_END:
-					System.out.println(ix);
 					if (ix < owner.getLine(iy).length()) {
-						move(owner.getLine(iy).length(), 0);
+						move(owner.getLine(iy).length() - ix, 0);
 					}
 					break;
 				case Keyboard.KEY_RETURN:
-					owner.newline();
-					move(0, 1);
+					owner.newline(ix, iy);
+					move(-ix, 1);
 					reset();
+					break;
+				case Keyboard.KEY_TAB:
+					int tabSize = owner.tab(ix, iy);
+					move(tabSize, 0);
 					break;
 				default:
 					owner.place(Keyboard.getEventCharacter(), ix, iy);
