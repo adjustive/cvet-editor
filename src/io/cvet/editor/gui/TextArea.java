@@ -1,10 +1,5 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Cursor.CursorStyle;
-import io.cvet.editor.util.Input;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +8,11 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Cursor.CursorStyle;
+import io.cvet.editor.util.Input;
 
 public class TextArea extends Component {
 
@@ -26,7 +26,6 @@ public class TextArea extends Component {
 	
 	private int padding = 5;
 	private int tabSize = 4;
-	private int charWidth = Render.MONOSPACED_FONT.getWidth("a");
 	private int charHeight = Render.MONOSPACED_FONT.getHeight();
 	private int wheelDelta = 0;
 	
@@ -68,12 +67,12 @@ public class TextArea extends Component {
 	
 	@Override
 	public void render() {
-		Render.colour(foreground);
+		Render.colour(background);
 		Render.rect(x, y, w, h);
 
 		renderChildren(children);
 		
-		Render.colour(background);
+		Render.colour(foreground);
 		int line = 0;
 		for (StringBuilder s : buffer) {
 			Render.drawString(s.toString(), x + xOffset + padding, y + yOffset + padding + (line * charHeight));
@@ -209,6 +208,10 @@ public class TextArea extends Component {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setCursorColour(Colour colour) {
+		this.caret.setColour(colour);
 	}
 	
 }

@@ -5,19 +5,13 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.TextArea;
-import io.cvet.editor.gui.commands.CommandPalette;
-import io.cvet.editor.util.Input;
-import io.cvet.editor.util.RNG;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.util.Stack;
 
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
@@ -26,22 +20,35 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.commands.CommandPalette;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.RNG;
+
 public class Editor extends Component implements Runnable {
 	
 	private static Editor instance;
 	private Thread thread;
 	private CommandPalette palette;
 	private int frames = 0;
-	private TextArea currentArea;
+	
+	private Stack<TextArea> areas;
 	
 	public Editor() {
 		instance = this;
 	}
 	
 	public void init() {
+		java.awt.DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+		final int width = mode.getWidth() / 12 * 9;
+		final int height = mode.getHeight() / 12 * 9;
+		
 		// setup the display
 		try {
-			Display.setDisplayMode(new DisplayMode(1280, 720));
+			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("shit");
@@ -60,6 +67,8 @@ public class Editor extends Component implements Runnable {
 		if (children.size() != 0) {
 			children.get(RNG.cap(children.size())).setFocus(true);
 		}
+		
+		areas = new Stack<TextArea>();
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
@@ -142,12 +151,21 @@ public class Editor extends Component implements Runnable {
 	
 	// TODO: hashmap for this for them O(1)s...
 	public void closeCurrentBuffer() {
-		children.remove(currentArea);
+		TextArea area = areas.pop();
+		children.remove(area);
+		
+		// no areas left to focus
+		if (areas.isEmpty()) {
+			return;
+		}
+		
+		// give the last textarea focus
+		areas.peek().setFocus(true);
 	}
 	
 	public void setCurrentTextArea(TextArea area) {
 		addChild(area);
-		this.currentArea = area;
+		this.areas.push(area);
 	}
 	
 	public static void main(String[] args) {

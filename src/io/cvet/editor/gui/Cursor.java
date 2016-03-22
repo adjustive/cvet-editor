@@ -1,8 +1,9 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.gfx.Render;
-
 import org.lwjgl.input.Keyboard;
+
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.Render;
 
 public class Cursor extends Component {
 	public static enum CursorStyle {
@@ -11,6 +12,7 @@ public class Cursor extends Component {
 	}
 
 	private TextArea owner;
+	private Colour colour = new Colour(30, 30, 30);
 	
 	// where the cursor is positioned in the buffer
 	// insertion x, y
@@ -129,7 +131,7 @@ public class Cursor extends Component {
 
 	@Override
 	public void render() {
-		Render.colour(30, 30, 30);
+		Render.colour(colour);
 		Render.rect(x + xOffset + padding, y + yOffset + padding, w, h);
 	}
 	
@@ -155,6 +157,10 @@ public class Cursor extends Component {
 
 	public void reset() {
 		yOffset = xOffset = ix = iy = 0;
+	}
+
+	public void setColour(Colour colour) {
+		this.colour = colour;
 	}
 	
 }
