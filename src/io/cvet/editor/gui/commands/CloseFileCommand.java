@@ -12,5 +12,10 @@ public class CloseFileCommand extends Command {
 	public void action(String[] arguments) {
 		Editor.getInstance().closeCurrentBuffer();
 	}
+	
+	@Override
+	public String getHelp() {
+		return "Closes the current buffer.";
+	}
 
 }

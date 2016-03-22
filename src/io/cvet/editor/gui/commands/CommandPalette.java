@@ -28,6 +28,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("exit", new ExitCommand());
 		commands.put("save", new SaveFileCommand());
 		commands.put("configure", new EditSettingsCommand());
+		commands.put("help", new HelpCommand());
 	}
 	
 	public CommandPalette() {
@@ -35,12 +36,13 @@ public class CommandPalette extends Component implements CursorAction {
 		this.w = 512;
 		this.h = defaultHeight;
 		this.x = (Display.getWidth() / 2) - (this.w / 2);
-		this.y = 0;
+		this.y = 5;
 		
 		this.buffer = new TextArea(this.w, defaultHeight);
-		buffer.setBackground(Colour.BLACK);
+		buffer.setBackground(new Colour(0x61A598));
 		buffer.setFocus(true);
 		buffer.getCaret().setCursorAction(this);
+		buffer.getCaret().setColour(new Colour(0x3D3331));
 		addChild(buffer, Layout.Child);
 	}
 	
@@ -59,6 +61,8 @@ public class CommandPalette extends Component implements CursorAction {
 	public void render() {
 		Render.colour(background);
 		Render.rect(x, y, w, h);
+		Render.colour(Colour.BLACK);
+		Render.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);
 	}
@@ -101,4 +105,8 @@ public class CommandPalette extends Component implements CursorAction {
 		}
 	}
 
+	public static HashMap<String, Command> getCommands() {
+		return commands;
+	}
+	
 }

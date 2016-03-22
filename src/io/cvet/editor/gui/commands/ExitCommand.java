@@ -13,4 +13,9 @@ public class ExitCommand extends Command {
 		Editor.getInstance().exit();
 	}
 	
+	@Override
+	public String getHelp() {
+		return "Exits the editor.";
+	}
+	
 }

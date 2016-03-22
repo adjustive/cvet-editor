@@ -12,5 +12,11 @@ public class SaveFileCommand extends Command {
 	public void action(String[] arguments) {
 		Editor.getInstance().getCurrentBuffer().save();
 	}
+
+	@Override
+	public String getHelp() {
+		return "Saves the current buffer. Will prompt for a location\n" +
+				"if the file has never been saved before.";
+	}
 	
 }

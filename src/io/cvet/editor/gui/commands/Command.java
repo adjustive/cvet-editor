@@ -16,4 +16,6 @@ public abstract class Command {
 		return argumentCount;
 	}
 
+	public abstract String getHelp();
+
 }

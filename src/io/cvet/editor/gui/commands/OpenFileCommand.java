@@ -37,5 +37,13 @@ public class OpenFileCommand extends Command {
 		// TODO: check for file in the
 		// editors view
 	}
+	
+	@Override
+	public String getHelp() {
+		return "Opens the given file. If a ? is specified,\n" +
+				"a file chooser will be shown. If a non-path\n" +
+				"is given, an existing file in the editor will be\n" +
+				"opened if it exists. (open <path|?|name>)";
+	}
 
 }

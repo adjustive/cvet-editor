@@ -120,19 +120,22 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_DOWN:
-					int nextLineLen = owner.getLine(iy + 1).length();
 					if (ix >= owner.getLine(iy).length()
 						&& iy < owner.getLineCount() - 1) {
+						int nextLineLen = owner.getLine(iy + 1).length();
 						if (ix <= nextLineLen) {
 							move(nextLineLen - ix, 1);
 						} else if (ix >= nextLineLen) {
 							move(nextLineLen - ix, 1);
 						}
 					} else {
-						if (ix >= nextLineLen) {
-							move(nextLineLen - ix, 1);
-						} else {
-							move(0, 1);
+						if (iy < owner.getLineCount() - 1) {
+							int nextLineLen = owner.getLine(iy + 1).length();
+							if (ix >= nextLineLen) {
+								move(nextLineLen - ix, 1);
+							} else {
+								move(0, 1);
+							}
 						}
 					}
 					break;

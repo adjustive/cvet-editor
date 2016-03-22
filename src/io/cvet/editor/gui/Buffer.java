@@ -1,19 +1,30 @@
 package io.cvet.editor.gui;
 
+import io.cvet.editor.gfx.Render;
+import io.cvet.editor.util.Theme;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
+import org.lwjgl.opengl.Display;
+
 public class Buffer extends TextArea {
 
 	private String name;
 	private File file;
 	private boolean saved;
+	private Label title;
 	
 	public Buffer(String name) {
 		this.name = name;
+		int padding = 5;
+		this.title = new Label(name, Render.MONOSPACED_FONT.getWidth(name) + (padding * 2), 24);
+		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
+		title.setBackground(Theme.ACCENT);
+		addChild(title);
 	}
 	
 	public Buffer(String name, String contents) {
@@ -30,6 +41,15 @@ public class Buffer extends TextArea {
 		this.file = file;
 		buffer.clear();
 		this.loadFile(file);
+	}
+	
+	public void update() {
+		super.update();
+	}
+	
+	public void render() {
+		renderChildren(children);
+		super.render();
 	}
 
 	public void save() {

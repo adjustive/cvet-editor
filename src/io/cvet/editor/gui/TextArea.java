@@ -14,6 +14,7 @@ import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
 
 public class TextArea extends Component {
 
@@ -37,9 +38,11 @@ public class TextArea extends Component {
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
-		setBackground(new Colour(0x3D3331));
-		setCursorColour(new Colour(0x61A598));
+		
+		setBackground(Theme.BASE);
+		setCursorColour(Theme.ACCENT);
 		setForeground(Colour.PINK);
+		
 		this.buffer.add(new StringBuilder());
 	}
 	

@@ -14,5 +14,11 @@ public class EditSettingsCommand extends Command {
 	public void action(String[] arguments) {
 		Editor.getInstance().setCurrentBuffer(new Buffer(Settings.getUserConfigFile()));
 	}
+	
+	@Override
+	public String getHelp() {
+		return "Opens up the user configuration\n" +
+				"file in a new buffer.";
+	}
 
 }

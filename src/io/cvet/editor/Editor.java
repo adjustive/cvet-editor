@@ -104,7 +104,7 @@ public class Editor extends Component implements Runnable {
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		Render.colour(Colour.WHITE);
+		Render.colour(Colour.BLACK);
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
@@ -116,7 +116,7 @@ public class Editor extends Component implements Runnable {
 		Input.render();
 
 		Render.colour(255, 0, 0);
-		Render.drawString("fps: " + frames, Display.getWidth() - 100, 20);
+		Render.drawString("fps: " + frames, Display.getWidth() - 100, Display.getHeight() - 40);
 	}
 	
 	public void run() {

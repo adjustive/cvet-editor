@@ -14,4 +14,9 @@ public class NewFileCommand extends Command {
 		Editor.getInstance().setCurrentBuffer(new Buffer(arguments[0]));
 	}
 
+	@Override
+	public String getHelp() {
+		return "Creates a new file with the given name (new <name>)";
+	}
+	
 }
