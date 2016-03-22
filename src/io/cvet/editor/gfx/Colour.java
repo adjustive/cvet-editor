@@ -20,7 +20,7 @@ public class Colour {
 	}
 	
 	public Colour(int hex) {
-        this(((hex >> 16) & 0xFF), ((hex >> 8) & 0xFF), (hex & 0xFF), ((hex >> 24) & 0xFF));
+        this(((hex >> 16) & 0xFF), ((hex >> 8) & 0xFF), (hex & 0xFF), 255);
 	}
 	
 }

@@ -52,6 +52,7 @@ public class Render {
 	}
 
 	public static void rect(int x, int y, int w, int h) {
+		glPushMatrix();
 		applyColour();
 		glBegin(GL_TRIANGLES);
 		glVertex2f(x, y);
@@ -62,6 +63,7 @@ public class Render {
 		glVertex2f(x + w, y + h);
 		glVertex2f(x, y + h);
 		glEnd();
+		glPopMatrix();
 	}
 
 	public static void texture(Texture t, int x, int y) {
@@ -101,8 +103,10 @@ public class Render {
 	public static void drawString(String s, int x, int y) {
 		applyColour();
 		glEnable(GL_BLEND);
+		glPushMatrix();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		MONOSPACED_FONT.drawString(x, y, s);
+		glPopMatrix();
 		glDisable(GL_BLEND);
 	}
 
