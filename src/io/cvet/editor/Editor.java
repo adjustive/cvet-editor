@@ -161,6 +161,7 @@ public class Editor extends Component implements Runnable {
 	
 	public void stop() {
 		thread.interrupt();
+		System.exit(0);
 	}
 	
 	// TODO: hashmap for this for them O(1)s...
