@@ -220,5 +220,9 @@ public class TextArea extends Component {
 		}
 		setLine(line, iy);
 	}
+
+	public int getTabSize() {
+		return tabSize;
+	}
 	
 }

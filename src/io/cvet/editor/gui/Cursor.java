@@ -23,6 +23,7 @@ public class Cursor extends Component {
 	private int charWidth, charHeight;
 	private int padding;
 	
+	private boolean hungryBackspace = true;
 	private boolean matchBraces = true;
 	
 	private CursorAction cursorAction = null;
@@ -42,8 +43,6 @@ public class Cursor extends Component {
 		
 	}
 
-	private int levelsOfIndentation = 0;
-	
 	@Override
 	public void update() {
 		this.x = owner.x;
@@ -67,7 +66,19 @@ public class Cursor extends Component {
 					// nothing
 					break;
 				case Keyboard.KEY_BACK:
-					owner.backspace(this, ix, iy);
+					if (hungryBackspace && ix - owner.getTabSize() >= 0) {
+						String cut = owner.getLine(iy).substring(ix - owner.getTabSize(), ix);
+						if (cut.length() == owner.getTabSize()
+								&& cut.trim().length() == 0) {
+							for (int i = 0; i < owner.getTabSize(); i++) {
+								owner.backspace(this, ix, iy);
+							}
+						} else {
+							owner.backspace(this, ix, iy);
+						}
+					} else {
+						owner.backspace(this, ix, iy);
+					}
 					break;
 				case Keyboard.KEY_LEFT:
 					if (ix > 0) {
@@ -127,7 +138,6 @@ public class Cursor extends Component {
 					carriageReturn();
 					break;
 				case Keyboard.KEY_TAB:
-					levelsOfIndentation++;
 					move(owner.tab(ix, iy), 0);
 					break;
 				default:
