@@ -8,18 +8,6 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
-
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.util.Stack;
-
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
@@ -27,6 +15,15 @@ import io.cvet.editor.gui.TextArea;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
+
+import java.awt.GraphicsEnvironment;
+import java.util.Stack;
+
+import javax.swing.UIManager;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 public class Editor extends Component implements Runnable {
 	
@@ -49,6 +46,7 @@ public class Editor extends Component implements Runnable {
 		// setup the display
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
+			Display.setTitle("Editor");
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("shit");
@@ -78,22 +76,16 @@ public class Editor extends Component implements Runnable {
 		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
 			palette.setVisible(true);
 			palette.setFocus(true);
-		} else if (Input.getKeyPressed(Keyboard.KEY_F2)) {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setVisible(true);
-			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
-				TextArea buff = new TextArea(Display.getWidth(), Display.getHeight());
-				buff.loadFile(file);
-				addChild(buff);
-			}
 		}
-		
 		
 		if (palette.isVisible() && palette.getFocus()) {
 			palette.update();
 		} else {
 			updateChildren(children);
+		}
+		
+		while (Keyboard.next()) {
+			
 		}
 		
 		Input.update();
@@ -103,7 +95,7 @@ public class Editor extends Component implements Runnable {
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		Render.colour(Colour.BLACK);
+		Render.colour(Colour.WHITE);
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
@@ -166,6 +158,7 @@ public class Editor extends Component implements Runnable {
 	public void setCurrentTextArea(TextArea area) {
 		addChild(area);
 		this.areas.push(area);
+		area.setFocus(true);
 	}
 	
 	public static void main(String[] args) {
@@ -177,6 +170,11 @@ public class Editor extends Component implements Runnable {
 	
 	public static Editor getInstance() {
 		return instance;
+	}
+
+	public void exit() {
+		Display.destroy();
+		stop();	
 	}
 	
 }

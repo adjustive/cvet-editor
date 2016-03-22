@@ -18,11 +18,14 @@ public class CommandPalette extends Component implements CursorAction {
 	private Colour background = Colour.PINK;
 	private TextArea buffer;
 	private int defaultHeight;
+	private int hack = 0;
 	
 	private static HashMap<String, Command> commands = new HashMap<String, Command>();
 	static {
 		commands.put("new", new NewFileCommand());
+		commands.put("open", new OpenFileCommand());
 		commands.put("close", new CloseFileCommand());
+		commands.put("exit", new ExitCommand());
 	}
 	
 	public CommandPalette() {
@@ -33,6 +36,7 @@ public class CommandPalette extends Component implements CursorAction {
 		this.y = 0;
 		
 		this.buffer = new TextArea(this.w, defaultHeight);
+		buffer.setBackground(Colour.BLACK);
 		buffer.setFocus(true);
 		buffer.getCaret().setCursorAction(this);
 		addChild(buffer, Layout.Child);
@@ -46,6 +50,8 @@ public class CommandPalette extends Component implements CursorAction {
 	@Override
 	public void update() {
 		updateChildren(children);
+		hack++;
+		System.out.println(hack);
 	}
 
 	@Override
@@ -70,16 +76,27 @@ public class CommandPalette extends Component implements CursorAction {
 			}
 		}
 	}
+	
+	public void hide() {
+		setVisible(false);
+		setFocus(false);
+		hack = 0;
+		buffer.clear();
+	}
 
 	@Override
 	public void keyPress(int keyCode) {
-		if (keyCode == Keyboard.KEY_RETURN) {
+		switch (keyCode) {
+		case Keyboard.KEY_RETURN:
 			String command = buffer.getBuffer().get(0).toString();
 			processCommand(command.split(" "));
-			buffer.clear();
-			buffer.getCaret().reset();
-			setVisible(false);
-			setFocus(false);
+			hide();
+			break;
+		case Keyboard.KEY_ESCAPE:
+			if (hack > 5) {
+				hide();
+			}
+			break;
 		}
 	}
 

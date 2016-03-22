@@ -46,7 +46,7 @@ public class Cursor extends Component {
 		this.y = owner.y;
 		this.visible = owner.visible;
 		
-		while (this.visible && Keyboard.next()) {
+		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
 				switch (keyCode) {

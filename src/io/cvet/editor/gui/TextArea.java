@@ -38,6 +38,9 @@ public class TextArea extends Component {
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
+		setBackground(new Colour(0x3D3331));
+		setCursorColour(new Colour(0x61A598));
+		setForeground(Colour.PINK);
 	}
 	
 	public TextArea(int w, int h) {
@@ -204,6 +207,7 @@ public class TextArea extends Component {
 		caret.carriageReturn();
 		buffer.clear();
 		buffer.add(new StringBuilder());
+		caret.reset();
 	}
 
 	public String getName() {

@@ -33,7 +33,7 @@ public class Input {
 	}
 	
 	public static void render() {
-		Render.colour(Colour.BLACK);
+		Render.colour(Colour.YELLOW);
 		Render.rect(x, y, w, h);
 	}
 
