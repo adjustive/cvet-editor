@@ -6,7 +6,10 @@ import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
 import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -19,6 +22,9 @@ public class CommandPalette extends Component implements CursorAction {
 	private TextArea buffer;
 	private int defaultHeight;
 	private int hack = 0;
+	private int lastTimeTyped = 0;
+	
+	private ArrayList<Command> suggestions = new ArrayList<Command>();
 	
 	private static HashMap<String, Command> commands = new HashMap<String, Command>();
 	static {
@@ -44,6 +50,7 @@ public class CommandPalette extends Component implements CursorAction {
 		buffer.setFocus(true);
 		buffer.getCaret().setCursorAction(this);
 		buffer.getCaret().setColour(new Colour(0x3D3331));
+		buffer.getCaret().setHungryBackspace(false);
 		addChild(buffer, Layout.Child);
 	}
 	
@@ -52,24 +59,76 @@ public class CommandPalette extends Component implements CursorAction {
 		
 	}
 
+	public void findSuggestions(String input) {
+		if (input.length() == 0) {
+			if (suggestions.size() > 0) {
+				suggestions.clear();
+			}
+			return;
+		}
+		
+		for (String s : commands.keySet()) {
+			if (s.contains(input)) {
+				if (!suggestions.contains(commands.get(s))) {
+					suggestions.add(commands.get(s));
+				}
+			}
+		}
+		lastTimeTyped = 0;
+	}
+	
 	@Override
 	public void update() {
+		lastTimeTyped++;
 		updateChildren(children);
+		
+		if (lastTimeTyped >= 1) {
+			findSuggestions(buffer.getLine().toString());
+		}
+		
+		if (suggestions.size() >= 0) {
+			if (Input.getKeyPressed(Keyboard.KEY_DOWN)) {
+				selectionIndex++;
+			} else if (Input.getKeyPressed(Keyboard.KEY_UP)) {
+				selectionIndex--;
+			}
+		}
+		
+		// wrap around
+		if (selectionIndex >= suggestions.size()) {
+			selectionIndex = 0;
+		} else if (selectionIndex < 0) {
+			selectionIndex = suggestions.size() - 1;
+		}
+		
 		hack++;
 	}
-
+	
+	private int selectionIndex = -1;
+	
 	@Override
 	public void render() {
+		Render.endClip();
+		
 		Render.colour(background);
 		Render.rect(x, y, w, h);
 		Render.colour(Colour.BLACK);
 		Render.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);
+
+		for (int i = 0; i < suggestions.size(); i++) {
+			Render.colour(selectionIndex == i ? Theme.DARK_ACCENT : Theme.ACCENT);
+			Render.rect(x, y + ((i + 1) * h), w, h);
+			
+			Render.colour(Colour.WHITE);
+			Render.drawString(suggestions.get(i).name, x + 5, y + 4 + ((i + 1) * h));
+		}
 	}
 	
 	public void processCommand(String[] command) {
 		String commandName = command[0];
+		System.out.println("Processing command " + command[0]);
 		
 		Command cmd = null;
 		if (commands.containsKey(commandName)) {
@@ -87,23 +146,38 @@ public class CommandPalette extends Component implements CursorAction {
 		setVisible(false);
 		setFocus(false);
 		hack = 0;
+		lastTimeTyped = 0;
 		buffer.clear();
+		selectionIndex = -1;
+		suggestions.clear();
 	}
 
 	@Override
-	public void keyPress(int keyCode) {
+	public boolean keyPress(int keyCode) {
 		switch (keyCode) {
+		case Keyboard.KEY_TAB:
+			if (selectionIndex != -1) {
+				String suggested = suggestions.get(selectionIndex).name;
+				String oldLine = buffer.getLine(0).toString();
+				buffer.setLine(suggested);
+				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
+				selectionIndex = -1;
+				suggestions.clear();
+			}
+			return true;
 		case Keyboard.KEY_RETURN:
 			String command = buffer.getBuffer().get(0).toString();
 			processCommand(command.split(" "));
 			hide();
-			break;
+			return true;
 		case Keyboard.KEY_ESCAPE:
 			if (hack > 5) {
 				hide();
 			}
 			break;
 		}
+		lastTimeTyped = 0;
+		return false;
 	}
 
 	public static HashMap<String, Command> getCommands() {

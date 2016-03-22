@@ -2,6 +2,6 @@ package io.cvet.editor.gui;
 
 public interface CursorAction {
 
-	void keyPress(int keyCode);
+	boolean keyPress(int keyCode);
 	
 }

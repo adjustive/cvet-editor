@@ -86,6 +86,10 @@ public class TextArea extends Component {
 	public void append(char c) {
 		setLine(getLine().append(c), buffer.size() - 1);
 	}
+	
+	public void append(String s) {
+		setLine(getLine().append(s), buffer.size() - 1);
+	}
 
 	public StringBuilder getLine(int lineNum) {
 		return buffer.get(lineNum);
@@ -97,6 +101,10 @@ public class TextArea extends Component {
 	
 	public void setLine(StringBuilder to, int lineNum) {
 		buffer.set(lineNum, to);
+	}
+	
+	public void setLine(String to) {
+		buffer.set(buffer.size() - 1, new StringBuilder(to));
 	}
 	
 	public void insert(char c, int ix, int iy) {
@@ -238,6 +246,19 @@ public class TextArea extends Component {
 
 	public void clearLine(int iy) {
 		buffer.set(iy, new StringBuilder());
+	}
+
+	public boolean isEmpty() {
+		return getLineCount() == 0;
+	}
+
+	public void setText(String val) {
+		buffer.clear();
+		buffer.add(new StringBuilder(val));
+	}
+
+	public void moveCursor(int x, int y) {
+		caret.move(x, y);
 	}
 	
 }

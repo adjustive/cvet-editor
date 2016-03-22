@@ -7,7 +7,7 @@ import io.cvet.editor.gui.Buffer;
 public class EditSettingsCommand extends Command {
 
 	public EditSettingsCommand() {
-		super("config", 0);
+		super("configure", 0);
 	}
 
 	@Override

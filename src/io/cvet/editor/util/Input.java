@@ -33,8 +33,9 @@ public class Input {
 	}
 	
 	public static void render() {
-		Render.colour(Colour.YELLOW);
-		Render.rect(x, y, w, h);
+		Render.colour(Mouse.isButtonDown(0) ? Colour.RED : Colour.YELLOW);
+		Render.rect(x, 0, 1, Display.getHeight());
+		Render.rect(0, y, Display.getWidth(), 1);
 	}
 
 	public static boolean intersects(Component c) {

@@ -175,7 +175,10 @@ public class Editor extends Component implements Runnable {
 		}
 		
 		// give the last textarea focus
-		buffers.peek().setFocus(true);
+		// if it exists
+		if (buffers.peek() != null) {
+			buffers.peek().setFocus(true);
+		}
 	}
 	
 	public void setCurrentBuffer(Buffer buff) {
