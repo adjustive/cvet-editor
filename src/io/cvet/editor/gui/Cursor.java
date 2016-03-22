@@ -5,6 +5,7 @@ import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 
 public class Cursor extends Component {
@@ -76,11 +77,21 @@ public class Cursor extends Component {
 					// TODO:
 					break;
 				case Keyboard.KEY_D: // delete line
-					if (iy < owner.getLineCount() - 1) {
+					if (iy >= 0 && iy < owner.getLineCount() - 1) {
 						owner.deleteLine(iy);
 						carriageReturn();
-					} else if (iy == 0 && iy == owner.getLineCount() - 1) {
+					} else if (iy == owner.getLineCount() - 1 && owner.getLine(iy).length() == 0) {
+						if (iy != 0) {
+							owner.deleteLine(iy);
+							move(owner.getLine(iy - 1).length(), -1);
+						}
+					} else if (owner.getLine(iy).toString().trim().length() == 0) {
+						owner.deleteLine(iy);
+						move(owner.getLine(iy - 1).length(), -1);
+					} else {
+						System.out.println("hey");
 						owner.clearLine(iy);
+						carriageReturn();
 					}
 					break;
 				default:
