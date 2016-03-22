@@ -46,6 +46,8 @@ public class Buffer extends TextArea {
 	
 	public void update() {
 		super.update();
+		// todo make this more obvious
+		title.setBackground(saved ? Theme.ACCENT : Theme.DARK_ACCENT);
 	}
 	
 	public void render() {

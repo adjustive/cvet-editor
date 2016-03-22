@@ -13,7 +13,7 @@ public class HelpCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		String helpMessage = "# help\n" +
+		String helpMessage = "# Help\n" +
 				"Here are a list of commands, what\n" +
 				"action they perform, and their usage.\n" +
 				"\n";

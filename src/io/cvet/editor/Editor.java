@@ -16,6 +16,7 @@ import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
+import io.cvet.editor.util.Theme;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Stack;
@@ -38,6 +39,7 @@ public class Editor extends Component implements Runnable {
 	private Thread thread;
 	private CommandPalette palette;
 	private int frames = 0;
+	private final String intro = "Press `ESC` to get started. If you are stuck, type `help`.";
 	
 	private Stack<Buffer> buffers;
 	
@@ -79,7 +81,7 @@ public class Editor extends Component implements Runnable {
 		palette = new CommandPalette();
 		palette.setVisible(false);
 		
-		setCurrentBuffer(new Buffer("Untitled", WELCOME_STRING));
+		setCurrentBuffer(new Buffer("welcome.md", WELCOME_STRING));
 	}
 	
 	public void update() {
@@ -103,11 +105,16 @@ public class Editor extends Component implements Runnable {
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		Render.colour(Colour.BLACK);
+		Render.colour(Theme.BASE);
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
 
+		if (children.size() == 0) {
+			int x = Render.MONOSPACED_FONT.getWidth(intro);
+			Render.drawString(intro, (Display.getWidth() / 2) - (x / 2), (Display.getHeight() / 2) - (Render.MONOSPACED_FONT.getHeight() / 2));
+		}
+		
 		if (palette.isVisible()) {
 			palette.render();
 		}
