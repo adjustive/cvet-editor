@@ -29,6 +29,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("save", new SaveFileCommand());
 		commands.put("configure", new EditSettingsCommand());
 		commands.put("help", new HelpCommand());
+		commands.put("goto", new GotoCommand());
 	}
 	
 	public CommandPalette() {
@@ -107,6 +108,12 @@ public class CommandPalette extends Component implements CursorAction {
 
 	public static HashMap<String, Command> getCommands() {
 		return commands;
+	}
+
+	public void setText(String input) {
+		buffer.getBuffer().clear();
+		buffer.getBuffer().add(new StringBuilder(input));
+		buffer.getCaret().move(input.length(), 0);
 	}
 	
 }

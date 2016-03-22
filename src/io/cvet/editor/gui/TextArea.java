@@ -233,5 +233,9 @@ public class TextArea extends Component {
 	public void deleteLine(int iy) {
 		buffer.remove(iy);
 	}
+
+	public void clearLine(int iy) {
+		buffer.set(iy, new StringBuilder());
+	}
 	
 }

@@ -1,9 +1,9 @@
 package io.cvet.editor.gui;
 
+import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
-import io.cvet.editor.util.Input;
 
 import org.lwjgl.input.Keyboard;
 
@@ -56,18 +56,31 @@ public class Cursor extends Component {
 				case Keyboard.KEY_C: // copy
 					// TODO:
 					break;
+				case Keyboard.KEY_N:
+					
+					break;
+				case Keyboard.KEY_W: // close file
+					Editor.getInstance().closeCurrentBuffer();
+					break;
 				case Keyboard.KEY_S: // save
+					Editor.getInstance().getCurrentBuffer().save();
 					// TODO:
+					break;
+				case Keyboard.KEY_L: // line goto
+					Editor.getInstance().showCommandPalette("goto ");
 					break;
 				case Keyboard.KEY_LEFT: // left word
 					// TODO: 
 					break;
 				case Keyboard.KEY_RIGHT: // right word
-					// TODO: 
+					// TODO:
 					break;
 				case Keyboard.KEY_D: // delete line
-					if (iy < owner.getLineCount()) {
+					if (iy < owner.getLineCount() - 1) {
 						owner.deleteLine(iy);
+						carriageReturn();
+					} else if (iy == 0 && iy == owner.getLineCount() - 1) {
+						owner.clearLine(iy);
 					}
 					break;
 				default:

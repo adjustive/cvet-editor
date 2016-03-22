@@ -84,8 +84,7 @@ public class Editor extends Component implements Runnable {
 	
 	public void update() {
 		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
-			palette.setVisible(true);
-			palette.setFocus(true);
+			showCommandPalette("");
 		}
 		
 		if (palette.isVisible() && palette.getFocus()) {
@@ -207,6 +206,12 @@ public class Editor extends Component implements Runnable {
 
 	public Buffer getCurrentBuffer() {
 		return buffers.peek();
+	}
+
+	public void showCommandPalette(String input) {
+		palette.setVisible(true);
+		palette.setFocus(true);
+		palette.setText(input);
 	}
 	
 }
