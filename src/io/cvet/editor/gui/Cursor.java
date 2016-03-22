@@ -3,6 +3,7 @@ package io.cvet.editor.gui;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.util.Input;
 
 import org.lwjgl.input.Keyboard;
 
@@ -46,12 +47,60 @@ public class Cursor extends Component {
 	public void init() {
 		
 	}
+	
+	public void handleControlCombo() {
+		while (Keyboard.next()) {
+			if (Keyboard.getEventKeyState()) {
+				int keyCode = Keyboard.getEventKey();
+				switch (keyCode) {
+				case Keyboard.KEY_C: // copy
+					// TODO:
+					break;
+				case Keyboard.KEY_S: // save
+					// TODO:
+					break;
+				case Keyboard.KEY_LEFT: // left word
+					// TODO: 
+					break;
+				case Keyboard.KEY_RIGHT: // right word
+					// TODO: 
+					break;
+				case Keyboard.KEY_D: // delete line
+					if (iy < owner.getLineCount()) {
+						owner.deleteLine(iy);
+					}
+					break;
+				default:
+					System.out.println(keyCode);
+					break;
+				// IGNORE THESE
+				case Keyboard.KEY_LSHIFT:
+				case Keyboard.KEY_RSHIFT:
+				case Keyboard.KEY_LCONTROL:
+				case Keyboard.KEY_RCONTROL:
+					break;
+				}
+			}
+		}
+	}
+	
+	public void handleShiftCombo() {
+		
+	}
 
 	@Override
 	public void update() {
 		this.x = owner.x;
 		this.y = owner.y;
 		this.visible = owner.visible;
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) 
+				|| Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) { 
+			handleControlCombo();
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) 
+				|| Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+			handleShiftCombo();
+		}
 		
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {

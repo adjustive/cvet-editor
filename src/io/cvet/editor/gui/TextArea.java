@@ -229,5 +229,9 @@ public class TextArea extends Component {
 	public int getTabSize() {
 		return tabSize;
 	}
+
+	public void deleteLine(int iy) {
+		buffer.remove(iy);
+	}
 	
 }
