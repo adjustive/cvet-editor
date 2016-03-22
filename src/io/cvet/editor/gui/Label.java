@@ -3,9 +3,12 @@ package io.cvet.editor.gui;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 
+import org.newdawn.slick.TrueTypeFont;
+
 public class Label extends Component {
 
 	private String value;
+	private static TrueTypeFont face = Render.INTERFACE_FONT;
 	private Colour background = null;
 	private Colour foreground = Colour.WHITE;
 	
@@ -16,7 +19,7 @@ public class Label extends Component {
 	}
 
 	public Label(String value) {
-		this(value, Render.MONOSPACED_FONT.getWidth(value), Render.MONOSPACED_FONT.getHeight() * 2);
+		this(value, face.getWidth(value), face.getHeight() * 2);
 	}
 	
 	@Override
@@ -37,7 +40,10 @@ public class Label extends Component {
 		}
 		
 		Render.colour(foreground);
-		Render.drawString(value, x + 5, y + 1);
+		Render.font(face);
+		
+		int xx = (w / 2) - (face.getWidth(value) / 2);
+		Render.drawString(value, x + xx, y + 3);
 	}
 
 	public void setBackground(Colour background) {

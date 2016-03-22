@@ -22,7 +22,7 @@ public class Buffer extends TextArea {
 		this.name = name;
 		int padding = 5;
 		
-		this.title = new Label(name, Render.MONOSPACED_FONT.getWidth(name) + (padding * 2), 24);
+		this.title = new Label(name, Render.EDITING_FONT.getWidth(name) + (padding * 2), 24);
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title);

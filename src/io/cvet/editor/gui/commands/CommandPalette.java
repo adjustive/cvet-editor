@@ -4,8 +4,10 @@ import io.cvet.editor.Layout;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.Cursor;
 import io.cvet.editor.gui.CursorAction;
 import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
@@ -20,6 +22,8 @@ public class CommandPalette extends Component implements CursorAction {
 
 	private Colour background = Colour.PINK;
 	private TextArea buffer;
+	private Cursor caret;
+	
 	private int defaultHeight;
 	private int hack = 0;
 	private int lastTimeTyped = 0;
@@ -40,18 +44,23 @@ public class CommandPalette extends Component implements CursorAction {
 	}
 	
 	public CommandPalette() {
-		this.defaultHeight = Render.MONOSPACED_FONT.getHeight() + 10;
+		this.defaultHeight = Render.EDITING_FONT.getHeight() + 10;
 		this.w = 512;
 		this.h = defaultHeight;
 		this.x = (Display.getWidth() / 2) - (this.w / 2);
 		this.y = 5;
 		
 		this.buffer = new TextArea(this.w, defaultHeight);
+		this.caret = buffer.getCaret();
+		
 		buffer.setBackground(new Colour(0x61A598));
 		buffer.setFocus(true);
-		buffer.getCaret().setCursorAction(this);
-		buffer.getCaret().setColour(new Colour(0x3D3331));
-		buffer.getCaret().setHungryBackspace(false);
+		buffer.setFont(Render.INTERFACE_FONT);
+		caret.setCursorAction(this);
+		caret.setColour(Theme.BASE);
+		caret.setCursorStyle(CursorStyle.Line);
+		caret.setHungryBackspace(false);
+		
 		addChild(buffer, Layout.Child);
 	}
 	
@@ -121,13 +130,13 @@ public class CommandPalette extends Component implements CursorAction {
 			Render.rect(x, y + ((i + 1) * h), w, h);
 			
 			Render.colour(Colour.WHITE);
+			Render.font(Render.INTERFACE_FONT);
 			Render.drawString(suggestions.get(i).name, x + 5, y + 4 + ((i + 1) * h));
 		}
 	}
 	
 	public void processCommand(String[] command) {
 		String commandName = command[0];
-		System.out.println("Processing command " + command[0]);
 		
 		Command cmd = null;
 		if (commands.containsKey(commandName)) {
@@ -155,7 +164,7 @@ public class CommandPalette extends Component implements CursorAction {
 	public boolean keyPress(int keyCode) {
 		switch (keyCode) {
 		case Keyboard.KEY_TAB:
-			if (selectionIndex != -1) {
+			if (suggestions.size() > 0) {
 				String suggested = suggestions.get(selectionIndex).name;
 				String oldLine = buffer.getLine(0).toString();
 				buffer.setLine(suggested);

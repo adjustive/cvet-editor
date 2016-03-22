@@ -8,36 +8,30 @@ import io.cvet.editor.gfx.Render;
 import org.lwjgl.input.Keyboard;
 
 public class Cursor extends Component {
-    public static enum CursorStyle {
+    
+	public static enum CursorStyle {
         Block,
         Line,
     }
 
     private TextArea owner;
     private Colour colour = new Colour(30, 30, 30);
-    
-    // where the cursor is positioned in the buffer
-    // insertion x, y
-    private int ix, iy;
-    
     private CursorStyle cursorStyle;
+    private CursorAction cursorAction = null;
+    
+    private int ix, iy;
+    private String last;
     private int xOffset, yOffset;
-    private int charWidth, charHeight;
     private int padding;
 
     private boolean hungryBackspace;
     private boolean matchBraces;
     
-    private CursorAction cursorAction = null;
-    
     public Cursor(TextArea owner, CursorStyle style) {
         this.owner = owner;
         this.cursorStyle = style;
         this.ix = iy = 0;
-        charWidth = Render.MONOSPACED_FONT.getWidth("a");
-        charHeight = Render.MONOSPACED_FONT.getHeight();
-        this.h = charHeight;
-        this.w = cursorStyle == CursorStyle.Block ? charWidth : 1;
+        this.h = Render.EDITING_FONT.getHeight();
         
         this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
         this.matchBraces = (boolean) Settings.getSetting("match_braces");
@@ -94,7 +88,7 @@ public class Cursor extends Component {
                     }
                     break;
                 default:
-                    System.out.println(keyCode);
+                    System.out.println((char) keyCode);
                     break;
                 // IGNORE THESE
                 case Keyboard.KEY_LSHIFT:
@@ -126,6 +120,11 @@ public class Cursor extends Component {
             // nothing
             break;
         case Keyboard.KEY_BACK:
+        	// we're at the start, nothing to do
+        	if (ix == 0) {
+        		return;
+        	}
+        	
             if (hungryBackspace && ix - owner.getTabSize() >= 0) {
                 String cut = owner.getLine(iy).substring(ix - owner.getTabSize(), ix);
                 // if the last X characters are == to our tabSize
@@ -138,10 +137,12 @@ public class Cursor extends Component {
                         owner.backspace(this, ix, iy);
                     }
                 } else {
+                	last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
                     owner.backspace(this, ix, iy);
                 }
             } else {
-                owner.backspace(this, ix, iy);
+            	last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
+            	owner.backspace(this, ix, iy);
             }
             break;
         case Keyboard.KEY_LEFT:
@@ -211,10 +212,12 @@ public class Cursor extends Component {
             carriageReturn();
             break;
         case Keyboard.KEY_TAB:
+        	last = new String(new char[owner.getTabSize()]).replace('\0', ' ');
             move(owner.tab(ix, iy), 0);
             break;
         default:
-            owner.place(Keyboard.getEventCharacter(), ix, iy);
+        	last = String.valueOf(Keyboard.getEventCharacter());
+            owner.place(last.charAt(0), ix, iy);
             move(1, 0);
             break;
         }
@@ -225,6 +228,7 @@ public class Cursor extends Component {
         this.x = owner.x;
         this.y = owner.y;
         this.visible = owner.visible;
+        this.w = cursorStyle == CursorStyle.Block ? Render.CHARACTER_WIDTH : 1;
         
         // TODO: cleanup
         if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) 
@@ -264,13 +268,22 @@ public class Cursor extends Component {
     }
     
     public void move(int x, int y) {
-        ix += x;
+    	ix += x;
         iy += y;
-        xOffset += charWidth * x;
-        yOffset += charHeight * y;
+        
+        int cw = owner.getFont().getWidth(lastInsert());
+        xOffset += cw * x;
+        yOffset += owner.getFont().getHeight() * y;
     }
 
-    public void setOffset(int padding) {
+    private String lastInsert() {
+    	if (last == null) {
+    		return "";
+    	}
+		return last;
+	}
+
+	public void setOffset(int padding) {
         this.padding = padding;
     }
 
@@ -285,5 +298,9 @@ public class Cursor extends Component {
     public void setHungryBackspace(boolean hungryBackspace) {
         this.hungryBackspace = hungryBackspace;
     }
-    
+
+	public void setCursorStyle(CursorStyle style) {
+		this.cursorStyle = style;
+	}
+
 }

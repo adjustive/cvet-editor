@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.newdawn.slick.TrueTypeFont;
 
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
@@ -19,15 +20,16 @@ import io.cvet.editor.util.Theme;
 public class TextArea extends Component {
 
 	protected List<StringBuilder> buffer;
-	private int xOffset, yOffset;
 	private Cursor caret;
+	private TrueTypeFont font;
 	
 	private Colour background = Colour.WHITE;
 	private Colour foreground = Colour.BLACK;
 	
+	private int xOffset, yOffset;
 	private int padding = 5;
 	private int tabSize;
-	private int charHeight = Render.MONOSPACED_FONT.getHeight();
+	private int charHeight = Render.EDITING_FONT.getHeight();
 	private int wheelDelta = 0;
 	
 	public TextArea(int w, int h) {
@@ -42,6 +44,7 @@ public class TextArea extends Component {
 		setBackground(Theme.BASE);
 		setCursorColour(Theme.ACCENT);
 		setForeground(Colour.PINK);
+		setFont(Render.EDITING_FONT);
 		
 		this.buffer.add(new StringBuilder());
 	}
@@ -76,6 +79,7 @@ public class TextArea extends Component {
 		
 		Render.colour(foreground);
 		int line = 0;
+		Render.font(font);
 		for (StringBuilder s : buffer) {
 			String lineToRender = s.toString();
 			Render.drawString(lineToRender, x + xOffset + padding, y + yOffset + padding + (line * charHeight));
@@ -259,6 +263,14 @@ public class TextArea extends Component {
 
 	public void moveCursor(int x, int y) {
 		caret.move(x, y);
+	}
+
+	public void setFont(TrueTypeFont font) {
+		this.font = font;
+	}
+
+	public TrueTypeFont getFont() {
+		return font;
 	}
 	
 }

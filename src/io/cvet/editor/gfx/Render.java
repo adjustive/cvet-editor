@@ -6,6 +6,7 @@ import io.cvet.editor.config.Settings;
 
 import java.awt.Font;
 
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.TrueTypeFont;
 
 /*
@@ -16,10 +17,15 @@ import org.newdawn.slick.TrueTypeFont;
 public class Render {
 
 	private static float r, g, b, a;
-	public static TrueTypeFont MONOSPACED_FONT;
 	
+	public static TrueTypeFont EDITING_FONT;
+	public static TrueTypeFont INTERFACE_FONT;
+	private static TrueTypeFont CURRENT_FONT;
+	
+	public static int CHARACTER_WIDTH, CHARACTER_HEIGHT;
 	private static boolean ANTI_ALIAS;
 	private static int FONT_SIZE;
+	private static String FONT_FACE;
 	
 	static {
 		loadFont();
@@ -28,7 +34,12 @@ public class Render {
 	public static void loadFont() {
 		ANTI_ALIAS = (boolean) Settings.getSetting("anti_alias");
 		FONT_SIZE = (int) Settings.getSetting("font_size");
-		MONOSPACED_FONT = new TrueTypeFont(new Font("Monospaced", Font.PLAIN, FONT_SIZE), ANTI_ALIAS);
+		FONT_FACE = (String) Settings.getSetting("font_face");
+		EDITING_FONT = new TrueTypeFont(new Font(FONT_FACE, Font.PLAIN, FONT_SIZE), ANTI_ALIAS);
+		INTERFACE_FONT = new TrueTypeFont(new Font("Arial", Font.PLAIN, 14), ANTI_ALIAS);
+		CHARACTER_WIDTH = EDITING_FONT.getWidth("a");
+		CHARACTER_HEIGHT = EDITING_FONT.getHeight();
+		CURRENT_FONT = EDITING_FONT;
 	}
 
 	public static void showPolygons() {
@@ -115,7 +126,7 @@ public class Render {
 		glEnable(GL_BLEND);
 		glPushMatrix();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		MONOSPACED_FONT.drawString(x, y, s);
+		CURRENT_FONT.drawString(x, y, s);
 		glPopMatrix();
 		glDisable(GL_BLEND);
 	}
@@ -127,6 +138,10 @@ public class Render {
 
 	public static void endClip() {
 		glDisable(GL_SCISSOR_BOX);
+	}
+
+	public static void font(TrueTypeFont face) {
+		CURRENT_FONT = face;
 	}
 
 }

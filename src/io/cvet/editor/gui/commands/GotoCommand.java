@@ -14,8 +14,8 @@ public class GotoCommand extends Command {
 		int currentX = Editor.getInstance().getCurrentBuffer().getCaret().x;
 		int currentY = Editor.getInstance().getCurrentBuffer().getCaret().y;
 		int delta = 0;
-		if (lineNumber > currentY) {
-			delta += Math.abs(lineNumber - currentY - 1);
+		if (lineNumber >= currentY) {
+			delta += lineNumber - currentY - 1;
 		} else {
 			delta -= Math.abs(currentY - lineNumber);
 		}
