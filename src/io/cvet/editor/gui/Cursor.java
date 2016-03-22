@@ -76,7 +76,7 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_UP:
-					if (iy >= 0) {
+					if (iy > 0) {
 						int prevLineLen = owner.getLine(iy - 1).length();
 						if (ix >= prevLineLen) {
 							move(prevLineLen - ix, -1);

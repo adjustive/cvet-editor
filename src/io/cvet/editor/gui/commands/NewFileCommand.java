@@ -1,7 +1,7 @@
 package io.cvet.editor.gui.commands;
 
 import io.cvet.editor.Editor;
-import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.Buffer;
 
 public class NewFileCommand extends Command {
 
@@ -12,9 +12,7 @@ public class NewFileCommand extends Command {
 	@Override
 	public void action(String[] arguments) {
 		String filename = arguments[0];
-		TextArea area = new TextArea(filename);
-		Editor.getInstance().clearFocus();
-		Editor.getInstance().setCurrentTextArea(area);
+		Editor.getInstance().setCurrentBuffer(new Buffer(filename, false));
 	}
 
 }

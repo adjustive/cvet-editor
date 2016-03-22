@@ -16,8 +16,7 @@ import io.cvet.editor.util.Input;
 
 public class TextArea extends Component {
 
-	private String name;
-	private List<StringBuilder> buffer;
+	protected List<StringBuilder> buffer;
 	private int xOffset, yOffset;
 	private Cursor caret;
 	
@@ -29,8 +28,7 @@ public class TextArea extends Component {
 	private int charHeight = Render.MONOSPACED_FONT.getHeight();
 	private int wheelDelta = 0;
 	
-	public TextArea(String name, int w, int h) {
-		this.name = name;
+	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;
 		this.buffer = new ArrayList<StringBuilder>();
@@ -43,12 +41,8 @@ public class TextArea extends Component {
 		setForeground(Colour.PINK);
 	}
 	
-	public TextArea(int w, int h) {
-		this("", w, h);
-	}
-	
-	public TextArea(String name) {
-		this(name, Display.getWidth(), Display.getHeight());
+	public TextArea() {
+		this(Display.getWidth(), Display.getHeight());
 	}
 	
 	@Override
@@ -208,10 +202,6 @@ public class TextArea extends Component {
 		buffer.clear();
 		buffer.add(new StringBuilder());
 		caret.reset();
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public void setCursorColour(Colour colour) {

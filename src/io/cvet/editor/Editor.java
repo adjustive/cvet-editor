@@ -10,8 +10,8 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.TextArea;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
@@ -32,7 +32,7 @@ public class Editor extends Component implements Runnable {
 	private CommandPalette palette;
 	private int frames = 0;
 	
-	private Stack<TextArea> areas;
+	private Stack<Buffer> buffers;
 	
 	public Editor() {
 		instance = this;
@@ -66,7 +66,7 @@ public class Editor extends Component implements Runnable {
 			children.get(RNG.cap(children.size())).setFocus(true);
 		}
 		
-		areas = new Stack<TextArea>();
+		buffers = new Stack<Buffer>();
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
@@ -142,22 +142,23 @@ public class Editor extends Component implements Runnable {
 	
 	// TODO: hashmap for this for them O(1)s...
 	public void closeCurrentBuffer() {
-		TextArea area = areas.pop();
-		children.remove(area);
+		Buffer buff = buffers.pop();
+		children.remove(buff);
 		
 		// no areas left to focus
-		if (areas.isEmpty()) {
+		if (buffers.isEmpty()) {
 			return;
 		}
 		
 		// give the last textarea focus
-		areas.peek().setFocus(true);
+		buffers.peek().setFocus(true);
 	}
 	
-	public void setCurrentTextArea(TextArea area) {
-		addChild(area);
-		this.areas.push(area);
-		area.setFocus(true);
+	public void setCurrentBuffer(Buffer buff) {
+		clearFocus();
+		addChild(buff);
+		buffers.push(buff);
+		buff.setFocus(true);
 	}
 	
 	public static void main(String[] args) {
@@ -174,6 +175,10 @@ public class Editor extends Component implements Runnable {
 	public void exit() {
 		Display.destroy();
 		stop();	
+	}
+
+	public Buffer getCurrentBuffer() {
+		return buffers.peek();
 	}
 	
 }

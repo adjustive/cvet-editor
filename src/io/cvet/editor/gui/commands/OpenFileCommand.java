@@ -1,7 +1,7 @@
 package io.cvet.editor.gui.commands;
 
 import io.cvet.editor.Editor;
-import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.Buffer;
 
 import java.io.File;
 
@@ -15,17 +15,27 @@ public class OpenFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		System.out.println(arguments.toString());
+		// If we pass a question mark
+		// this means to open a file with
+		// the file viewer
 		if (arguments[0].equals("?")) {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setVisible(true);
 			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
-				TextArea buff = new TextArea(file.getName());
-				buff.loadFile(file);
-				Editor.getInstance().setCurrentTextArea(buff);
+				Editor.getInstance().setCurrentBuffer(new Buffer(file));
 			}
+			return;
 		}
+		
+		File potentialFile = new File(arguments[0]);
+		if (potentialFile.isFile()) {
+			Editor.getInstance().setCurrentBuffer(new Buffer(potentialFile));
+			return;
+		}
+		
+		// TODO: check for file in the
+		// editors view
 	}
 
 }

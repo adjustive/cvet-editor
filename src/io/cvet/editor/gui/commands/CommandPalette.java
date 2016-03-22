@@ -26,6 +26,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("open", new OpenFileCommand());
 		commands.put("close", new CloseFileCommand());
 		commands.put("exit", new ExitCommand());
+		commands.put("save", new SaveFileCommand());
 	}
 	
 	public CommandPalette() {
