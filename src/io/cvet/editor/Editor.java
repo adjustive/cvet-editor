@@ -27,6 +27,12 @@ import org.lwjgl.opengl.DisplayMode;
 
 public class Editor extends Component implements Runnable {
 	
+	private static final String WELCOME_STRING = "# Nate\n" +
+			"Hello, welcome! Nate is a text editor created\n" +
+			"with the aims of being widely portable, blazingly fast,\n" +
+			"and beautiful. Nate is built on top of a custom\n" +
+			"GUI framework written on top of OpenGL.";
+
 	private static Editor instance;
 	private Thread thread;
 	private CommandPalette palette;
@@ -46,10 +52,11 @@ public class Editor extends Component implements Runnable {
 		// setup the display
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.setTitle("Editor");
+			Display.setTitle("nate");
 			Display.create();
 		} catch (Exception e) {
-			System.err.println("shit");
+			System.err.println("Well this is awkward.");
+			return;
 		}
 		
 		this.w = Display.getWidth();
@@ -70,6 +77,8 @@ public class Editor extends Component implements Runnable {
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
+		
+		setCurrentBuffer(new Buffer("Untitled", WELCOME_STRING));
 	}
 	
 	public void update() {

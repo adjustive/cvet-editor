@@ -12,9 +12,15 @@ public class Buffer extends TextArea {
 	private File file;
 	private boolean saved;
 	
-	public Buffer(String name, boolean saved) {
+	public Buffer(String name) {
 		this.name = name;
-		this.saved = saved;
+	}
+	
+	public Buffer(String name, String contents) {
+		this.name = name;
+		for (String s : contents.split("\n")) {
+			buffer.add(new StringBuilder(s));
+		}
 	}
 	
 	public Buffer(File file) {
@@ -22,6 +28,7 @@ public class Buffer extends TextArea {
 		this.saved = true;
 		this.file = file;
 		this.loadFile(file);
+		this.saved = true;
 	}
 
 	public void save() {
