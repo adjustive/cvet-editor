@@ -32,7 +32,6 @@ public class TextArea extends Component {
 		this.w = w;
 		this.h = h;
 		this.buffer = new ArrayList<StringBuilder>();
-		buffer.add(new StringBuilder());
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
