@@ -23,6 +23,7 @@ public class CommandPalette extends Component implements CursorAction {
 	private int defaultHeight;
 	private int hack = 0;
 	private int lastTimeTyped = 0;
+	private int selectionIndex = 0;
 	
 	private ArrayList<Command> suggestions = new ArrayList<Command>();
 	
@@ -103,8 +104,6 @@ public class CommandPalette extends Component implements CursorAction {
 		
 		hack++;
 	}
-	
-	private int selectionIndex = -1;
 	
 	@Override
 	public void render() {

@@ -31,9 +31,9 @@ public class Colour {
 	}
 	
 	public Colour darker() {
-		this.r *= (1 - 5);
-		this.g *= (1 - 5);
-		this.b *= (1 - 5);
+		this.r *= (1 - 0.1);
+		this.g *= (1 - 0.1);
+		this.b *= (1 - 0.1);
 		return this;
 	}
 	

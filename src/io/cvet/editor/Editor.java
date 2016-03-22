@@ -166,6 +166,11 @@ public class Editor extends Component implements Runnable {
 	
 	// TODO: hashmap for this for them O(1)s...
 	public void closeCurrentBuffer() {
+		// nothing to do
+		if (buffers.empty()) {
+			return;
+		}
+		
 		Buffer buff = buffers.pop();
 		children.remove(buff);
 		
@@ -176,7 +181,7 @@ public class Editor extends Component implements Runnable {
 		
 		// give the last textarea focus
 		// if it exists
-		if (buffers.peek() != null) {
+		if (!buffers.empty()) {
 			buffers.peek().setFocus(true);
 		}
 	}

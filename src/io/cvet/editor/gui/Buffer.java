@@ -21,6 +21,7 @@ public class Buffer extends TextArea {
 	public Buffer(String name) {
 		this.name = name;
 		int padding = 5;
+		
 		this.title = new Label(name, Render.MONOSPACED_FONT.getWidth(name) + (padding * 2), 24);
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
@@ -28,7 +29,7 @@ public class Buffer extends TextArea {
 	}
 	
 	public Buffer(String name, String contents) {
-		this.name = name;
+		this(name);
 		buffer.clear();
 		for (String s : contents.split("\n")) {
 			buffer.add(new StringBuilder(s));
@@ -36,7 +37,7 @@ public class Buffer extends TextArea {
 	}
 	
 	public Buffer(File file) {
-		this.name = file.getName();
+		this(file.getName());
 		this.saved = true;
 		this.file = file;
 		buffer.clear();
@@ -58,7 +59,9 @@ public class Buffer extends TextArea {
 		if (!isSaved()) {
 			// TODO: store the last directory we saved
 			// in, and set the default location to that
-			JFileChooser chooser = new JFileChooser(System.getenv("user.home"));
+			JFileChooser chooser = new JFileChooser(System.getenv("HOME"));
+			chooser.setDialogTitle("Save File \"" + name + "\"");
+			chooser.setSelectedFile(new File(name));
 			if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 				file = chooser.getSelectedFile();
 			} else {
