@@ -77,7 +77,8 @@ public class TextArea extends Component {
 		Render.colour(foreground);
 		int line = 0;
 		for (StringBuilder s : buffer) {
-			Render.drawString(s.toString(), x + xOffset + padding, y + yOffset + padding + (line * charHeight));
+			String lineToRender = s.toString();
+			Render.drawString(lineToRender, x + xOffset + padding, y + yOffset + padding + (line * charHeight));
 			line++;
 		}
 	}
@@ -166,7 +167,8 @@ public class TextArea extends Component {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = "";
 			while ((line = br.readLine()) != null) {
-				buffer.add(new StringBuilder(line));
+				// convert our \t into a string of {tabSize} amount of spaces
+				buffer.add(new StringBuilder(line.replaceAll("\t", new String(new char[tabSize]).replace('\0', ' '))));
 			}
 			br.close();
 		} 
