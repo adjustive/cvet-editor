@@ -105,6 +105,14 @@ public class Cursor extends Component {
 	public void handleShiftCombo() {
 
 	}
+	
+	public boolean atStart() {
+		return ix == 0 && iy == 0;
+	}
+	
+	public boolean atEndOfLine() {
+		return ix >= getCurrentLine().length();
+	}
 
 	public void handleKeyCode(int keyCode) {
 		switch (keyCode) {
@@ -122,7 +130,7 @@ public class Cursor extends Component {
 			break;
 		case Keyboard.KEY_BACK:
 			// we're at the start, nothing to do
-			if (ix == 0 && iy == 0) {
+			if (atStart()) {
 				return;
 			}
 
@@ -149,83 +157,52 @@ public class Cursor extends Component {
 					if (ix > 0) {
 						last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
 					} else {
-						for (int i = 0; i < owner.getLineCount(); i++) {
-							String line = owner.getLine(iy - i).toString();
-							if (line.length() != 0) {
-								last = String.valueOf(line.charAt(line.length() - 1));
-								break;
-							}
-						}
+						moveToEnd();
 					}
 				}
 				owner.backspace(this, ix, iy);
 			}
 			break;
 		case Keyboard.KEY_LEFT:
-			if (ix > 0) {
-				move(-1, 0);
-			}
+			last = String.valueOf(owner.getLine(iy).charAt(ix));
+			move(ix > 0 ? -1 : 0, 0);
 			break;
 		case Keyboard.KEY_RIGHT:
-			if (ix < owner.getLine(iy).length()) {
-				move(1, 0);
-			}
+			last = String.valueOf(owner.getLine(iy).charAt(ix));
+			move(ix < getCurrentLine().length() ? 1 : 0, 0);
 			break;
 		case Keyboard.KEY_DELETE:
 			owner.delete(ix, iy);
 			break;
 		case Keyboard.KEY_LBRACKET:
-			char c = Keyboard.getEventCharacter();
-			owner.place(c, ix, iy);
+			char openingBracket = Keyboard.getEventCharacter();
+			owner.place(openingBracket, ix, iy);
 			move(1, 0);
 			if (matchBraces) {
-				owner.place((char) ((int) (c + 2)), ix, iy);
+				// opening bracket + 2 in ascii
+				// will get us the closing bracket
+				owner.place((char) ((int) (openingBracket + 2)), ix, iy);
 			}
 			break;
 		case Keyboard.KEY_UP:
 			if (iy > 0) {
-				int prevLineLen = owner.getLine(iy - 1).length();
-				if (ix >= prevLineLen) {
-					move(prevLineLen - ix, -1);
-				} else {
-					move(0, -1);
-				}
+				int prevLineLen = getLineOffsetBy(-1).length();
+				move(ix >= prevLineLen ? prevLineLen - ix : 0, -1);
 			}
 			break;
 		case Keyboard.KEY_DOWN:
-			if (ix >= owner.getLine(iy).length()
-					&& iy < owner.getLineCount() - 1) {
-				int nextLineLen = owner.getLine(iy + 1).length();
-				if (ix <= nextLineLen) {
-					move(nextLineLen - ix, 1);
-				} else if (ix >= nextLineLen) {
-					move(nextLineLen - ix, 1);
-				}
-			} else {
-				if (iy < owner.getLineCount() - 1) {
-					int nextLineLen = owner.getLine(iy + 1).length();
-					if (ix >= nextLineLen) {
-						move(nextLineLen - ix, 1);
-					} else {
-						move(0, 1);
-					}
-				}
+			if (atEndOfLine() && iy < owner.getLineCount() - 1) {
+				move(getLineOffsetBy(1).length() - ix, 1);
+			} else if (iy < owner.getLineCount() - 1) {
+				int nextLineLen = getLineOffsetBy(1).length();
+				move(ix >= nextLineLen ? nextLineLen - ix : 0, 1);
 			}
 			break;
 		case Keyboard.KEY_HOME:
-			if (ix > 0) {
-				move(-ix, 0);
-			}
+			move(ix > 0 ? -ix : 0, 0);
 			break;
 		case Keyboard.KEY_END:
-			String line = owner.getLine(iy).toString();
-			int initialX = ix;
-			if (ix < line.length()) {
-				for (int i = 0; i < line.length() - initialX; i++) {
-					last = String.valueOf(line.charAt(ix));
-					move(1, 0);
-				}
-			}
+			moveToEnd();
 			break;
 		case Keyboard.KEY_RETURN:
 			owner.newline(ix, iy);
@@ -241,6 +218,28 @@ public class Cursor extends Component {
 			owner.place(last.charAt(0), ix, iy);
 			move(1, 0);
 			break;
+		}
+	}
+	
+	public String getLineOffsetBy(int offs) {
+		return owner.getLine(iy + offs).toString();
+	}
+	
+	public String getCurrentLine() {
+		return getLineOffsetBy(0);
+	}
+	
+	public void moveToEnd() {
+		if (atEndOfLine()) {
+			return;
+		}
+		
+		for (int i = 0; i < owner.getLineCount(); i++) {
+			String line = owner.getLine(iy - i).toString();
+			if (line.length() != 0) {
+				last = String.valueOf(line.charAt(line.length() - 1));
+				break;
+			}
 		}
 	}
 
