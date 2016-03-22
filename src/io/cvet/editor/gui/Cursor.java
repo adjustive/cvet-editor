@@ -1,9 +1,9 @@
 package io.cvet.editor.gui;
 
-import org.lwjgl.input.Keyboard;
-
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
+
+import org.lwjgl.input.Keyboard;
 
 public class Cursor extends Component {
 	public static enum CursorStyle {
@@ -23,6 +23,8 @@ public class Cursor extends Component {
 	private int charWidth, charHeight;
 	private int padding;
 	
+	private boolean matchBraces = true;
+	
 	private CursorAction cursorAction = null;
 	
 	public Cursor(TextArea owner, CursorStyle style) {
@@ -40,6 +42,8 @@ public class Cursor extends Component {
 		
 	}
 
+	private int levelsOfIndentation = 0;
+	
 	@Override
 	public void update() {
 		this.x = owner.x;
@@ -77,6 +81,12 @@ public class Cursor extends Component {
 					break;
 				case Keyboard.KEY_DELETE:
 					owner.delete(ix, iy);
+					break;
+				case Keyboard.KEY_LBRACKET:
+					char c = Keyboard.getEventCharacter();
+					owner.place(c, ix, iy);
+					move(1, 0);
+					owner.place((char) ((int) (c + 2)), ix, iy);
 					break;
 				case Keyboard.KEY_UP:
 					if (iy > 0) {
@@ -117,8 +127,8 @@ public class Cursor extends Component {
 					carriageReturn();
 					break;
 				case Keyboard.KEY_TAB:
-					int tabSize = owner.tab(ix, iy);
-					move(tabSize, 0);
+					levelsOfIndentation++;
+					move(owner.tab(ix, iy), 0);
 					break;
 				default:
 					owner.place(Keyboard.getEventCharacter(), ix, iy);

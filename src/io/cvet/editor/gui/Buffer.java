@@ -41,7 +41,15 @@ public class Buffer extends TextArea {
 			JFileChooser chooser = new JFileChooser(System.getenv("user.home"));
 			if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 				file = chooser.getSelectedFile();
+			} else {
+				System.err.println("choose a file next time fuckboy");
+				return;
 			}
+		}
+		
+		if (file == null) {
+			System.err.println("this shouldn't happen\n");
+			return;
 		}
 		
 		// write contents of buffer
@@ -55,7 +63,7 @@ public class Buffer extends TextArea {
 			bw.close();
 		} 
 		catch (Exception e) {
-			System.err.println(":(");
+			System.err.println("failed 2 write :(");
 		}
 		
 		saved = true;
