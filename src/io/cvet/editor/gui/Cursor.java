@@ -75,6 +75,9 @@ public class Cursor extends Component {
 						move(1, 0);
 					}
 					break;
+				case Keyboard.KEY_DELETE:
+					owner.delete(ix, iy);
+					break;
 				case Keyboard.KEY_UP:
 					if (iy > 0) {
 						int prevLineLen = owner.getLine(iy - 1).length();

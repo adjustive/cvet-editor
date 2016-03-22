@@ -207,5 +207,18 @@ public class TextArea extends Component {
 	public void setCursorColour(Colour colour) {
 		this.caret.setColour(colour);
 	}
+
+	public void delete(int ix, int iy) {
+		StringBuilder line = getLine(iy);
+		if (ix < line.length()) {
+			line.deleteCharAt(ix);
+		} else if (iy < getLineCount() - 1) {
+			System.out.println(y + ", " + getLineCount());
+			StringBuilder next = getLine(iy + 1);
+			line.append(next.toString());
+			buffer.remove(iy + 1);
+		}
+		setLine(line, iy);
+	}
 	
 }
