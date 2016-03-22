@@ -28,9 +28,8 @@ public class Buffer extends TextArea {
 		this.name = file.getName();
 		this.saved = true;
 		this.file = file;
-		this.loadFile(file);
-		this.saved = true;
 		buffer.clear();
+		this.loadFile(file);
 	}
 
 	public void save() {
