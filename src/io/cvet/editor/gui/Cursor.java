@@ -1,5 +1,6 @@
 package io.cvet.editor.gui;
 
+import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 
@@ -23,8 +24,8 @@ public class Cursor extends Component {
 	private int charWidth, charHeight;
 	private int padding;
 	
-	private boolean hungryBackspace = true;
-	private boolean matchBraces = true;
+	private boolean hungryBackspace;
+	private boolean matchBraces;
 	
 	private CursorAction cursorAction = null;
 	
@@ -36,6 +37,9 @@ public class Cursor extends Component {
 		charHeight = Render.MONOSPACED_FONT.getHeight();
 		this.h = charHeight;
 		this.w = cursorStyle == CursorStyle.Block ? charWidth : 1;
+		
+		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
+		this.matchBraces = (boolean) Settings.getSetting("match_braces");
 	}
 	
 	@Override
@@ -68,6 +72,10 @@ public class Cursor extends Component {
 				case Keyboard.KEY_BACK:
 					if (hungryBackspace && ix - owner.getTabSize() >= 0) {
 						String cut = owner.getLine(iy).substring(ix - owner.getTabSize(), ix);
+						// if the last X characters are == to our tabSize
+						// and if we trim the whitespace and it becomes 
+						// the length of zero, they are all spaces we can
+						// remove.
 						if (cut.length() == owner.getTabSize()
 								&& cut.trim().length() == 0) {
 							for (int i = 0; i < owner.getTabSize(); i++) {
@@ -97,7 +105,9 @@ public class Cursor extends Component {
 					char c = Keyboard.getEventCharacter();
 					owner.place(c, ix, iy);
 					move(1, 0);
-					owner.place((char) ((int) (c + 2)), ix, iy);
+					if (matchBraces) {
+						owner.place((char) ((int) (c + 2)), ix, iy);
+					}
 					break;
 				case Keyboard.KEY_UP:
 					if (iy > 0) {
@@ -110,16 +120,20 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_DOWN:
+					int nextLineLen = owner.getLine(iy + 1).length();
 					if (ix >= owner.getLine(iy).length()
 						&& iy < owner.getLineCount() - 1) {
-						int nextLineLen = owner.getLine(iy + 1).length();
 						if (ix <= nextLineLen) {
 							move(nextLineLen - ix, 1);
 						} else if (ix >= nextLineLen) {
 							move(nextLineLen - ix, 1);
 						}
-					} else if (iy < owner.getLineCount() - 1){
-						move(0, 1);
+					} else {
+						if (ix >= nextLineLen) {
+							move(nextLineLen - ix, 1);
+						} else {
+							move(0, 1);
+						}
 					}
 					break;
 				case Keyboard.KEY_HOME:

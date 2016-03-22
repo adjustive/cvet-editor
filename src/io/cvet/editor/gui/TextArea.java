@@ -9,6 +9,7 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Cursor.CursorStyle;
@@ -24,13 +25,14 @@ public class TextArea extends Component {
 	private Colour foreground = Colour.BLACK;
 	
 	private int padding = 5;
-	private int tabSize = 4;
+	private int tabSize;
 	private int charHeight = Render.MONOSPACED_FONT.getHeight();
 	private int wheelDelta = 0;
 	
 	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;
+		this.tabSize = (int) Settings.getSetting("tab_size");
 		this.buffer = new ArrayList<StringBuilder>();
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);

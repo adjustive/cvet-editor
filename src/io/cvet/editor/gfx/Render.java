@@ -2,6 +2,8 @@ package io.cvet.editor.gfx;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import io.cvet.editor.config.Settings;
+
 import java.awt.Font;
 
 import org.newdawn.slick.TrueTypeFont;
@@ -15,10 +17,18 @@ public class Render {
 
 	private static float r, g, b, a;
 	public static TrueTypeFont MONOSPACED_FONT;
-
+	
+	private static boolean ANTI_ALIAS;
+	private static int FONT_SIZE;
+	
 	static {
-		MONOSPACED_FONT = new TrueTypeFont(new Font("Monospaced", Font.PLAIN,
-				21), true);
+		loadFont();
+	}
+	
+	public static void loadFont() {
+		ANTI_ALIAS = (boolean) Settings.getSetting("anti_alias");
+		FONT_SIZE = (int) Settings.getSetting("font_size");
+		MONOSPACED_FONT = new TrueTypeFont(new Font("Monospaced", Font.PLAIN, FONT_SIZE), ANTI_ALIAS);
 	}
 
 	public static void showPolygons() {

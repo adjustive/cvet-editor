@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
+import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Buffer;
@@ -189,6 +190,9 @@ public class Editor extends Component implements Runnable {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) { }
+		
+		Settings.setupEditor();
+		Settings.loadSettings();
 		new Editor().start();
 	}
 	
