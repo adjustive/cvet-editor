@@ -20,7 +20,6 @@ import org.lwjgl.opengl.Display;
 
 public class CommandPalette extends Component implements CursorAction {
 
-	private Colour background = Colour.PINK;
 	private TextArea buffer;
 	private Cursor caret;
 	
@@ -28,6 +27,7 @@ public class CommandPalette extends Component implements CursorAction {
 	private int hack = 0;
 	private int lastTimeTyped = 0;
 	private int selectionIndex = 0;
+	private boolean writtenCommand = false;
 	
 	private ArrayList<Command> suggestions = new ArrayList<Command>();
 	
@@ -53,7 +53,7 @@ public class CommandPalette extends Component implements CursorAction {
 		this.buffer = new TextArea(this.w, defaultHeight);
 		this.caret = buffer.getCaret();
 		
-		buffer.setBackground(new Colour(0x61A598));
+		buffer.setBackground(Theme.ACCENT);
 		buffer.setFocus(true);
 		buffer.setFont(Render.EDITING_FONT);
 		caret.setCursorAction(this);
@@ -118,8 +118,6 @@ public class CommandPalette extends Component implements CursorAction {
 	public void render() {
 		Render.endClip();
 		
-		Render.colour(background);
-		Render.rect(x, y, w, h);
 		Render.colour(Colour.BLACK);
 		Render.rect(x, y, w + 2, h + 2);
 		
@@ -163,7 +161,7 @@ public class CommandPalette extends Component implements CursorAction {
 	@Override
 	public boolean keyPress(int keyCode) {
 		switch (keyCode) {
-		case Keyboard.KEY_TAB:
+		case Keyboard.KEY_RETURN:
 			if (suggestions.size() > 0) {
 				String suggested = suggestions.get(selectionIndex).name;
 				String oldLine = buffer.getLine(0).toString();
@@ -171,15 +169,27 @@ public class CommandPalette extends Component implements CursorAction {
 				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
 				selectionIndex = -1;
 				suggestions.clear();
+				
 				buffer.append(' ');
 				buffer.moveCursor(1, 0);
+
+				writtenCommand = true;
+			} else {
+				String command = buffer.getBuffer().get(0).toString();
+				processCommand(command.split(" "));
+				hide();
 			}
 			return true;
-		case Keyboard.KEY_RETURN:
-			String command = buffer.getBuffer().get(0).toString();
-			processCommand(command.split(" "));
-			hide();
-			return true;
+		case Keyboard.KEY_SPACE:
+			// we've just written the command
+			// we do this to avoid it running
+			// the same check more than once
+			// TODO reset if we delete a space
+			if (!writtenCommand) {
+				writtenCommand = true;
+				System.out.println("done command");
+			}
+			break;
 		case Keyboard.KEY_ESCAPE:
 			if (hack > 5) {
 				hide();
