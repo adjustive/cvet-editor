@@ -25,7 +25,6 @@ public class CommandPalette extends Component implements CursorAction {
 	private Cursor caret;
 	
 	private int defaultHeight;
-	private int timeAlive = 0;
 	private int selectedSuggestion = 0;
 	private boolean enteredCommand = false;
 	
@@ -117,8 +116,6 @@ public class CommandPalette extends Component implements CursorAction {
 				enteredCommand = false;
 			}
 		}
-		
-		timeAlive++;
 	}
 	
 	@Override
@@ -168,7 +165,6 @@ public class CommandPalette extends Component implements CursorAction {
 	public void hide() {
 		setVisible(false);
 		setFocus(false);
-		timeAlive = 0;
 		buffer.clear();
 		removeSuggestions();
 		enteredCommand = false;
@@ -232,11 +228,6 @@ public class CommandPalette extends Component implements CursorAction {
 			if (enteredCommand 
 					&& buffer.getLine().charAt(buffer.getCaret().ix - 1) == ' ') {
 				enteredCommand = false;
-			}
-			break;
-		case Keyboard.KEY_ESCAPE:
-			if (timeAlive > 5) {
-				hide();
 			}
 			break;
 		}
