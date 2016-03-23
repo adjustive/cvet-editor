@@ -1,6 +1,8 @@
 package io.cvet.editor.gui;
 
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.text.Line;
+import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Theme;
 
 import java.io.BufferedWriter;
@@ -32,7 +34,7 @@ public class Buffer extends TextArea {
 		this(name);
 		buffer.clear();
 		for (String s : contents.split("\n")) {
-			buffer.add(new StringBuilder(s));
+			buffer.add(new Line(s));
 		}
 	}
 	
@@ -81,7 +83,7 @@ public class Buffer extends TextArea {
 		// into the file
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			for (StringBuilder builtString : buffer) {
+			for (Line builtString : buffer) {
 				String actualString = builtString.toString() + '\n';
 				bw.write(actualString);
 			}

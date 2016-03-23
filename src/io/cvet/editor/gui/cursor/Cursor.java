@@ -6,7 +6,7 @@ import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
-import io.cvet.editor.gui.TextArea;
+import io.cvet.editor.gui.text.TextArea;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.TrueTypeFont;

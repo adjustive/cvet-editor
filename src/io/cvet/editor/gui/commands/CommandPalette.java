@@ -5,9 +5,10 @@ import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
-import io.cvet.editor.gui.TextArea;
 import io.cvet.editor.gui.cursor.Cursor;
 import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.gui.text.Line;
+import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
@@ -26,6 +27,7 @@ public class CommandPalette extends Component implements CursorAction {
 	private int defaultHeight;
 	private int timeAlive = 0;
 	private int selectedSuggestion = 0;
+	private boolean enteredCommand = false;
 	
 	private ArrayList<Command> suggestions = new ArrayList<Command>();
 	private static HashMap<String, Command> commands = new HashMap<String, Command>();
@@ -67,6 +69,12 @@ public class CommandPalette extends Component implements CursorAction {
 	}
 
 	public void findSuggestions(String input) {
+		// we've already got the command
+		// lets get the fuc outta here
+		if (enteredCommand) {
+			return;
+		}
+		
 		if (input.length() == 0) {
 			if (suggestions.size() > 0) {
 				suggestions.clear();
@@ -102,6 +110,14 @@ public class CommandPalette extends Component implements CursorAction {
 			selectedSuggestion = suggestions.size() - 1;
 		}
 		
+		// if we have already written the 
+		if (enteredCommand) {
+			removeSuggestions();
+			if (buffer.getLine().length() == 0) {
+				enteredCommand = false;
+			}
+		}
+		
 		timeAlive++;
 	}
 	
@@ -113,7 +129,7 @@ public class CommandPalette extends Component implements CursorAction {
 		Render.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);
-
+		
 		for (int i = 0; i < suggestions.size(); i++) {
 			Command sugg = suggestions.get(i);
 			
@@ -155,6 +171,7 @@ public class CommandPalette extends Component implements CursorAction {
 		timeAlive = 0;
 		buffer.clear();
 		removeSuggestions();
+		enteredCommand = false;
 	}
 
 	@Override
@@ -165,11 +182,16 @@ public class CommandPalette extends Component implements CursorAction {
 		switch (keyCode) {
 		case Keyboard.KEY_TAB: // ignore tabs
 			return true;
+		case Keyboard.KEY_SPACE:
+			if (!enteredCommand) {
+				enteredCommand = true;
+			}
+			break;
 		case Keyboard.KEY_RETURN:
 			if (suggestions.size() > 0 && selectedSuggestion != -1) {
 				String suggested = suggestions.get(selectedSuggestion).name;
 				String oldLine = buffer.getLine(0).toString();
-				buffer.setLine(suggested);
+				buffer.setLine(new Line(suggested));
 				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
 
 				// only add a space after if the command
@@ -180,6 +202,7 @@ public class CommandPalette extends Component implements CursorAction {
 					buffer.moveCursor(1, 0);
 				}
 				removeSuggestions();
+				enteredCommand = true;
 			} else {
 				String[] command = buffer.getBuffer().get(0).toString().split(" ");
 				if (command[0].equals("?")) {
@@ -191,7 +214,7 @@ public class CommandPalette extends Component implements CursorAction {
 				}
 				
 				if (!commands.containsKey(command[0])) {
-					System.err.println("handle this");
+					System.err.println("handle this (p.s its command not found)");
 					hide();
 					return true;
 				}
@@ -203,6 +226,14 @@ public class CommandPalette extends Component implements CursorAction {
 		case Keyboard.KEY_UP:
 		case Keyboard.KEY_DOWN:
 			return true;
+		case Keyboard.KEY_BACK:
+			// FIXME, or does this work?
+			// it actually works well.
+			if (enteredCommand 
+					&& buffer.getLine().charAt(buffer.getCaret().ix - 1) == ' ') {
+				enteredCommand = false;
+			}
+			break;
 		case Keyboard.KEY_ESCAPE:
 			if (timeAlive > 5) {
 				hide();
@@ -240,7 +271,7 @@ public class CommandPalette extends Component implements CursorAction {
 
 	public void setText(String input) {
 		buffer.getBuffer().clear();
-		buffer.getBuffer().add(new StringBuilder(input));
+		buffer.getBuffer().add(new Line(input));
 		buffer.getCaret().move(input.length(), 0);
 	}
 	

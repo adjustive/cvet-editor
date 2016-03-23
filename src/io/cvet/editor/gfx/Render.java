@@ -26,7 +26,6 @@ import io.cvet.editor.config.Settings;
 
 import java.awt.Font;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
 /*
