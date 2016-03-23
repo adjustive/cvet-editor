@@ -35,8 +35,7 @@ public class Cursor extends Component {
 		this.ix = iy = 0;
 		this.h = Render.EDITING_FONT.getHeight();
 
-		this.hungryBackspace = (boolean) Settings
-				.getSetting("hungry_backspace");
+		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
 	}
 

@@ -24,13 +24,10 @@ public class CommandPalette extends Component implements CursorAction {
 	private Cursor caret;
 	
 	private int defaultHeight;
-	private int hack = 0;
-	private int lastTimeTyped = 0;
-	private int selectionIndex = 0;
-	private boolean writtenCommand = false;
+	private int timeAlive = 0;
+	private int selectedSuggestion = 0;
 	
 	private ArrayList<Command> suggestions = new ArrayList<Command>();
-	
 	private static HashMap<String, Command> commands = new HashMap<String, Command>();
 	static {
 		commands.put("new", new NewFileCommand());
@@ -84,34 +81,28 @@ public class CommandPalette extends Component implements CursorAction {
 				}
 			}
 		}
-		lastTimeTyped = 0;
 	}
 	
 	@Override
 	public void update() {
-		lastTimeTyped++;
 		updateChildren(children);
-		
-		if (lastTimeTyped >= 1) {
-			findSuggestions(buffer.getLine().toString());
-		}
 		
 		if (suggestions.size() >= 0) {
 			if (Input.getKeyPressed(Keyboard.KEY_DOWN)) {
-				selectionIndex++;
+				selectedSuggestion++;
 			} else if (Input.getKeyPressed(Keyboard.KEY_UP)) {
-				selectionIndex--;
+				selectedSuggestion--;
 			}
 		}
 		
 		// wrap around
-		if (selectionIndex >= suggestions.size()) {
-			selectionIndex = 0;
-		} else if (selectionIndex < 0) {
-			selectionIndex = suggestions.size() - 1;
+		if (selectedSuggestion >= suggestions.size()) {
+			selectedSuggestion = 0;
+		} else if (selectedSuggestion < 0) {
+			selectedSuggestion = suggestions.size() - 1;
 		}
 		
-		hack++;
+		timeAlive++;
 	}
 	
 	@Override
@@ -124,7 +115,7 @@ public class CommandPalette extends Component implements CursorAction {
 		renderChildren(children);
 
 		for (int i = 0; i < suggestions.size(); i++) {
-			Render.colour(selectionIndex == i ? Theme.DARK_ACCENT : Theme.ACCENT);
+			Render.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
 			Render.rect(x, y + ((i + 1) * h), w, h);
 			
 			Render.colour(Colour.WHITE);
@@ -151,64 +142,68 @@ public class CommandPalette extends Component implements CursorAction {
 	public void hide() {
 		setVisible(false);
 		setFocus(false);
-		hack = 0;
-		lastTimeTyped = 0;
+		timeAlive = 0;
 		buffer.clear();
-		selectionIndex = -1;
-		suggestions.clear();
+		removeSuggestions();
 	}
 
 	@Override
 	public boolean keyPress(int keyCode) {
+		// lookup after each keypress
+		findSuggestions(buffer.getLine().toString());
+		
 		switch (keyCode) {
+		case Keyboard.KEY_TAB: // ignore tabs
+			return true;
 		case Keyboard.KEY_RETURN:
-			if (suggestions.size() > 0) {
-				String suggested = suggestions.get(selectionIndex).name;
+			if (suggestions.size() > 0 && selectedSuggestion != -1) {
+				String suggested = suggestions.get(selectedSuggestion).name;
 				String oldLine = buffer.getLine(0).toString();
 				buffer.setLine(suggested);
 				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
-				selectionIndex = -1;
-				suggestions.clear();
-				
-				buffer.append(' ');
-				buffer.moveCursor(1, 0);
 
-				writtenCommand = true;
+				// only add a space after if the command
+				// actually takes args!
+				Command cmd = suggestions.get(selectedSuggestion);
+				if (cmd.argumentCount > 0) {
+					buffer.append(' ');
+					buffer.moveCursor(1, 0);
+				}
+				removeSuggestions();
 			} else {
-				String command = buffer.getBuffer().get(0).toString();
-				processCommand(command.split(" "));
+				String[] command = buffer.getBuffer().get(0).toString().split(" ");
+				if (!commands.containsKey(command[0])) {
+					System.err.println("handle this");
+					hide();
+					return true;
+				}
+				
+				processCommand(command);
 				hide();
 			}
 			return true;
-		case Keyboard.KEY_SPACE:
-			// we've just written the command
-			// we do this to avoid it running
-			// the same check more than once
-			// TODO reset if we delete a space
-			if (!writtenCommand) {
-				writtenCommand = true;
-				System.out.println("done command");
-			}
-			break;
 		case Keyboard.KEY_ESCAPE:
-			if (hack > 5) {
+			if (timeAlive > 5) {
 				hide();
 			}
 			break;
 		}
-		lastTimeTyped = 0;
-		
 		if (suggestions.size() > 0) {
 			String[] command = buffer.getBuffer().get(0).toString().split(" ");
 			int suggestionIndex = getSuggestionIndex(command[0]);
 			if (suggestionIndex != -1) {
-				selectionIndex = suggestionIndex;
+				selectedSuggestion = suggestionIndex;
 			}
 		}
 		
 		return false;
 	}
 	
+	private void removeSuggestions() {
+		suggestions.clear();		
+		selectedSuggestion = -1;
+	}
+
 	public int getSuggestionIndex(String name) {
 		for (String key : commands.keySet()) {
 			if (key.startsWith(name)) {

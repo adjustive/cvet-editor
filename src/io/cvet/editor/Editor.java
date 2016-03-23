@@ -1,13 +1,21 @@
 package io.cvet.editor;
 
-import static org.lwjgl.opengl.GL11.*;
-
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
 import io.cvet.editor.config.Settings;
+import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.commands.CommandPalette;
-import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 import io.cvet.editor.util.Theme;
@@ -20,22 +28,22 @@ import javax.swing.UIManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.Color;
 
 public class Editor extends Component implements Runnable {
 	
-	private static final String WELCOME_STRING;
-	
-	static {
-		WELCOME_STRING = FileUtil.LoadFromUrl("http://loripsum.net/api/10/long/plaintext");
-	}
-
+	public static boolean DEBUG_MODE = false;
 	private static Editor instance;
+	private final String MOTD = "Press `CLTR+P` to open the command palette.\n" +
+			"If you are stuck, type `help` for a buffer of commands.\n" +
+			"P.S. You can change this message in the configuration file.\n" +
+			"Well, not yet... but you will be able to soon!\n";
+
+
+	private Stack<Buffer> buffers;
 	private Thread thread;
 	private CommandPalette palette;
-	private int frames = 0;
-	private final String intro = "Press `ESC` to get started. If you are stuck, type `help`.";
-	
-	private Stack<Buffer> buffers;
+	private int frameRate = 0;
 	
 	public Editor() {
 		instance = this;
@@ -78,8 +86,12 @@ public class Editor extends Component implements Runnable {
 	}
 	
 	public void update() {
-		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Input.getKeyPressed(Keyboard.KEY_P)) {
 			showCommandPalette("");
+		}
+		
+		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
+			DEBUG_MODE = !DEBUG_MODE;
 		}
 		
 		if (palette.isVisible() && palette.getFocus()) {
@@ -103,19 +115,37 @@ public class Editor extends Component implements Runnable {
 		
 		renderChildren(children);
 
+		// everything after we render in a nice
+		// sans-serif font... for now this mostly
+		// means the welcome motd and the fps
+		Render.font(Render.INTERFACE_FONT);
 		if (children.size() == 0) {
-			int x = Render.CURRENT_FONT.getWidth(intro);
-			Render.drawString(intro, (Display.getWidth() / 2) - (x / 2), (Display.getHeight() / 2) - (Render.EDITING_FONT.getHeight() / 2));
+			String[] splitMOTD = MOTD.split("\n");
+			int blockHeight = splitMOTD.length * Render.EDITING_FONT.getHeight();
+			int blockOffset = (Display.getHeight() / 2) - (blockHeight / 2);
+			int idx = 0;
+			for (String line : splitMOTD) {
+				int lineWidth = Render.CURRENT_FONT.getWidth(line);
+				Render.colour(Colour.WHITE);
+				Render.drawString(line, (Display.getWidth() / 2) - (lineWidth / 2), blockOffset + (idx * Render.CURRENT_FONT.getHeight()));
+				idx++;
+			}
 		}
 		
 		if (palette.isVisible()) {
 			palette.render();
 		}
 		
-		Input.render();
+		if (DEBUG_MODE) {
+			Input.render();
+		}
 
-		Render.colour(255, 0, 0);
-		Render.drawString("fps: " + frames, Display.getWidth() - 100, Display.getHeight() - 40);
+		if (DEBUG_MODE) {
+			Render.colour(Colour.YELLOW);
+			String framerate = "fps: " + frameRate;
+			int padding = 10;
+			Render.drawString(framerate, Display.getWidth() - Render.INTERFACE_FONT.getWidth(framerate) - padding, Display.getHeight() - Render.INTERFACE_FONT.getHeight() - padding);
+		}
 	}
 	
 	public void run() {
@@ -141,7 +171,7 @@ public class Editor extends Component implements Runnable {
 			
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
-				this.frames = frames;
+				this.frameRate = frames;
 				frames = 0;
 			}
 			

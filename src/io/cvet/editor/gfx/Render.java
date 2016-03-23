@@ -26,6 +26,7 @@ import io.cvet.editor.config.Settings;
 
 import java.awt.Font;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
 
 /*
@@ -36,6 +37,7 @@ import org.newdawn.slick.TrueTypeFont;
 public class Render {
 
 	private static float r, g, b, a;
+	private static Colour colour = Colour.WHITE;
 	
 	public static TrueTypeFont EDITING_FONT;
 	public static TrueTypeFont INTERFACE_FONT;
@@ -145,7 +147,7 @@ public class Render {
 		glEnable(GL_BLEND);
 		glPushMatrix();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		CURRENT_FONT.drawString(x, y, s);
+		CURRENT_FONT.drawString(x, y, s, colour.getStupidFuckingColour());
 		glPopMatrix();
 		glDisable(GL_BLEND);
 	}

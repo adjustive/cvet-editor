@@ -1,5 +1,7 @@
 package io.cvet.editor.gfx;
 
+import org.newdawn.slick.Color;
+
 public class Colour {
 
 
@@ -11,6 +13,8 @@ public class Colour {
 	public static final Colour YELLOW = new Colour(255, 255, 0);
 	public static final Colour RED = new Colour(255, 0, 0);
 	
+	private Color fuckingSlick;
+	
 	public Colour(Colour o) {
 		this(o.r, o.g, o.b);
 	}
@@ -20,6 +24,7 @@ public class Colour {
 		this.g = g;
 		this.b = b;
 		this.a = a;
+		this.fuckingSlick = new Color(r, g, b, a); 
 	}
 	
 	public Colour(float r, float g, float b) {
@@ -35,6 +40,10 @@ public class Colour {
 		this.g *= (1 - 0.1);
 		this.b *= (1 - 0.1);
 		return this;
+	}
+
+	public Color getStupidFuckingColour() {
+		return fuckingSlick;
 	}
 	
 }
