@@ -171,6 +171,8 @@ public class CommandPalette extends Component implements CursorAction {
 				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
 				selectionIndex = -1;
 				suggestions.clear();
+				buffer.append(' ');
+				buffer.moveCursor(1, 0);
 			}
 			return true;
 		case Keyboard.KEY_RETURN:
