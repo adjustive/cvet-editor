@@ -114,7 +114,7 @@ public class Cursor extends Component {
 					// TODO:
 					break;
 				case Keyboard.KEY_N:
-
+					Editor.getInstance().showCommandPalette("new ");
 					break;
 				case Keyboard.KEY_W: // close file
 					Editor.getInstance().closeCurrentBuffer();
@@ -187,8 +187,7 @@ public class Cursor extends Component {
 				case Keyboard.KEY_RIGHT: // right word
 					break;
 				default:
-					owner.place(Keyboard.getEventCharacter(), ix, iy);
-					move(1, 0);
+					handleKeyCode(keyCode);
 					break;
 				// IGNORE THESE
 				case Keyboard.KEY_LSHIFT:
@@ -288,6 +287,7 @@ public class Cursor extends Component {
 			char openingBracket = Keyboard.getEventCharacter();
 			owner.place(openingBracket, ix, iy);
 			move(1, 0);
+			System.out.println(matchBraces);
 			if (matchBraces) {
 				// opening bracket + 2 in ascii
 				// will get us the closing bracket

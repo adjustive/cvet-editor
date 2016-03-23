@@ -51,6 +51,7 @@ public class Settings {
 	public static Object getSetting(String key) {
 		if (USER_SETTING_LOOKUP.containsKey(key)) {
 			Object res = USER_SETTING_LOOKUP.get(key);
+			System.out.println("notice: found setting " + key + " : " + res.toString());
 			if (res instanceof Long) {
 				return (int) safeLongToInt((long) res);
 			}

@@ -151,6 +151,15 @@ public class Render {
 		glPopMatrix();
 		glDisable(GL_BLEND);
 	}
+	
+	public static void drawStringln(String s, int x, int y) {
+		String[] lines = s.split("\n");
+		int idx = 0;
+		for (String line : lines) {
+			drawString(line, x, y + (idx * CURRENT_FONT.getHeight()));
+			idx++;
+		}
+	}
 
 	public static void startClip(int x, int y, int w, int h) {
 		glEnable(GL_SCISSOR_BOX);

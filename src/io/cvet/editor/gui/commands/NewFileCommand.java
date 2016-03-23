@@ -16,7 +16,7 @@ public class NewFileCommand extends Command {
 
 	@Override
 	public String getHelp() {
-		return "Creates a new file with the given name (new <name>)";
+		return "Creates a new file with the given name.";
 	}
 	
 }

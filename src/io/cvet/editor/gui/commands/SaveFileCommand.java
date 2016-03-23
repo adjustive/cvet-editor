@@ -15,7 +15,8 @@ public class SaveFileCommand extends Command {
 
 	@Override
 	public String getHelp() {
-		return "Saves the current buffer. Will prompt for a location\n" +
+		return "Saves the current buffer.\n" +
+				"Will prompt for a location\n" +
 				"if the file has never been saved before.";
 	}
 	

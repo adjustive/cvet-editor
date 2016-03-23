@@ -119,6 +119,10 @@ public class TextArea extends Component {
 	}
 	
 	public void place(char c, int ix, int iy) {
+		if (ix == 0 && iy == 0 && buffer.size() == 0) {
+			buffer.add(new StringBuilder(1));
+		}
+		
 		StringBuilder line = getLine(iy);
 		if (ix >= line.length()) {
 			line.append(c);

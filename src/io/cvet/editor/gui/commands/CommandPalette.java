@@ -115,12 +115,22 @@ public class CommandPalette extends Component implements CursorAction {
 		renderChildren(children);
 
 		for (int i = 0; i < suggestions.size(); i++) {
+			Command sugg = suggestions.get(i);
+			
+			// render the background +
+			// set the colour if its selected
 			Render.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
 			Render.rect(x, y + ((i + 1) * h), w, h);
 			
+			// render the command name
 			Render.colour(Colour.WHITE);
 			Render.font(caret.getFont());
-			Render.drawString(suggestions.get(i).name, x + 5, y + 4 + ((i + 1) * h));
+			String suggName = sugg.name;
+			Render.drawString(suggName, x + 5, y + 4 + ((i + 1) * h));
+			
+			// and the message
+			Render.colour(Colour.GRAY);
+			Render.drawString(" - " + sugg.getShortHelp(), x + 5 + caret.getFont().getWidth(suggName), y + 4 + ((i + 1) * h));
 		}
 	}
 	
@@ -172,6 +182,14 @@ public class CommandPalette extends Component implements CursorAction {
 				removeSuggestions();
 			} else {
 				String[] command = buffer.getBuffer().get(0).toString().split(" ");
+				if (command[0].equals("?")) {
+					// populate suggestions with the commands
+					for (String c : commands.keySet()) {
+						suggestions.add(commands.get(c));
+					}
+					return true;
+				}
+				
 				if (!commands.containsKey(command[0])) {
 					System.err.println("handle this");
 					hide();
@@ -181,6 +199,9 @@ public class CommandPalette extends Component implements CursorAction {
 				processCommand(command);
 				hide();
 			}
+			return true;
+		case Keyboard.KEY_UP:
+		case Keyboard.KEY_DOWN:
 			return true;
 		case Keyboard.KEY_ESCAPE:
 			if (timeAlive > 5) {

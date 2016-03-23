@@ -13,6 +13,9 @@ public class Colour {
 	public static final Colour YELLOW = new Colour(255, 255, 0);
 	public static final Colour RED = new Colour(255, 0, 0);
 	
+	// how do you spell gray?
+	public static final Colour GRAY = new Colour(30, 30, 30);
+	
 	private Color fuckingSlick;
 	
 	public Colour(Colour o) {

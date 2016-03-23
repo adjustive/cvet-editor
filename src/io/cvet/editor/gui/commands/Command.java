@@ -18,4 +18,10 @@ public abstract class Command {
 
 	public abstract String getHelp();
 
+	public String getShortHelp() {
+		String help = getHelp();
+		int newLinePos = help.indexOf('\n');
+		return help.substring(0, newLinePos == -1 ? help.length() : newLinePos);
+	}
+
 }

@@ -28,7 +28,6 @@ import javax.swing.UIManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.newdawn.slick.Color;
 
 public class Editor extends Component implements Runnable {
 	
@@ -249,6 +248,8 @@ public class Editor extends Component implements Runnable {
 	public void showCommandPalette(String input) {
 		palette.setVisible(true);
 		palette.setFocus(true);
+		
+		// add a cheeky space in there
 		palette.setText(input);
 	}
 	
