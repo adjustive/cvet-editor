@@ -1,5 +1,13 @@
 package io.cvet.editor.gui;
 
+import io.cvet.editor.config.Settings;
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.cursor.Cursor;
+import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,13 +17,6 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.TrueTypeFont;
-
-import io.cvet.editor.config.Settings;
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Cursor.CursorStyle;
-import io.cvet.editor.util.Input;
-import io.cvet.editor.util.Theme;
 
 public class TextArea extends Component {
 
@@ -150,7 +151,10 @@ public class TextArea extends Component {
 	 * go left a spot, if not will return
 	 * false.
 	 */
-	public void backspace(Cursor caret, int ix, int iy) {
+	public void backspace(Cursor caret) {
+		int ix = caret.ix;
+		int iy = caret.iy;
+		
 		StringBuilder current = getLine(iy);
 		
 		if (ix == 0) {
@@ -232,7 +236,6 @@ public class TextArea extends Component {
 		if (ix < line.length()) {
 			line.deleteCharAt(ix);
 		} else if (iy < getLineCount() - 1) {
-			System.out.println(y + ", " + getLineCount());
 			StringBuilder next = getLine(iy + 1);
 			line.append(next.toString());
 			buffer.remove(iy + 1);

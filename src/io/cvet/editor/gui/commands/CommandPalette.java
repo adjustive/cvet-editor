@@ -4,10 +4,10 @@ import io.cvet.editor.Layout;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.Cursor;
 import io.cvet.editor.gui.CursorAction;
 import io.cvet.editor.gui.TextArea;
-import io.cvet.editor.gui.Cursor.CursorStyle;
+import io.cvet.editor.gui.cursor.Cursor;
+import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
@@ -55,7 +55,7 @@ public class CommandPalette extends Component implements CursorAction {
 		
 		buffer.setBackground(new Colour(0x61A598));
 		buffer.setFocus(true);
-		buffer.setFont(Render.INTERFACE_FONT);
+		buffer.setFont(Render.EDITING_FONT);
 		caret.setCursorAction(this);
 		caret.setColour(Theme.BASE);
 		caret.setCursorStyle(CursorStyle.Line);
@@ -130,7 +130,7 @@ public class CommandPalette extends Component implements CursorAction {
 			Render.rect(x, y + ((i + 1) * h), w, h);
 			
 			Render.colour(Colour.WHITE);
-			Render.font(Render.INTERFACE_FONT);
+			Render.font(caret.getFont());
 			Render.drawString(suggestions.get(i).name, x + 5, y + 4 + ((i + 1) * h));
 		}
 	}
@@ -185,7 +185,25 @@ public class CommandPalette extends Component implements CursorAction {
 			break;
 		}
 		lastTimeTyped = 0;
+		
+		if (suggestions.size() > 0) {
+			String[] command = buffer.getBuffer().get(0).toString().split(" ");
+			int suggestionIndex = getSuggestionIndex(command[0]);
+			if (suggestionIndex != -1) {
+				selectionIndex = suggestionIndex;
+			}
+		}
+		
 		return false;
+	}
+	
+	public int getSuggestionIndex(String name) {
+		for (String key : commands.keySet()) {
+			if (key.startsWith(name)) {
+				return suggestions.indexOf(commands.get(key));
+			}
+		}
+		return -1;
 	}
 
 	public static HashMap<String, Command> getCommands() {

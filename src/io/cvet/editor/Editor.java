@@ -7,6 +7,7 @@ import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.commands.CommandPalette;
+import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 import io.cvet.editor.util.Theme;
@@ -22,11 +23,11 @@ import org.lwjgl.opengl.DisplayMode;
 
 public class Editor extends Component implements Runnable {
 	
-	private static final String WELCOME_STRING = "# Nate\n" +
-			"Hello, welcome! Nate is a text editor created\n" +
-			"with the aims of being widely portable, blazingly fast,\n" +
-			"and beautiful. Nate is built on top of a custom\n" +
-			"GUI framework written on top of OpenGL.";
+	private static final String WELCOME_STRING;
+	
+	static {
+		WELCOME_STRING = FileUtil.LoadFromUrl("http://loripsum.net/api/10/long/plaintext");
+	}
 
 	private static Editor instance;
 	private Thread thread;
@@ -74,8 +75,6 @@ public class Editor extends Component implements Runnable {
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
-		
-		setCurrentBuffer(new Buffer("welcome.md", WELCOME_STRING));
 	}
 	
 	public void update() {

@@ -1,11 +1,15 @@
-package io.cvet.editor.gui;
+package io.cvet.editor.gui.cursor;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.TextArea;
 
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.TrueTypeFont;
 
 public class Cursor extends Component {
 
@@ -18,10 +22,9 @@ public class Cursor extends Component {
 	private CursorStyle cursorStyle;
 	private CursorAction cursorAction = null;
 
-	private int ix, iy;
-	private String last;
-	private int xOffset, yOffset;
-	private int padding;
+	public int ix, iy;
+	public int xOffset, yOffset;
+	public int padding;
 
 	private boolean hungryBackspace;
 	private boolean matchBraces;
@@ -41,10 +44,71 @@ public class Cursor extends Component {
 	public void init() {
 
 	}
+	
+	public char getCharacterBefore(int ix) {
+		if (atStartOfLine()) {
+			return '\0';
+		}
+		return getCurrentLine().charAt(ix - 1);
+	}
+	
+	public String getWordBefore(int ix) {
+		// we're at the left most side.
+		if (ix == 0) {
+			System.out.println("hm");
+			return "";
+		}
+		
+		StringBuilder result = new StringBuilder();
+		String line = getCurrentLine();
+		
+		int initialX = ix;
+		for (int i = ix - 1; i >= 0; i--) {
+			char c = line.charAt(i);
+			if (c == ' ' && i != initialX - 1) {
+				break;
+			}
+			result.append(c);
+		}
+		
+		return result.reverse().toString();
+	}
+	
+	public char getCharacterAfter(int ix) {
+		if (atEndOfLine()) {
+			return '\0';
+		}
+		return getCurrentLine().charAt(ix + 1);
+	}
+	
+	public String getWordAfter(int ix) {
+		if (atEndOfLine()) {
+			return "";
+		}
+		
+		StringBuilder result = new StringBuilder();
+		String line = getCurrentLine();
+		
+		int initialX = ix;
+		System.out.println(line.length() + ", " + initialX);
+		for (int i = initialX; i < line.length(); i++) {
+			char c = line.charAt(i);
+			if (c == ' ' && i != initialX) {
+				System.out.println(result.toString());
+				break;
+			}
+			result.append(c);
+		}
+		
+		return result.toString();
+	}
 
 	public void handleControlCombo() {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
+				
+				// TODO: clean this up, hashmap for easier
+				// binding?
 				int keyCode = Keyboard.getEventKey();
 				switch (keyCode) {
 				case Keyboard.KEY_C: // copy
@@ -64,10 +128,24 @@ public class Cursor extends Component {
 					Editor.getInstance().showCommandPalette("goto ");
 					break;
 				case Keyboard.KEY_LEFT: // left word
-					// TODO:
+					String previousWord = getWordBefore(ix);
+					move(-previousWord.length(), 0);
 					break;
 				case Keyboard.KEY_RIGHT: // right word
-					// TODO:
+					String nextWord = getWordAfter(ix);
+					move(nextWord.length(), 0);
+					break;
+				case Keyboard.KEY_BACK: // delete previous word
+					String prevWord = getWordBefore(ix);
+					for (int i = 0; i < prevWord.length() + 1; i++) {
+						owner.backspace(this);
+					}
+					break;
+				case Keyboard.KEY_DELETE:
+					String next = getWordAfter(ix);
+					for (int i = 0; i < next.length(); i++) {
+						owner.delete(ix, iy);
+					}
 					break;
 				case Keyboard.KEY_D: // delete line
 					if (iy >= 0 && iy < owner.getLineCount() - 1) {
@@ -83,13 +161,11 @@ public class Cursor extends Component {
 						owner.deleteLine(iy);
 						move(owner.getLine(iy - 1).length(), -1);
 					} else {
-						System.out.println("hey");
 						owner.clearLine(iy);
 						carriageReturn();
 					}
 					break;
 				default:
-					System.out.println((char) keyCode);
 					break;
 				// IGNORE THESE
 				case Keyboard.KEY_LSHIFT:
@@ -103,15 +179,58 @@ public class Cursor extends Component {
 	}
 
 	public void handleShiftCombo() {
-
+		while (Keyboard.next()) {
+			if (Keyboard.getEventKeyState()) {
+				int keyCode = Keyboard.getEventKey();
+				switch (keyCode) {
+				case Keyboard.KEY_LEFT: // left word
+					break;
+				case Keyboard.KEY_RIGHT: // right word
+					break;
+				default:
+					owner.place(Keyboard.getEventCharacter(), ix, iy);
+					move(1, 0);
+					break;
+				// IGNORE THESE
+				case Keyboard.KEY_LSHIFT:
+				case Keyboard.KEY_RSHIFT:
+				case Keyboard.KEY_LCONTROL:
+				case Keyboard.KEY_RCONTROL:
+					break;
+				}
+			}
+		}
 	}
 	
 	public boolean atStart() {
-		return ix == 0 && iy == 0;
+		return atStartOfLine() && iy == 0;
+	}
+	
+	public boolean atStartOfLine() {
+		return ix == 0;
 	}
 	
 	public boolean atEndOfLine() {
 		return ix >= getCurrentLine().length();
+	}
+	
+	public void setLast() {
+		if (atStart()) {
+			return;
+		}
+		
+		if (ix > 0) {
+			return;
+		}
+		
+		if (ix < 0) {
+			for (int i = 0; i < owner.getLineCount(); i++) {
+				String line = getLineOffsetBy(iy - i);
+				if (line.trim().length() != 0) {
+					return;
+				}
+			}
+		}
 	}
 
 	public void handleKeyCode(int keyCode) {
@@ -144,31 +263,23 @@ public class Cursor extends Component {
 				if (cut.length() == owner.getTabSize()
 						&& cut.trim().length() == 0) {
 					for (int i = 0; i < owner.getTabSize(); i++) {
-						owner.backspace(this, ix, iy);
+						owner.backspace(this);
 					}
 				} else {
-					last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
-					owner.backspace(this, ix, iy);
+					setLast();
+					owner.backspace(this);
 				}
 			} else {
-				try {
-					last = String.valueOf(owner.getLine(iy).charAt(ix));
-				} catch (Exception e) {
-					if (ix > 0) {
-						last = String.valueOf(owner.getLine(iy).charAt(ix - 1));
-					} else {
-						moveToEnd();
-					}
-				}
-				owner.backspace(this, ix, iy);
+				setLast();
+				owner.backspace(this);
 			}
 			break;
 		case Keyboard.KEY_LEFT:
-			last = String.valueOf(owner.getLine(iy).charAt(ix));
+			setLast();
 			move(ix > 0 ? -1 : 0, 0);
 			break;
 		case Keyboard.KEY_RIGHT:
-			last = String.valueOf(owner.getLine(iy).charAt(ix));
+			setLast();
 			move(ix < getCurrentLine().length() ? 1 : 0, 0);
 			break;
 		case Keyboard.KEY_DELETE:
@@ -210,12 +321,10 @@ public class Cursor extends Component {
 			carriageReturn();
 			break;
 		case Keyboard.KEY_TAB:
-			last = " ";
 			move(owner.tab(ix, iy), 0);
 			break;
 		default:
-			last = String.valueOf(Keyboard.getEventCharacter());
-			owner.place(last.charAt(0), ix, iy);
+			owner.place(Keyboard.getEventCharacter(), ix, iy);
 			move(1, 0);
 			break;
 		}
@@ -234,12 +343,11 @@ public class Cursor extends Component {
 			return;
 		}
 		
-		for (int i = 0; i < owner.getLineCount(); i++) {
-			String line = owner.getLine(iy - i).toString();
-			if (line.length() != 0) {
-				last = String.valueOf(line.charAt(line.length() - 1));
-				break;
-			}
+		int initialX = ix;
+		String line = owner.getLine(iy).toString();
+		for (int i = 0; i < line.length() - initialX; i++) {
+			setLast();
+			move(1, 0);
 		}
 	}
 
@@ -247,7 +355,7 @@ public class Cursor extends Component {
 	public void update() {
 		this.x = owner.x;
 		this.y = owner.y;
-		this.visible = owner.visible;
+		this.visible = owner.isVisible();
 		this.w = cursorStyle == CursorStyle.Block ? Render.CHARACTER_WIDTH : 1;
 
 		// TODO: cleanup
@@ -259,14 +367,16 @@ public class Cursor extends Component {
 			handleShiftCombo();
 		}
 
+		// TODO: holding keys down
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
-
 				if (cursorAction != null && cursorAction.keyPress(keyCode)) {
 					return;
 				}
-				handleKeyCode(keyCode);
+				if (Keyboard.getEventKeyState()) {
+					handleKeyCode(keyCode);
+				}
 			}
 		}
 	}
@@ -287,19 +397,16 @@ public class Cursor extends Component {
 	}
 
 	public void move(int x, int y) {
+		if (ix == 0 && Math.signum(x) < 0) {
+			return;
+		}
 		ix += x;
 		iy += y;
 
-		int cw = owner.getFont().getWidth(lastInsert());
+		// TODO: FIXME
+		int cw = owner.getFont().getWidth(" ");
 		xOffset += cw * x;
 		yOffset += owner.getFont().getHeight() * y;
-	}
-
-	private String lastInsert() {
-		if (last == null) {
-			return "";
-		}
-		return last;
 	}
 
 	public void setOffset(int padding) {
@@ -322,4 +429,8 @@ public class Cursor extends Component {
 		this.cursorStyle = style;
 	}
 
+	public TrueTypeFont getFont() {
+		return owner.getFont();
+	}
+	
 }
