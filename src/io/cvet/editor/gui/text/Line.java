@@ -101,16 +101,16 @@ public class Line {
 		return value.size();
 	}
 
-	public String substring(int s, int e) {
-		StringBuilder result = new StringBuilder();
+	public Line substring(int s, int e) {
+		Line result = new Line();
 		for (int i = s; i < e; i++) {
-			result.append(value.get(i).value);
+			result.value.add(value.get(i));
 		}
-		return result.toString();
+		return result;
 	}
 	
-	public String substring(int s) {
-		return substring(s, value.size() - 1);
+	public Line substring(int s) {
+		return substring(s, value.size());
 	}
 
 	public void deleteCharAt(int i) {

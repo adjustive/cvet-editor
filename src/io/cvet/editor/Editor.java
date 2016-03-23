@@ -89,7 +89,7 @@ public class Editor extends Component implements Runnable {
 			showCommandPalette("");
 		}
 		
-		if (Input.getKeyPressed(Keyboard.KEY_ESCAPE)) {
+		if (Input.getKeyPressed(Keyboard.KEY_F1)) {
 			DEBUG_MODE = !DEBUG_MODE;
 		}
 		

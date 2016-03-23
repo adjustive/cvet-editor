@@ -1,5 +1,7 @@
 package io.cvet.editor.gfx;
 
+import io.cvet.editor.util.RNG;
+
 import org.newdawn.slick.Color;
 
 public class Colour {
@@ -18,6 +20,10 @@ public class Colour {
 	
 	private Color fuckingSlick;
 	
+	public Colour() {
+		this(RNG.range(0, 255), RNG.range(0, 255), RNG.range(0, 255));
+	}
+	
 	public Colour(Colour o) {
 		this(o.r, o.g, o.b);
 	}
@@ -27,7 +33,7 @@ public class Colour {
 		this.g = g;
 		this.b = b;
 		this.a = a;
-		this.fuckingSlick = new Color(r, g, b, a); 
+		this.fuckingSlick = new Color(r / 255, g / 255, b / 255, a / 255); 
 	}
 	
 	public Colour(float r, float g, float b) {
@@ -47,6 +53,10 @@ public class Colour {
 
 	public Color getStupidFuckingColour() {
 		return fuckingSlick;
+	}
+	
+	public String toString() {
+		return r + ", " + g + ", " + b + ", " + a;
 	}
 	
 }

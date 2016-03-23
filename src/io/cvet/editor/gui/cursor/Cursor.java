@@ -6,6 +6,7 @@ import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 
 import org.lwjgl.input.Keyboard;
@@ -252,14 +253,14 @@ public class Cursor extends Component {
 			}
 
 			if (hungryBackspace && ix - owner.getTabSize() >= 0) {
-				String cut = owner.getLine(iy).substring(
+				Line cut = owner.getLine(iy).substring(
 						ix - owner.getTabSize(), ix);
 				// if the last X characters are == to our tabSize
 				// and if we trim the whitespace and it becomes
 				// the length of zero, they are all spaces we can
 				// remove.
 				if (cut.length() == owner.getTabSize()
-						&& cut.trim().length() == 0) {
+						&& cut.toString().trim().length() == 0) {
 					for (int i = 0; i < owner.getTabSize(); i++) {
 						owner.backspace(this);
 					}

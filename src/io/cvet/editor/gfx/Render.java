@@ -82,6 +82,7 @@ public class Render {
 	
 	public static void colour(Colour c) {
 		colour(c.r, c.g, c.b, c.a);
+		Render.colour = c;
 	}
 
 	public static void colour(float r, float g, float b) {

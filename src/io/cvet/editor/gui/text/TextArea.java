@@ -6,6 +6,7 @@ import io.cvet.editor.gfx.Render;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.cursor.Cursor;
 import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.gui.text.Line.Glyph;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
@@ -83,8 +84,13 @@ public class TextArea extends Component {
 		int line = 0;
 		Render.font(font);
 		for (Line s : buffer) {
-			String lineToRender = s.toString();
-			Render.drawString(lineToRender, x + xOffset + padding, y + yOffset + padding + (line * charHeight));
+			int glyph = 0;
+			for (Glyph g : s.value) {
+				int charWidth = Render.CURRENT_FONT.getWidth(String.valueOf(g.value));
+				Render.colour(g.colouring);
+				Render.drawString(String.valueOf(g.value), x + xOffset + padding + (glyph * charWidth), y + yOffset + padding + (line * charHeight));
+				glyph++;
+			}
 			line++;
 		}
 	}
@@ -130,7 +136,7 @@ public class TextArea extends Component {
 		
 		Line line = getLine(iy);
 		if (ix >= line.length()) {
-			line.append(c);
+			line.append(new Colour(), c);
 		} else {
 			line.insert(ix, c);
 		}
@@ -148,10 +154,10 @@ public class TextArea extends Component {
 			return;
 		}
 		
-		String first = currentLine.substring(0, ix);
-		String excess = currentLine.substring(ix);
-		buffer.set(iy, new Line(first));
-		buffer.add(iy + 1, new Line(excess));
+		Line first = currentLine.substring(0, ix);
+		Line excess = currentLine.substring(ix);
+		buffer.set(iy, first);
+		buffer.add(iy + 1, excess);
 	}
 
 	/*

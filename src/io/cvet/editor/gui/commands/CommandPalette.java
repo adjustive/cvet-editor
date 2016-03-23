@@ -222,6 +222,9 @@ public class CommandPalette extends Component implements CursorAction {
 		case Keyboard.KEY_UP:
 		case Keyboard.KEY_DOWN:
 			return true;
+		case Keyboard.KEY_ESCAPE: // esc exits out of the command palete
+			hide();
+			break;
 		case Keyboard.KEY_BACK:
 			// FIXME, or does this work?
 			// it actually works well.
