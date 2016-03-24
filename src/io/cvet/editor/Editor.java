@@ -29,7 +29,7 @@ public class Editor extends Component implements Runnable {
 			"If you are stuck, type `help` for a buffer of commands.\n" +
 			"P.S. You can change this message in the configuration file.\n" +
 			"Well, not yet... but you will be able to soon!\n";
-
+	private String OS = System.getProperty("os.name");
 
 	private Stack<Buffer> buffers;
 	private Thread thread;
@@ -42,13 +42,18 @@ public class Editor extends Component implements Runnable {
 	
 	public void init() {
 		java.awt.DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		final int width = mode.getWidth() / 10 * 9;
-		final int height = mode.getHeight() / 10 * 9;
+		final int width = mode.getWidth() / 12 * 9;
+		final int height = mode.getHeight() / 12 * 9;
 		
 		// setup the display
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("nate");
+			
+			// TODO: probably a nicer way to do this
+			int offset = OS.startsWith("Windows") ? 40 : 0;
+			Display.setLocation((mode.getWidth() / 2) - (width / 2), (mode.getHeight() / 2) - (height / 2) - offset);
+			
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("Well this is awkward.");
