@@ -13,7 +13,7 @@ import me.grison.jtoml.impl.Toml;
 public class Settings {
 
 	private static Toml toml;
-	private static File editorDir = new File(System.getenv("HOME") + "/.nate-editor");
+	private static File editorDir = new File(System.getenv("APPDATA") + "/.nate-editor");
 	private static File defaultEditorConfig = new File(editorDir + "/config.toml");
 	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
 	
@@ -49,13 +49,18 @@ public class Settings {
 	}
 	
 	public static Object getSetting(String key) {
-		if (USER_SETTING_LOOKUP.containsKey(key)) {
+		if (USER_SETTING_LOOKUP != null && USER_SETTING_LOOKUP.containsKey(key)) {
 			Object res = USER_SETTING_LOOKUP.get(key);
 			System.out.println("notice: found setting " + key + " : " + res.toString());
 			if (res instanceof Long) {
 				return (int) safeLongToInt((long) res);
 			}
 			return res;
+		}
+		
+		if (DEFAULT_SETTING_LOOKUP == null) {
+			System.err.println("> mfw the backup fails");
+			System.exit(1969);
 		}
 		
 		System.err.println("Failed to load " + key + " loading default from backup");
