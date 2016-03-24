@@ -1,15 +1,7 @@
 package io.cvet.editor;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.*;
+
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.Render;
@@ -50,8 +42,8 @@ public class Editor extends Component implements Runnable {
 	
 	public void init() {
 		java.awt.DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		final int width = mode.getWidth() / 12 * 9;
-		final int height = mode.getHeight() / 12 * 9;
+		final int width = mode.getWidth() / 10 * 9;
+		final int height = mode.getHeight() / 10 * 9;
 		
 		// setup the display
 		try {
@@ -72,7 +64,8 @@ public class Editor extends Component implements Runnable {
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-
+		resize();
+		
 		// pick a random child to focus lol
 		if (children.size() != 0) {
 			children.get(RNG.cap(children.size())).setFocus(true);
@@ -85,6 +78,10 @@ public class Editor extends Component implements Runnable {
 	}
 	
 	public void update() {
+		if (Display.wasResized()) {
+			resize();
+		}
+		
 		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Input.getKeyPressed(Keyboard.KEY_P)) {
 			showCommandPalette("");
 		}
@@ -239,6 +236,10 @@ public class Editor extends Component implements Runnable {
 		stop();	
 	}
 
+	public void resize() {
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+	}
+	
 	public Buffer getCurrentBuffer() {
 		return buffers.peek();
 	}

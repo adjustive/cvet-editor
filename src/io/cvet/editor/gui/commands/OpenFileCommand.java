@@ -40,7 +40,7 @@ public class OpenFileCommand extends Command {
 	
 	@Override
 	public String getHelp() {
-		return "Opens the given file.\n " +
+		return "Opens the given file.\n" +
 				"If a ? is specified,\n" +
 				"a file chooser will be shown. If a non-path\n" +
 				"is given, an existing file in the editor will be\n" +

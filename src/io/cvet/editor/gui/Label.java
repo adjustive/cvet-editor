@@ -35,6 +35,8 @@ public class Label extends Component {
 	@Override
 	public void render() {
 		if (background != null) {
+			Render.colour(Colour.BLACK);
+			Render.rect(x, y, w + 2, h + 2);
 			Render.colour(background);
 			Render.rect(x, y, w, h);
 		}

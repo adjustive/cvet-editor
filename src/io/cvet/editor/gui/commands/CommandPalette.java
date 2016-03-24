@@ -45,7 +45,7 @@ public class CommandPalette extends Component implements CursorAction {
 	
 	public CommandPalette() {
 		this.defaultHeight = Render.EDITING_FONT.getHeight() + 10;
-		this.w = 512;
+		this.w = Display.getWidth() / 3;
 		this.h = defaultHeight;
 		this.x = (Display.getWidth() / 2) - (this.w / 2);
 		this.y = 5;
@@ -131,7 +131,11 @@ public class CommandPalette extends Component implements CursorAction {
 		
 		for (int i = 0; i < suggestions.size(); i++) {
 			Command sugg = suggestions.get(i);
-			
+
+			// render a cheeky shadow
+			Render.colour(Colour.BLACK);
+			Render.rect(x, y + ((i + 1) * h), w + 2, h + 2);
+
 			// render the background +
 			// set the colour if its selected
 			Render.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
