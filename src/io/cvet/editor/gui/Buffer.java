@@ -11,9 +11,10 @@ import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
-public class Buffer extends TextArea {
+public class Buffer extends TextArea implements CursorAction {
 
 	private String name;
 	private File file;
@@ -32,6 +33,7 @@ public class Buffer extends TextArea {
 		title.setBackground(Theme.ACCENT);
 		addChild(title);
 		this.timer = System.currentTimeMillis();
+		this.getCaret().setCursorAction(this);
 	}
 	
 	public Buffer(String name, String contents) {
@@ -72,7 +74,7 @@ public class Buffer extends TextArea {
 	public void save() {
 		// we haven't before, so we need
 		// to set where to save.
-		if (!isSaved()) {
+		if (!hasBeenSaved()) {
 			// TODO: store the last directory we saved
 			// in, and set the default location to that
 			JFileChooser chooser = new JFileChooser(System.getenv("HOME"));
@@ -123,6 +125,26 @@ public class Buffer extends TextArea {
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	@Override
+	public boolean keyPress(int keyCode) {
+		// TODO: clean this up
+		switch (keyCode) {
+		case Keyboard.KEY_LEFT:
+		case Keyboard.KEY_RIGHT:
+		case Keyboard.KEY_UP:
+		case Keyboard.KEY_DOWN:
+		case Keyboard.KEY_LCONTROL:
+		case Keyboard.KEY_RCONTROL:
+		case Keyboard.KEY_LSHIFT:
+		case Keyboard.KEY_RSHIFT:
+			break;
+		default:
+			saved = false;
+			break;
+		}
+		return false;
 	}
 
 }

@@ -145,7 +145,7 @@ public class TextArea extends Component {
 		
 		Line line = getLine(iy);
 		if (ix >= line.length()) {
-			line.append(new Colour(), c);
+			line.append(c);
 		} else {
 			line.insert(ix, c);
 		}

@@ -116,7 +116,6 @@ public class Cursor extends Component {
 					// TODO:
 					break;
 				case Keyboard.KEY_V: // paste
-					System.err.println("FIXME");
 					String s = FileUtil.getClipboardContents();
 					owner.place(s, ix, iy);
 					break;
