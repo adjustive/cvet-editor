@@ -99,9 +99,6 @@ public class Editor extends Component implements Runnable {
 			updateChildren(children);
 		}
 		
-		// this is here to eat up input if we have nothing focused.
-		while (Keyboard.next()) {}
-		
 		Input.update();
 		Display.update();
 	}
@@ -113,7 +110,7 @@ public class Editor extends Component implements Runnable {
 		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
-
+		
 		// everything after we render in a nice
 		// sans-serif font... for now this mostly
 		// means the welcome motd and the fps
@@ -162,8 +159,8 @@ public class Editor extends Component implements Runnable {
 			last = now;
 			
 			if (delta >= 1) {
-				render();
 				update();
+				render();
 				frames++;
 				delta--;
 			}
@@ -226,7 +223,8 @@ public class Editor extends Component implements Runnable {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) { }
-		
+		Keyboard.enableRepeatEvents(true);
+
 		Settings.setupEditor();
 		Settings.loadSettings();
 		new Editor().start();

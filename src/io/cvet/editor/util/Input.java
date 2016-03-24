@@ -45,4 +45,16 @@ public class Input {
 				&& y + h > c.y;
 	}
 	
+	public static boolean isControlModifierDown() {
+		return getKey(Keyboard.KEY_LCONTROL) || getKey(Keyboard.KEY_RCONTROL);
+	}
+	
+	public static boolean isShiftModifierDown() {
+		return getKey(Keyboard.KEY_LSHIFT) || getKey(Keyboard.KEY_RSHIFT);
+	}
+	
+	public static boolean isControlModifier(int key) {
+		return key == Keyboard.KEY_LCONTROL || key == Keyboard.KEY_RCONTROL;
+	}
+	
 }

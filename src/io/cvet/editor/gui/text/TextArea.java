@@ -129,6 +129,15 @@ public class TextArea extends Component {
 		setLine(line, iy);
 	}
 	
+	public void place(String s, int ix, int iy) {
+		int idx = 0;
+		System.out.println("got " + s);
+		for (char c : s.toCharArray()) {
+			place(c, ix + idx, iy);
+			idx++;
+		}
+	}
+	
 	public void place(char c, int ix, int iy) {
 		if (ix == 0 && iy == 0 && buffer.size() == 0) {
 			buffer.add(new Line(1));

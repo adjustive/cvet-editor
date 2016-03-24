@@ -5,8 +5,19 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.lwjgl.Sys;
+
 public class FileUtil {
 
+	public static String getClipboardContents() {
+		try {
+			return Sys.getClipboard();
+		} catch (Exception e) {
+			System.err.println("Failed to get clipboard contents, todo error\n" + e.getMessage());
+			return "";
+		}
+	}
+	
 	public static String LoadFromUrl(String location) {
 		StringBuilder result = new StringBuilder();
 		try {

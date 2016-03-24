@@ -181,7 +181,11 @@ public class CommandPalette extends Component implements CursorAction {
 		
 		switch (keyCode) {
 		case Keyboard.KEY_TAB: // autocomplete?
-			String argument = buffer.getLine().toString().split(" ")[1];
+			String foo[] = buffer.getLine().toString().split(" ");
+			if (foo.length < 2) {
+				return true;
+			}
+			String argument = foo[1];
 			File file = new File(argument);
 			if (!file.isDirectory()) {
 				filePrefix = file.getName();

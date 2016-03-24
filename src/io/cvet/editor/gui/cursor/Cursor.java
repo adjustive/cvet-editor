@@ -8,6 +8,8 @@ import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
+import io.cvet.editor.util.FileUtil;
+import io.cvet.editor.util.Input;
 
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.TrueTypeFont;
@@ -106,13 +108,17 @@ public class Cursor extends Component {
 	public void handleControlCombo() {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
-				
 				// TODO: clean this up, hashmap for easier
 				// binding?
 				int keyCode = Keyboard.getEventKey();
 				switch (keyCode) {
 				case Keyboard.KEY_C: // copy
 					// TODO:
+					break;
+				case Keyboard.KEY_V: // paste
+					System.err.println("FIXME");
+					String s = FileUtil.getClipboardContents();
+					owner.place(s, ix, iy);
 					break;
 				case Keyboard.KEY_N:
 					Editor.getInstance().showCommandPalette("new ");
@@ -358,25 +364,20 @@ public class Cursor extends Component {
 		this.visible = owner.isVisible();
 		this.w = cursorStyle == CursorStyle.Block ? Render.CHARACTER_WIDTH : 1;
 
-		// TODO: cleanup
-		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
-				|| Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
+		if (Input.isControlModifierDown()) {
 			handleControlCombo();
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+		} else if (Input.isShiftModifierDown()) {
 			handleShiftCombo();
 		}
 
-		// TODO: holding keys down
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
-				if (cursorAction != null && cursorAction.keyPress(keyCode)) {
+				if (cursorAction != null 
+						&& cursorAction.keyPress(keyCode)) {
 					return;
 				}
-				if (Keyboard.getEventKeyState()) {
-					handleKeyCode(keyCode);
-				}
+				handleKeyCode(keyCode);
 			}
 		}
 	}
