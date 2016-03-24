@@ -11,15 +11,12 @@ import javax.swing.JFileChooser;
 public class OpenFileCommand extends Command {
 
 	public OpenFileCommand() {
-		super("open", 1);
+		super("open", 0);
 	}
 
 	@Override
 	public void action(String[] arguments) {
-		// If we pass a question mark
-		// this means to open a file with
-		// the file viewer
-		if (arguments[0].equals("?")) {
+		if (arguments.length == 0) {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setVisible(true);
 			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
@@ -27,17 +24,22 @@ public class OpenFileCommand extends Command {
 				Editor.getInstance().setCurrentBuffer(new Buffer(file));
 			}
 			return;
-		} else if (arguments[0].startsWith("http")) {
+		} 
+		
+		File potentialFile = new File(arguments[0]);
+		if (potentialFile.isFile()) {
+			Editor.getInstance().setCurrentBuffer(new Buffer(potentialFile));
+			return;
+		}
+		
+		// check if its a URL _last_
+		// it's more likely the user
+		// will try to open a file than a url
+		if (FileUtil.isValidURL(arguments[0])) {
 			// TODO: check actual scheme
 			String source = FileUtil.LoadFromUrl(arguments[0]);
 			File file = new File(arguments[0]);
 			Editor.getInstance().setCurrentBuffer(new Buffer(file.getName(), source));
-			return;
-		}
-
-		File potentialFile = new File(arguments[0]);
-		if (potentialFile.isFile()) {
-			Editor.getInstance().setCurrentBuffer(new Buffer(potentialFile));
 			return;
 		}
 		

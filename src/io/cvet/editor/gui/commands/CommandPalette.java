@@ -160,10 +160,10 @@ public class CommandPalette extends Component implements CursorAction {
 		if (commands.containsKey(commandName)) {
 			cmd = commands.get(commandName);
 			String args[] = Arrays.copyOfRange(command, 1, command.length);
-			if (args.length == cmd.getArgumentCount()) {
+			if (cmd.getArgumentCount() <= args.length) {
 				cmd.action(args);
 			} else {
-				System.err.println("todo fuck");
+				System.err.println("todo !fuck " + args.length + " <= fuck " + cmd.getArgumentCount());
 			}
 		}
 	}

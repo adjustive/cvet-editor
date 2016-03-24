@@ -1,9 +1,12 @@
 package io.cvet.editor.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 
 import org.lwjgl.Sys;
 
@@ -35,6 +38,40 @@ public class FileUtil {
 			return "";
 		}
 		return result.toString();
+	}
+	
+	public static boolean isValidURL(String what) {
+		try {
+		    URL url = new URL(what);
+		    URLConnection conn = url.openConnection();
+		    conn.connect();
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public static ByteBuffer loadIcon(String path) {
+		InputStream inputStream = FileUtil.class.getResourceAsStream(path);
+		PNGDecoder decoder = null;
+		ByteBuffer bytebuf = null;
+
+		try {
+			decoder = new PNGDecoder(inputStream);
+			bytebuf = ByteBuffer.allocateDirect(decoder.getWidth() * decoder.getHeight() * 4);
+			decoder.decode(bytebuf, decoder.getWidth() * 4, PNGDecoder.RGBA);
+			bytebuf.flip();
+			return bytebuf;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return bytebuf;
 	}
 
 }

@@ -1,18 +1,19 @@
 package io.cvet.editor;
 
-import static org.lwjgl.opengl.GL11.*;
-
-import io.cvet.editor.config.Settings;
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Buffer;
-import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.commands.CommandPalette;
-import io.cvet.editor.util.Input;
-import io.cvet.editor.util.RNG;
-import io.cvet.editor.util.Theme;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.awt.GraphicsEnvironment;
+import java.nio.ByteBuffer;
 import java.util.Stack;
 
 import javax.swing.UIManager;
@@ -20,6 +21,17 @@ import javax.swing.UIManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+
+import io.cvet.editor.config.Settings;
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gui.Buffer;
+import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.commands.CommandPalette;
+import io.cvet.editor.util.FileUtil;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.RNG;
+import io.cvet.editor.util.Theme;
 
 public class Editor extends Component implements Runnable {
 	
@@ -49,6 +61,7 @@ public class Editor extends Component implements Runnable {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("nate");
+			Display.setIcon(new ByteBuffer[]{FileUtil.loadIcon("/rob.png"), FileUtil.loadIcon("/rob.png")});
 			
 			// TODO: probably a nicer way to do this
 			int offset = OS.startsWith("Windows") ? 40 : 0;
