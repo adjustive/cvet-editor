@@ -8,18 +8,20 @@ import org.newdawn.slick.TrueTypeFont;
 public class Label extends Component {
 
 	private String value;
-	private static TrueTypeFont face = Render.INTERFACE_FONT;
+	private TrueTypeFont font = Render.INTERFACE_FONT;
 	private Colour background = null;
 	private Colour foreground = Colour.WHITE;
+	private int xPad = 15, yPad = 10;
 	
 	public Label(String value, int w, int h) {
 		this.value = value;
-		this.w = w;
-		this.h = h;
+		this.w = w + xPad;
+		this.h = h + yPad;
 	}
 
-	public Label(String value) {
-		this(value, face.getWidth(value), face.getHeight() * 2);
+	public Label(String value, TrueTypeFont font) {
+		this(value, font.getWidth(value), font.getHeight());
+		setFont(font);
 	}
 	
 	@Override
@@ -36,16 +38,16 @@ public class Label extends Component {
 	public void render() {
 		if (background != null) {
 			Render.colour(Colour.BLACK);
-			Render.rect(x, y, w + 2, h + 2);
+			Render.rect(x - xPad, y + yPad, w + 2, h + 2);
 			Render.colour(background);
-			Render.rect(x, y, w, h);
+			Render.rect(x - xPad, y + yPad, w, h);
 		}
 		
 		Render.colour(foreground);
-		Render.font(face);
+		Render.font(font);
 		
-		int xx = (w / 2) - (face.getWidth(value) / 2);
-		Render.drawString(value, x + xx, y + 3);
+		int xx = (w / 2) - (font.getWidth(value) / 2);
+		Render.drawString(value, x + xx - xPad, y + (int) (yPad * 1.5));
 	}
 
 	public void setBackground(Colour background) {
@@ -57,7 +59,12 @@ public class Label extends Component {
 	}
 
 	public void setValue(String value) {
+		this.w = font.getWidth(value) + xPad;
 		this.value = value;
+	}
+
+	public void setFont(TrueTypeFont font) {
+		this.font = font;
 	}
 
 }

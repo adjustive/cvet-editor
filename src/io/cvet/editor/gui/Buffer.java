@@ -18,13 +18,15 @@ public class Buffer extends TextArea {
 	private String name;
 	private File file;
 	private boolean saved;
+	private int lineNum = 1;
 	private Label title;
+	private int padding = 10;
 	
 	public Buffer(String name) {
 		this.name = name;
-		int padding = 5;
 		
-		this.title = new Label(name, Render.EDITING_FONT.getWidth(name) + (padding * 2), 24);
+		String bufferInformation = "#" + lineNum + " " + name;
+		this.title = new Label(bufferInformation, Render.EDITING_FONT);
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title);
@@ -48,8 +50,7 @@ public class Buffer extends TextArea {
 	
 	public void update() {
 		super.update();
-		// todo make this more obvious
-		title.setBackground(saved ? Theme.ACCENT : Theme.DARK_ACCENT);
+		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
 	}
 	
 	public void render() {
