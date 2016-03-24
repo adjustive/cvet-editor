@@ -21,6 +21,7 @@ public class Buffer extends TextArea {
 	private int lineNum = 1;
 	private Label title;
 	private int padding = 10;
+	private long timer;
 	
 	public Buffer(String name) {
 		this.name = name;
@@ -30,6 +31,7 @@ public class Buffer extends TextArea {
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title);
+		this.timer = System.currentTimeMillis();
 	}
 	
 	public Buffer(String name, String contents) {
@@ -51,6 +53,15 @@ public class Buffer extends TextArea {
 	public void update() {
 		super.update();
 		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
+		
+		// save every second
+		// TODO: config for this.
+		// maybe even config for save rate in seconds?
+		if (System.currentTimeMillis() - timer > 1000 
+				&& hasBeenSaved()) {
+			save();
+			timer += 1000;
+		}
 	}
 	
 	public void render() {
@@ -89,12 +100,17 @@ public class Buffer extends TextArea {
 				bw.write(actualString);
 			}
 			bw.close();
+			saved = true;
 		} 
 		catch (Exception e) {
 			System.err.println("failed 2 write :(");
 		}
 		
 		saved = true;
+	}
+	
+	public boolean hasBeenSaved() {
+		return file != null;
 	}
 	
 	public boolean isSaved() {
