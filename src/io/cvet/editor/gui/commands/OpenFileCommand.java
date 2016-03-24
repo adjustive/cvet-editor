@@ -2,6 +2,7 @@ package io.cvet.editor.gui.commands;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.gui.Buffer;
+import io.cvet.editor.util.FileUtil;
 
 import java.io.File;
 
@@ -26,8 +27,14 @@ public class OpenFileCommand extends Command {
 				Editor.getInstance().setCurrentBuffer(new Buffer(file));
 			}
 			return;
+		} else if (arguments[0].startsWith("http")) {
+			// TODO: check actual scheme
+			String source = FileUtil.LoadFromUrl(arguments[0]);
+			File file = new File(arguments[0]);
+			Editor.getInstance().setCurrentBuffer(new Buffer(file.getName(), source));
+			return;
 		}
-		
+
 		File potentialFile = new File(arguments[0]);
 		if (potentialFile.isFile()) {
 			Editor.getInstance().setCurrentBuffer(new Buffer(potentialFile));
