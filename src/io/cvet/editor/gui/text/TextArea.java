@@ -193,14 +193,25 @@ public class TextArea extends Component {
 		return;
 	}
 
+	
+	// TODO: FIXME optimize for HUGE files.
+	// how?
+	// load the file, cut it into pieces
+	// put the first 2 views worth of file?
+	// into the buffer, as we scroll load the
+	// rest???
 	public void loadFile(File file) {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = "";
+			int currentLine = 1;
 			while ((line = br.readLine()) != null) {
 				// convert our \t into a string of {tabSize} amount of spaces
 				buffer.add(new Line(line.replaceAll("\t", new String(new char[tabSize]).replace('\0', ' '))));
+				System.out.println("# " + currentLine + " : " + line);
+				currentLine++;
 			}
+			System.out.println("done");
 			br.close();
 		} 
 		catch (Exception e) {

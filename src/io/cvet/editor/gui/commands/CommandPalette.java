@@ -12,9 +12,11 @@ import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -169,6 +171,8 @@ public class CommandPalette extends Component implements CursorAction {
 		removeSuggestions();
 		enteredCommand = false;
 	}
+	
+	private String filePrefix = "";
 
 	@Override
 	public boolean keyPress(int keyCode) {
@@ -176,7 +180,37 @@ public class CommandPalette extends Component implements CursorAction {
 		findSuggestions(buffer.getLine().toString());
 		
 		switch (keyCode) {
-		case Keyboard.KEY_TAB: // ignore tabs
+		case Keyboard.KEY_TAB: // autocomplete?
+			String argument = buffer.getLine().toString().split(" ")[1];
+			File file = new File(argument);
+			if (!file.isDirectory()) {
+				filePrefix = file.getName();
+				file = file.getParentFile();
+			}
+			if (file != null) {
+				File[] contents = file.listFiles();
+				if (contents == null || contents.length == 0) {
+					return true;
+				}
+				
+				List<File> possibleFiles = new ArrayList<File>(file.listFiles().length);
+				for (File entry : file.listFiles()) {
+					if (entry.isFile() && entry.getName().equals(filePrefix)) {
+						return true;
+					}
+					if (entry.isFile() && entry.getName().startsWith(filePrefix)) {
+						System.out.println("could be " + entry.getName());
+						possibleFiles.add(entry);
+					}
+				}
+				if (possibleFiles.size() == 1) {
+					String suggested = possibleFiles.get(0).getName();
+					buffer.append(suggested.substring(filePrefix.length()));
+					buffer.moveCursor(suggested.length() - filePrefix.length(), 0);
+					possibleFiles.clear();
+					filePrefix = "";
+				}
+			}
 			return true;
 		case Keyboard.KEY_SPACE:
 			if (!enteredCommand) {
