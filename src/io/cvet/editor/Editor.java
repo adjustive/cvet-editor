@@ -22,7 +22,6 @@ import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.commands.Command;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
@@ -59,11 +58,10 @@ public class Editor extends Component implements Runnable {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("nate");
-			Display.setIcon(new ByteBuffer[]{FileUtil.loadIcon("/rob.png"), FileUtil.loadIcon("/rob.png")});
 			
 			int offset = OS.startsWith("Windows") ? 40 : 0;
 			Display.setLocation((mode.getWidth() / 2) - (width / 2), (mode.getHeight() / 2) - (height / 2) - offset);
-			
+
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("Well this is awkward.");
@@ -93,7 +91,8 @@ public class Editor extends Component implements Runnable {
 			resize();
 		}
 		
-		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Input.getKeyPressed(Keyboard.KEY_P)) {
+		if (!palette.isVisible() && 
+				Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Input.getKeyPressed(Keyboard.KEY_P)) {
 			showCommandPalette("");
 		}
 		

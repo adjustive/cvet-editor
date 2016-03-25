@@ -11,7 +11,6 @@ import org.lwjgl.opengl.Display;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.Layout;
-import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
@@ -92,7 +91,7 @@ public class CommandPalette extends Component implements CursorAction {
 	public void render() {
 		RenderContext.endClip();
 		
-		RenderContext.colour(Colour.BLACK);
+		RenderContext.colour(Theme.DARK_BASE);
 		RenderContext.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);

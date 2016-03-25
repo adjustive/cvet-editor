@@ -13,7 +13,6 @@ public class Mark {
 		this.start = start;
 		this.end = end;
 		this.caret = caret;
-		System.out.println(start.x + ", " + end.y);
 	}
 	
 	public void update() {

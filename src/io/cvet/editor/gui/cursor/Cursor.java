@@ -59,7 +59,6 @@ public class Cursor extends Component {
 	public String getWordBefore(int ix) {
 		// we're at the left most side.
 		if (ix == 0) {
-			System.out.println("hm");
 			return "";
 		}
 		
@@ -94,11 +93,9 @@ public class Cursor extends Component {
 		String line = getCurrentLine();
 		
 		int initialX = ix;
-		System.out.println(line.length() + ", " + initialX);
 		for (int i = initialX; i < line.length(); i++) {
 			char c = line.charAt(i);
 			if (c == ' ' && i != initialX) {
-				System.out.println(result.toString());
 				break;
 			}
 			result.append(c);
@@ -120,6 +117,7 @@ public class Cursor extends Component {
 				case Keyboard.KEY_V: // paste
 					String s = FileUtil.getClipboardContents();
 					owner.place(s, ix, iy);
+					owner.moveCursor(s.length(), 0);
 					break;
 				case Keyboard.KEY_N:
 					Editor.getInstance().showCommandPalette("new ");
@@ -229,7 +227,6 @@ public class Cursor extends Component {
 					// were not at the start, we need to remove
 					// goto the start and remove -4
 					else {
-						System.out.println("here");
 					}
 					break;
 				default:
@@ -333,7 +330,6 @@ public class Cursor extends Component {
 			char openingBracket = Keyboard.getEventCharacter();
 			owner.place(openingBracket, ix, iy);
 			move(1, 0);
-			System.out.println(matchBraces);
 			if (matchBraces) {
 				// opening bracket + 2 in ascii
 				// will get us the closing bracket

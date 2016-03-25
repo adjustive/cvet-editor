@@ -51,7 +51,7 @@ public class PaletteSuggestionList extends Component {
 		for (int i = 0; i < suggestions.size(); i++) {
 
 			// render a cheeky shadow
-			RenderContext.colour(Colour.BLACK);
+			RenderContext.colour(Theme.DARK_BASE);
 			RenderContext.rect(x, y + (i * h), w + 2, h + 2);
 
 			// render the background +
