@@ -12,11 +12,20 @@ import io.cvet.editor.util.Input;
 
 public abstract class Component {
 
+	public static enum Modifier {
+		Super,
+		Shift,
+		Alt,
+	}
+	
 	// components dimensions
 	public int x, y, w, h;
 	
 	protected boolean focus = true;
 	protected boolean visible = true;
+	
+	protected Modifier mod = Modifier.Super;
+	public int trigger = -1;
 	
 	// if the focus can be changed
 	protected boolean focusable;
@@ -135,14 +144,39 @@ public abstract class Component {
 			}
 		}
 	}
+
+	public void processTrigger() {
+		if (!isVisible() && trigger != -1) {
+			switch (mod) {
+			case Super:
+				if (Input.isControlModifierDown()) {
+					boolean trig = Input.getKeyPressed(trigger);
+					setVisible(trig);
+					setFocus(trig);
+				}
+				break;
+			case Shift:
+				if (Input.isShiftModifierDown()) {
+					setVisible(Input.getKeyPressed(trigger));
+				}
+				break;
+			case Alt:
+				System.out.println("todo");
+				break;
+			}
+		}
+	}
 	
 	public void updateChildren(List<Component> children) {
+		processTrigger();
+		
 		checkFocus();
 		for (int i = 0; i < children.size(); i++) {
 			Component c = children.get(i);
 
 			c.checkFocus();
-
+			c.processTrigger();
+			
 			// only update if
 			// the component is focused on
 			if (c.isVisible() && c.getFocus()) {
@@ -173,6 +207,11 @@ public abstract class Component {
 		for (Component c : children) {
 			c.setFocus(false);
 		}
+	}
+	
+	public void setKeyboardTrigger(Modifier mod, int trigger) {
+		this.mod = mod;
+		this.trigger = trigger;
 	}
 	
 	public void addChild(Component c) {

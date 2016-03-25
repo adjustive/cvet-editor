@@ -120,7 +120,8 @@ public class Cursor extends Component {
 					owner.moveCursor(s.length(), 0);
 					break;
 				case Keyboard.KEY_N:
-					Editor.getInstance().showCommandPalette("new ");
+					System.err.println("todo");
+//					Editor.getInstance().showCommandPalette("new ");
 					break;
 				case Keyboard.KEY_W: // close file
 					Editor.getInstance().closeCurrentBuffer();
@@ -130,7 +131,8 @@ public class Cursor extends Component {
 					// TODO:
 					break;
 				case Keyboard.KEY_L: // line goto
-					Editor.getInstance().showCommandPalette("goto ");
+					System.err.println("todo");
+//					Editor.getInstance().showCommandPalette("goto ");
 					break;
 				case Keyboard.KEY_LEFT: // left word
 					String previousWord = getWordBefore(ix);
@@ -450,8 +452,8 @@ public class Cursor extends Component {
 			set(0, 0);
 			return;
 		}
-		if (x > owner.getCharacterCount() || y > owner.getLineCount()) {
-			set(owner.getCharacterCount(), owner.getLineCount());
+		if (x > owner.getCharacterCount() || y > owner.getLineCount() - 1) {
+			set(owner.getCharacterCount(), owner.getLineCount() - 1);
 			return;
 		}
 		

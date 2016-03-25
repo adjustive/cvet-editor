@@ -82,6 +82,8 @@ public class Editor extends Component implements Runnable {
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
+		palette.setKeyboardTrigger(Modifier.Super, Keyboard.KEY_P);
+		addChild(palette);
 	}
 	
 	public void update() {
@@ -89,19 +91,11 @@ public class Editor extends Component implements Runnable {
 			resize();
 		}
 		
-		if (!palette.isVisible() && Input.controlCombo(Keyboard.KEY_P)) {
-			showCommandPalette("");
-		}
-		
 		if (Input.getKeyPressed(Keyboard.KEY_F1)) {
 			DEBUG_MODE = !DEBUG_MODE;
 		}
 		
-		if (palette.isVisible() && palette.getFocus()) {
-			palette.update();
-		} else {
-			updateChildren(children);
-		}
+		updateChildren(children);
 		
 		Input.update();
 		Display.update();
@@ -130,10 +124,6 @@ public class Editor extends Component implements Runnable {
 				RenderContext.drawString(line, (Display.getWidth() / 2) - (lineWidth / 2), blockOffset + (idx * RenderBackend.CURRENT_FONT.getHeight()));
 				idx++;
 			}
-		}
-		
-		if (palette.isVisible()) {
-			palette.render();
 		}
 		
 		if (DEBUG_MODE) {
@@ -191,7 +181,6 @@ public class Editor extends Component implements Runnable {
 		System.exit(0);
 	}
 	
-	// TODO: hashmap for this for them O(1)s...
 	public void closeCurrentBuffer() {
 		// nothing to do
 		if (buffers.size() == 0) {
@@ -275,14 +264,6 @@ public class Editor extends Component implements Runnable {
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 	}
 	
-	public void showCommandPalette(String input) {
-		palette.setVisible(true);
-		palette.setFocus(true);
-		
-		// add a cheeky space in there
-		palette.setText(input);
-	}
-
 	public Set<String> getBufferNames() {
 		return buffers.keySet();
 	}
