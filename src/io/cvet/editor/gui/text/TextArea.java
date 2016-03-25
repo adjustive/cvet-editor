@@ -1,15 +1,5 @@
 package io.cvet.editor.gui.text;
 
-import io.cvet.editor.config.Settings;
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.cursor.Cursor;
-import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
-import io.cvet.editor.gui.text.Line.Glyph;
-import io.cvet.editor.util.Input;
-import io.cvet.editor.util.Theme;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,6 +9,17 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.TrueTypeFont;
+
+import io.cvet.editor.config.Settings;
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.cursor.Cursor;
+import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.gui.text.Line.Glyph;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
 
 public class TextArea extends Component {
 
@@ -32,7 +33,7 @@ public class TextArea extends Component {
 	private int xOffset, yOffset;
 	private int padding = 5;
 	private int tabSize;
-	private int charHeight = Render.EDITING_FONT.getHeight();
+	private int charHeight = ImmediateRenderer.EDITING_FONT.getHeight();
 	private int wheelDelta = 0;
 	
 	public TextArea(int w, int h) {
@@ -47,7 +48,7 @@ public class TextArea extends Component {
 		setBackground(Theme.BASE);
 		setCursorColour(Theme.ACCENT);
 		setForeground(Colour.PINK);
-		setFont(Render.EDITING_FONT);
+		setFont(ImmediateRenderer.EDITING_FONT);
 		
 		this.buffer.add(new Line());
 	}
@@ -75,20 +76,20 @@ public class TextArea extends Component {
 	
 	@Override
 	public void render() {
-		Render.colour(background);
-		Render.rect(x, y, w, h);
+		RenderContext.colour(background);
+		RenderContext.rect(x, y, w, h);
 
 		renderChildren(children);
 		
-		Render.colour(foreground);
+		RenderContext.colour(foreground);
 		int line = 0;
-		Render.font(font);
+		RenderContext.font(font);
 		for (Line s : buffer) {
 			int glyph = 0;
 			for (Glyph g : s.value) {
-				int charWidth = Render.CURRENT_FONT.getWidth(String.valueOf(g.value));
-				Render.colour(g.colouring);
-				Render.drawString(String.valueOf(g.value), x + xOffset + padding + (glyph * charWidth), y + yOffset + padding + (line * charHeight));
+				int charWidth = ImmediateRenderer.CURRENT_FONT.getWidth(String.valueOf(g.value));
+				RenderContext.colour(g.colouring);
+				RenderContext.drawString(String.valueOf(g.value), x + xOffset + padding + (glyph * charWidth), y + yOffset + padding + (line * charHeight));
 				glyph++;
 			}
 			line++;

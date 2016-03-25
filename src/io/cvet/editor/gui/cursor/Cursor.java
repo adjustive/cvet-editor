@@ -1,18 +1,20 @@
 package io.cvet.editor.gui.cursor;
 
+import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.TrueTypeFont;
+
 import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderBackend;
+import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
-
-import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.TrueTypeFont;
 
 public class Cursor extends Component {
 
@@ -36,7 +38,7 @@ public class Cursor extends Component {
 		this.owner = owner;
 		this.cursorStyle = style;
 		this.ix = iy = 0;
-		this.h = Render.EDITING_FONT.getHeight();
+		this.h = ImmediateRenderer.EDITING_FONT.getHeight();
 
 		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
@@ -361,7 +363,7 @@ public class Cursor extends Component {
 		this.x = owner.x;
 		this.y = owner.y;
 		this.visible = owner.isVisible();
-		this.w = cursorStyle == CursorStyle.Block ? Render.CHARACTER_WIDTH : 1;
+		this.w = cursorStyle == CursorStyle.Block ? RenderBackend.CHARACTER_WIDTH : 1;
 
 		if (Input.isControlModifierDown()) {
 			handleControlCombo();
@@ -383,8 +385,8 @@ public class Cursor extends Component {
 
 	@Override
 	public void render() {
-		Render.colour(colour);
-		Render.rect(x + xOffset + padding, y + yOffset + padding, w, h);
+		RenderContext.colour(colour);
+		RenderContext.rect(x + xOffset + padding, y + yOffset + padding, w, h);
 	}
 
 	public void carriageReturn() {

@@ -1,12 +1,12 @@
 package io.cvet.editor.util;
 
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Component;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.Component;
 
 public class Input {
 
@@ -32,10 +32,10 @@ public class Input {
 		return getKey(keyCode) && !lastKeys[keyCode];
 	}
 	
-	public static void render() {
-		Render.colour(Mouse.isButtonDown(0) ? Colour.RED : Colour.YELLOW);
-		Render.rect(x, 0, 1, Display.getHeight());
-		Render.rect(0, y, Display.getWidth(), 1);
+	public static void render(	) {
+		RenderContext.colour(Mouse.isButtonDown(0) ? Colour.RED : Colour.YELLOW);
+		RenderContext.rect(x, 0, 1, Display.getHeight());
+		RenderContext.rect(0, y, Display.getWidth(), 1);
 	}
 
 	public static boolean intersects(Component c) {

@@ -1,10 +1,5 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.text.Line;
-import io.cvet.editor.gui.text.TextArea;
-import io.cvet.editor.util.Theme;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,6 +8,11 @@ import javax.swing.JFileChooser;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+
+import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gui.text.Line;
+import io.cvet.editor.gui.text.TextArea;
+import io.cvet.editor.util.Theme;
 
 public class Buffer extends TextArea implements CursorAction {
 
@@ -28,7 +28,7 @@ public class Buffer extends TextArea implements CursorAction {
 		this.name = name;
 		
 		String bufferInformation = "#" + lineNum + " " + name;
-		this.title = new Label(bufferInformation, Render.EDITING_FONT);
+		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title);

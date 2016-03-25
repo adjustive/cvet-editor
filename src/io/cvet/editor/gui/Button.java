@@ -1,6 +1,6 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.util.RNG;
 
 public class Button extends Component {
@@ -31,8 +31,8 @@ public class Button extends Component {
 
 	@Override
 	public void render() {
-		Render.colour(r, g, b);
-		Render.rect(x, y, w, h);
+		RenderContext.colour(r, g, b);
+		RenderContext.rect(x, y, w, h);
 	}
 
 }

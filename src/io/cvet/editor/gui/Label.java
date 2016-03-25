@@ -1,14 +1,15 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-
 import org.newdawn.slick.TrueTypeFont;
+
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderContext;
 
 public class Label extends Component {
 
 	private String value;
-	private TrueTypeFont font = Render.INTERFACE_FONT;
+	private TrueTypeFont font = ImmediateRenderer.INTERFACE_FONT;
 	private Colour background = null;
 	private Colour foreground = Colour.WHITE;
 	private int xPad = 15, yPad = 10;
@@ -37,17 +38,17 @@ public class Label extends Component {
 	@Override
 	public void render() {
 		if (background != null) {
-			Render.colour(Colour.BLACK);
-			Render.rect(x - xPad, y + yPad, w + 2, h + 2);
-			Render.colour(background);
-			Render.rect(x - xPad, y + yPad, w, h);
+			RenderContext.colour(Colour.BLACK);
+			RenderContext.rect(x - xPad, y + yPad, w + 2, h + 2);
+			RenderContext.colour(background);
+			RenderContext.rect(x - xPad, y + yPad, w, h);
 		}
 		
-		Render.colour(foreground);
-		Render.font(font);
+		RenderContext.colour(foreground);
+		RenderContext.font(font);
 		
 		int xx = (w / 2) - (font.getWidth(value) / 2);
-		Render.drawString(value, x + xx - xPad, y + (int) (yPad * 1.5));
+		RenderContext.drawString(value, x + xx - xPad, y + (int) (yPad * 1.5));
 	}
 
 	public void setBackground(Colour background) {

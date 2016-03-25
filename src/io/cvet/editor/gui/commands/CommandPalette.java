@@ -1,17 +1,5 @@
 package io.cvet.editor.gui.commands;
 
-import io.cvet.editor.Layout;
-import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.CursorAction;
-import io.cvet.editor.gui.cursor.Cursor;
-import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
-import io.cvet.editor.gui.text.Line;
-import io.cvet.editor.gui.text.TextArea;
-import io.cvet.editor.util.Input;
-import io.cvet.editor.util.Theme;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +8,19 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+
+import io.cvet.editor.Layout;
+import io.cvet.editor.gfx.Colour;
+import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.cursor.Cursor;
+import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.gui.text.Line;
+import io.cvet.editor.gui.text.TextArea;
+import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
 
 public class CommandPalette extends Component implements CursorAction {
 
@@ -44,7 +45,7 @@ public class CommandPalette extends Component implements CursorAction {
 	}
 	
 	public CommandPalette() {
-		this.defaultHeight = Render.EDITING_FONT.getHeight() + 10;
+		this.defaultHeight = ImmediateRenderer.EDITING_FONT.getHeight() + 10;
 		this.w = Display.getWidth() / 3;
 		this.h = defaultHeight;
 		this.x = (Display.getWidth() / 2) - (this.w / 2);
@@ -55,7 +56,7 @@ public class CommandPalette extends Component implements CursorAction {
 		
 		buffer.setBackground(Theme.ACCENT);
 		buffer.setFocus(true);
-		buffer.setFont(Render.EDITING_FONT);
+		buffer.setFont(ImmediateRenderer.EDITING_FONT);
 		caret.setCursorAction(this);
 		caret.setColour(Theme.BASE);
 		caret.setCursorStyle(CursorStyle.Line);
@@ -69,29 +70,6 @@ public class CommandPalette extends Component implements CursorAction {
 		
 	}
 
-	public void findSuggestions(String input) {
-		// we've already got the command
-		// lets get the fuc outta here
-		if (enteredCommand) {
-			return;
-		}
-		
-		if (input.length() == 0) {
-			if (suggestions.size() > 0) {
-				suggestions.clear();
-			}
-			return;
-		}
-		
-		for (String s : commands.keySet()) {
-			if (s.contains(input)) {
-				if (!suggestions.contains(commands.get(s))) {
-					suggestions.add(commands.get(s));
-				}
-			}
-		}
-	}
-	
 	@Override
 	public void update() {
 		updateChildren(children);
@@ -122,10 +100,10 @@ public class CommandPalette extends Component implements CursorAction {
 	
 	@Override
 	public void render() {
-		Render.endClip();
+		RenderContext.endClip();
 		
-		Render.colour(Colour.BLACK);
-		Render.rect(x, y, w + 2, h + 2);
+		RenderContext.colour(Colour.BLACK);
+		RenderContext.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);
 		
@@ -133,23 +111,23 @@ public class CommandPalette extends Component implements CursorAction {
 			Command sugg = suggestions.get(i);
 
 			// render a cheeky shadow
-			Render.colour(Colour.BLACK);
-			Render.rect(x, y + ((i + 1) * h), w + 2, h + 2);
+			RenderContext.colour(Colour.BLACK);
+			RenderContext.rect(x, y + ((i + 1) * h), w + 2, h + 2);
 
 			// render the background +
 			// set the colour if its selected
-			Render.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
-			Render.rect(x, y + ((i + 1) * h), w, h);
+			RenderContext.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
+			RenderContext.rect(x, y + ((i + 1) * h), w, h);
 			
 			// render the command name
-			Render.colour(Colour.WHITE);
-			Render.font(caret.getFont());
+			RenderContext.colour(Colour.WHITE);
+			RenderContext.font(caret.getFont());
 			String suggName = sugg.name;
-			Render.drawString(suggName, x + 5, y + 4 + ((i + 1) * h));
+			RenderContext.drawString(suggName, x + 5, y + 4 + ((i + 1) * h));
 			
 			// and the message
-			Render.colour(Colour.GRAY);
-			Render.drawString(" - " + sugg.getShortHelp(), x + 5 + caret.getFont().getWidth(suggName), y + 4 + ((i + 1) * h));
+			RenderContext.colour(Colour.GRAY);
+			RenderContext.drawString(" - " + sugg.getShortHelp(), x + 5 + caret.getFont().getWidth(suggName), y + 4 + ((i + 1) * h));
 		}
 	}
 	
@@ -292,6 +270,29 @@ public class CommandPalette extends Component implements CursorAction {
 		selectedSuggestion = -1;
 	}
 
+	public void findSuggestions(String input) {
+		// we've already got the command
+		// lets get the fuc outta here
+		if (enteredCommand) {
+			return;
+		}
+		
+		if (input.length() == 0) {
+			if (suggestions.size() > 0) {
+				suggestions.clear();
+			}
+			return;
+		}
+		
+		for (String s : commands.keySet()) {
+			if (s.contains(input)) {
+				if (!suggestions.contains(commands.get(s))) {
+					suggestions.add(commands.get(s));
+				}
+			}
+		}
+	}
+	
 	public int getSuggestionIndex(String name) {
 		for (String key : commands.keySet()) {
 			if (key.startsWith(name)) {

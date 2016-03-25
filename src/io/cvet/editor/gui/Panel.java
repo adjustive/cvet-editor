@@ -2,7 +2,7 @@ package io.cvet.editor.gui;
 
 import org.lwjgl.opengl.Display;
 
-import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gfx.RenderContext;
 
 public class Panel extends Component {
 
@@ -26,8 +26,8 @@ public class Panel extends Component {
 
 	@Override
 	public void render() {
-		Render.colour(255, 0, 255);
-		Render.rect(x, y, w, h);
+		RenderContext.colour(255, 0, 255);
+		RenderContext.rect(x, y, w, h);
 		
 		for (Component c : children) {
 			c.render();

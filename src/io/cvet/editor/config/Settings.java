@@ -1,6 +1,6 @@
 package io.cvet.editor.config;
 
-import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gfx.ImmediateRenderer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,7 +31,7 @@ public class Settings {
 	
 	public static void reload() {
 		loadSettings();
-		Render.loadFont();
+		ImmediateRenderer.loadFont();
 	}
 	
 	public static void newFile(File file, String contents) {

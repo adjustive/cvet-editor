@@ -2,14 +2,7 @@ package io.cvet.editor;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.awt.GraphicsEnvironment;
@@ -21,10 +14,12 @@ import javax.swing.UIManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
-import io.cvet.editor.gfx.Render;
+import io.cvet.editor.gfx.RenderBackend;
+import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.commands.CommandPalette;
@@ -63,7 +58,6 @@ public class Editor extends Component implements Runnable {
 			Display.setTitle("nate");
 			Display.setIcon(new ByteBuffer[]{FileUtil.loadIcon("/rob.png"), FileUtil.loadIcon("/rob.png")});
 			
-			// TODO: probably a nicer way to do this
 			int offset = OS.startsWith("Windows") ? 40 : 0;
 			Display.setLocation((mode.getWidth() / 2) - (width / 2), (mode.getHeight() / 2) - (height / 2) - offset);
 			
@@ -76,13 +70,9 @@ public class Editor extends Component implements Runnable {
 		this.w = Display.getWidth();
 		this.h = Display.getHeight();
 		
-		// setup OpenGL
-		glEnable(GL_TEXTURE_2D);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
-		glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
-		resize();
+		RenderContext.init(w, h);
+		
+		System.out.println(GL11.glGetString(GL11.GL_VERSION));
 		
 		// pick a random child to focus lol
 		if (children.size() != 0) {
@@ -120,25 +110,26 @@ public class Editor extends Component implements Runnable {
 	
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		RenderContext.loadIdentity();
 		
-		Render.colour(Theme.BASE);
-		Render.rect(0, 0, Display.getWidth(), Display.getHeight());
+		RenderContext.colour(Theme.BASE);
+		RenderContext.rect(0, 0, Display.getWidth(), Display.getHeight());
 		
 		renderChildren(children);
 		
 		// everything after we render in a nice
 		// sans-serif font... for now this mostly
 		// means the welcome motd and the fps
-		Render.font(Render.INTERFACE_FONT);
+		RenderContext.font(RenderBackend.INTERFACE_FONT);
 		if (children.size() == 0) {
 			String[] splitMOTD = MOTD.split("\n");
-			int blockHeight = splitMOTD.length * Render.EDITING_FONT.getHeight();
+			int blockHeight = splitMOTD.length * RenderBackend.EDITING_FONT.getHeight();
 			int blockOffset = (Display.getHeight() / 2) - (blockHeight / 2);
 			int idx = 0;
 			for (String line : splitMOTD) {
-				int lineWidth = Render.CURRENT_FONT.getWidth(line);
-				Render.colour(Colour.WHITE);
-				Render.drawString(line, (Display.getWidth() / 2) - (lineWidth / 2), blockOffset + (idx * Render.CURRENT_FONT.getHeight()));
+				int lineWidth = RenderBackend.CURRENT_FONT.getWidth(line);
+				RenderContext.colour(Colour.WHITE);
+				RenderContext.drawString(line, (Display.getWidth() / 2) - (lineWidth / 2), blockOffset + (idx * RenderBackend.CURRENT_FONT.getHeight()));
 				idx++;
 			}
 		}
@@ -152,11 +143,13 @@ public class Editor extends Component implements Runnable {
 		}
 
 		if (DEBUG_MODE) {
-			Render.colour(Colour.YELLOW);
+			RenderContext.colour(Colour.YELLOW);
 			String framerate = "fps: " + frameRate;
 			int padding = 10;
-			Render.drawString(framerate, Display.getWidth() - Render.INTERFACE_FONT.getWidth(framerate) - padding, Display.getHeight() - Render.INTERFACE_FONT.getHeight() - padding);
+			RenderContext.drawString(framerate, Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - padding, Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
 		}
+		
+		RenderContext.flush();
 	}
 	
 	public void run() {
@@ -269,5 +262,5 @@ public class Editor extends Component implements Runnable {
 		// add a cheeky space in there
 		palette.setText(input);
 	}
-	
+
 }

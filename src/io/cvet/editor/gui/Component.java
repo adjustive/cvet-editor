@@ -1,14 +1,14 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.Layout;
-import io.cvet.editor.gfx.Render;
-import io.cvet.editor.util.Input;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+
+import io.cvet.editor.Layout;
+import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.util.Input;
 
 public abstract class Component {
 
@@ -155,16 +155,16 @@ public abstract class Component {
 		for (int i = 0; i < children.size(); i++) {
 			Component c = children.get(i);
 
-			Render.startClip(c.x, c.y, c.w, c.h);
+			RenderContext.startClip(c.x, c.y, c.w, c.h);
 			if (c.isVisible()) {
 				c.render();
 			}
-			Render.endClip();
+			RenderContext.endClip();
 			
 			// render a strip at the bottom of focused components
 			if (c.getFocusable() && c.getFocus()) {
-				Render.colour(125, 255, 50);
-				Render.rect(c.x, c.y + c.h - 2, c.w, 2);
+				RenderContext.colour(125, 255, 50);
+				RenderContext.rect(c.x, c.y + c.h - 2, c.w, 2);
 			}
 		}
 	}
