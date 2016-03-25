@@ -9,29 +9,31 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import io.cvet.editor.Editor;
 import io.cvet.editor.Layout;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.commands.palette.PaletteSuggestion;
+import io.cvet.editor.gui.commands.palette.PaletteSuggestion.SuggestionType;
+import io.cvet.editor.gui.commands.palette.PaletteSuggestionList;
 import io.cvet.editor.gui.cursor.Cursor;
 import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
-import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
 public class CommandPalette extends Component implements CursorAction {
 
 	private TextArea buffer;
 	private Cursor caret;
+	private PaletteSuggestionList suggestions;
 	
 	private int defaultHeight;
-	private int selectedSuggestion = 0;
 	private boolean enteredCommand = false;
 	
-	private ArrayList<Command> suggestions = new ArrayList<Command>();
 	private static HashMap<String, Command> commands = new HashMap<String, Command>();
 	static {
 		commands.put("new", new NewFileCommand());
@@ -42,6 +44,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("configure", new EditSettingsCommand());
 		commands.put("help", new HelpCommand());
 		commands.put("goto", new GotoCommand());
+		commands.put("buff", new BuffCommand());
 	}
 	
 	public CommandPalette() {
@@ -62,7 +65,9 @@ public class CommandPalette extends Component implements CursorAction {
 		caret.setCursorStyle(CursorStyle.Line);
 		caret.setHungryBackspace(false);
 		
+		suggestions = new PaletteSuggestionList(this);
 		addChild(buffer, Layout.Child);
+		addChild(suggestions, Layout.Child);
 	}
 	
 	@Override
@@ -74,24 +79,9 @@ public class CommandPalette extends Component implements CursorAction {
 	public void update() {
 		updateChildren(children);
 		
-		if (suggestions.size() >= 0) {
-			if (Input.getKeyPressed(Keyboard.KEY_DOWN)) {
-				selectedSuggestion++;
-			} else if (Input.getKeyPressed(Keyboard.KEY_UP)) {
-				selectedSuggestion--;
-			}
-		}
-		
-		// wrap around
-		if (selectedSuggestion >= suggestions.size()) {
-			selectedSuggestion = 0;
-		} else if (selectedSuggestion < 0) {
-			selectedSuggestion = suggestions.size() - 1;
-		}
-		
 		// if we have already written the 
 		if (enteredCommand) {
-			removeSuggestions();
+			suggestions.clear();
 			if (buffer.getLine().length() == 0) {
 				enteredCommand = false;
 			}
@@ -106,37 +96,14 @@ public class CommandPalette extends Component implements CursorAction {
 		RenderContext.rect(x, y, w + 2, h + 2);
 		
 		renderChildren(children);
-		
-		for (int i = 0; i < suggestions.size(); i++) {
-			Command sugg = suggestions.get(i);
-
-			// render a cheeky shadow
-			RenderContext.colour(Colour.BLACK);
-			RenderContext.rect(x, y + ((i + 1) * h), w + 2, h + 2);
-
-			// render the background +
-			// set the colour if its selected
-			RenderContext.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
-			RenderContext.rect(x, y + ((i + 1) * h), w, h);
-			
-			// render the command name
-			RenderContext.colour(Colour.WHITE);
-			RenderContext.font(caret.getFont());
-			String suggName = sugg.name;
-			RenderContext.drawString(suggName, x + 5, y + 4 + ((i + 1) * h));
-			
-			// and the message
-			RenderContext.colour(Colour.GRAY);
-			RenderContext.drawString(" - " + sugg.getShortHelp(), x + 5 + caret.getFont().getWidth(suggName), y + 4 + ((i + 1) * h));
-		}
 	}
 	
 	public void processCommand(String[] command) {
 		String commandName = command[0];
+		System.out.println("Processing command " + commandName);
 		
-		Command cmd = null;
-		if (commands.containsKey(commandName)) {
-			cmd = commands.get(commandName);
+		Command cmd = commands.get(commandName);
+		if (cmd != null) {
 			String args[] = Arrays.copyOfRange(command, 1, command.length);
 			if (cmd.getArgumentCount() <= args.length) {
 				cmd.action(args);
@@ -150,7 +117,7 @@ public class CommandPalette extends Component implements CursorAction {
 		setVisible(false);
 		setFocus(false);
 		buffer.clear();
-		removeSuggestions();
+		suggestions.clear();
 		enteredCommand = false;
 	}
 	
@@ -159,7 +126,7 @@ public class CommandPalette extends Component implements CursorAction {
 	@Override
 	public boolean keyPress(int keyCode) {
 		// lookup after each keypress
-		findSuggestions(buffer.getLine().toString());
+		suggestions.find(buffer.getLine().toString());
 		
 		switch (keyCode) {
 		case Keyboard.KEY_TAB: // autocomplete?
@@ -204,34 +171,44 @@ public class CommandPalette extends Component implements CursorAction {
 			}
 			break;
 		case Keyboard.KEY_RETURN:
-			if (suggestions.size() > 0 && selectedSuggestion != -1) {
-				String suggested = suggestions.get(selectedSuggestion).name;
-				String oldLine = buffer.getLine(0).toString();
-				buffer.setLine(new Line(suggested));
-				buffer.moveCursor(suggested.length() - oldLine.length(), 0);
+			if (suggestions.isPopulated()) {
+				PaletteSuggestion suggested = suggestions.getCurrentSuggestion();
 
-				// only add a space after if the command
-				// actually takes args!
-				Command cmd = suggestions.get(selectedSuggestion);
-				if (cmd.argumentCount > 0) {
+				switch (suggested.type) {
+				case Command:
+					buffer.setLineAndMove(new Line(suggested.key));
+					break;
+				case Buffer:
+					buffer.setLineAndMove(new Line("buff " + suggested.key));
+					break;
+				}
+
+				Command cmd = suggestions.getCurrentSuggestion().lookupCommand();
+				if (cmd != null && cmd.argumentCount > 0) {
 					buffer.append(' ');
 					buffer.moveCursor(1, 0);
 				}
-				removeSuggestions();
+				suggestions.clear();
 				enteredCommand = true;
-			} else {
-				String[] command = buffer.getBuffer().get(0).toString().split(" ");
-				if (command[0].equals("?")) {
-					// populate suggestions with the commands
+			} 
+			// it's not populated, this means it's
+			// our "final" time entering
+			else {
+				String[] command = buffer.getLine().toString().split(" ");
+				
+				// show commands
+				if (command.equals("?")) {
 					for (String c : commands.keySet()) {
-						suggestions.add(commands.get(c));
+						suggestions.add(new PaletteSuggestion(commands.get(c).name, SuggestionType.Command));
 					}
 					return true;
 				}
 				
-				if (!commands.containsKey(command[0])) {
-					System.err.println("handle this (p.s its command not found)");
-					hide();
+				// show open files
+				if (command[0].equals("!")) {
+					for (String buffName : Editor.getInstance().getBufferNames()) {
+						suggestions.add(new PaletteSuggestion(buffName, SuggestionType.Buffer));
+					}
 					return true;
 				}
 				
@@ -246,70 +223,41 @@ public class CommandPalette extends Component implements CursorAction {
 			hide();
 			break;
 		case Keyboard.KEY_BACK:
-			// FIXME, or does this work?
-			// it actually works well.
-			if (enteredCommand 
+			// if we have entered the command
+			// and we go past at least one
+			// space... we haven't entered the
+			// command.
+			if (enteredCommand() 
 					&& buffer.getLine().charAt(buffer.getCaret().ix - 1) == ' ') {
 				enteredCommand = false;
 			}
 			break;
 		}
-		if (suggestions.size() > 0) {
-			String[] command = buffer.getBuffer().get(0).toString().split(" ");
-			int suggestionIndex = getSuggestionIndex(command[0]);
-			if (suggestionIndex != -1) {
-				selectedSuggestion = suggestionIndex;
-			}
-		}
 		
+		suggestions.autoSelect();
 		return false;
 	}
 	
-	private void removeSuggestions() {
-		suggestions.clear();		
-		selectedSuggestion = -1;
-	}
-
-	public void findSuggestions(String input) {
-		// we've already got the command
-		// lets get the fuc outta here
-		if (enteredCommand) {
-			return;
-		}
-		
-		if (input.length() == 0) {
-			if (suggestions.size() > 0) {
-				suggestions.clear();
-			}
-			return;
-		}
-		
-		for (String s : commands.keySet()) {
-			if (s.contains(input)) {
-				if (!suggestions.contains(commands.get(s))) {
-					suggestions.add(commands.get(s));
-				}
-			}
-		}
-	}
-	
-	public int getSuggestionIndex(String name) {
-		for (String key : commands.keySet()) {
-			if (key.startsWith(name)) {
-				return suggestions.indexOf(commands.get(key));
-			}
-		}
-		return -1;
-	}
-
 	public static HashMap<String, Command> getCommands() {
 		return commands;
 	}
 
 	public void setText(String input) {
-		buffer.getBuffer().clear();
-		buffer.getBuffer().add(new Line(input));
+		buffer.getLines().clear();
+		buffer.getLines().add(new Line(input));
 		buffer.getCaret().move(input.length(), 0);
+	}
+
+	public Cursor getCaret() {
+		return caret;
+	}
+
+	public TextArea getBuffer() {
+		return buffer;
+	}
+
+	public boolean enteredCommand() {
+		return enteredCommand;
 	}
 	
 }

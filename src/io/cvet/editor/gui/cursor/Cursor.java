@@ -149,6 +149,7 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_DELETE:
+					// TODO: DELETE EVERYTHING IF NOT CHARS!
 					String next = getWordAfter(ix);
 					for (int i = 0; i < next.length(); i++) {
 						owner.delete(ix, iy);
@@ -197,6 +198,20 @@ public class Cursor extends Component {
 				case Keyboard.KEY_TAB: // shift tab!
 					// can't shift tab!
 					if (ix == 0) {
+						String currentLine = getCurrentLine();
+						if (currentLine.length() >= owner.getTabSize()) {
+							int charsToDelete = owner.getTabSize();
+							int initialIx = ix;
+							for (int i = 0; i < owner.getTabSize(); i++) {
+								if (currentLine.charAt(initialIx + i) != ' ') {
+									charsToDelete = i;
+									break;
+								}
+							}
+							for (int i = 0; i < charsToDelete; i++) {
+								owner.delete(ix, iy);
+							}
+						}
 						break;
 					}
 					
@@ -214,7 +229,7 @@ public class Cursor extends Component {
 					// were not at the start, we need to remove
 					// goto the start and remove -4
 					else {
-						
+						System.out.println("here");
 					}
 					break;
 				default:

@@ -124,6 +124,12 @@ public class TextArea extends Component {
 		buffer.set(buffer.size() - 1, to);
 	}
 	
+	public void setLineAndMove(Line to) {
+		int oldLen = buffer.get(buffer.size() - 1).length();
+		buffer.set(buffer.size() - 1, to);
+		moveCursor(to.length() - oldLen, 0);
+	}
+	
 	public void insert(char c, int ix, int iy) {
 		Line line = getLine(iy);
 		line.setCharAt(ix, c);
@@ -229,6 +235,10 @@ public class TextArea extends Component {
 		}
 	}
 
+	public int getCharacterCount() {
+		return getLine().length();
+	}
+	
 	public int getLineCount() {
 		return buffer.size();
 	}
@@ -252,7 +262,7 @@ public class TextArea extends Component {
 		this.foreground = foreground;
 	}
 	
-	public List<Line> getBuffer() {
+	public List<Line> getLines() {
 		return buffer;
 	}
 

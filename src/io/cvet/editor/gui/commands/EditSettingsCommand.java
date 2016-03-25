@@ -12,7 +12,7 @@ public class EditSettingsCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().setCurrentBuffer(new Buffer(Settings.getUserConfigFile()));
+		Editor.getInstance().pushBuffer(new Buffer(Settings.getUserConfigFile()));
 	}
 	
 	@Override

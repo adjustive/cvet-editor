@@ -11,7 +11,7 @@ public class NewFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().setCurrentBuffer(new Buffer(arguments[0]));
+		Editor.getInstance().pushBuffer(new Buffer(arguments[0]));
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class HelpCommand extends Command {
 			helpMessage += "\n";
 		}
 		
-		Editor.getInstance().setCurrentBuffer(new Buffer("help", helpMessage));
+		Editor.getInstance().pushBuffer(new Buffer("help", helpMessage));
 	}
 
 	@Override

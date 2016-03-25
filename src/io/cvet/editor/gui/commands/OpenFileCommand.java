@@ -21,14 +21,14 @@ public class OpenFileCommand extends Command {
 			chooser.setVisible(true);
 			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
-				Editor.getInstance().setCurrentBuffer(new Buffer(file));
+				Editor.getInstance().pushBuffer(new Buffer(file));
 			}
 			return;
 		} 
 		
 		File potentialFile = new File(arguments[0]);
 		if (potentialFile.isFile()) {
-			Editor.getInstance().setCurrentBuffer(new Buffer(potentialFile));
+			Editor.getInstance().pushBuffer(new Buffer(potentialFile));
 			return;
 		}
 		
@@ -39,7 +39,7 @@ public class OpenFileCommand extends Command {
 			// TODO: check actual scheme
 			String source = FileUtil.LoadFromUrl(arguments[0]);
 			File file = new File(arguments[0]);
-			Editor.getInstance().setCurrentBuffer(new Buffer(file.getName(), source));
+			Editor.getInstance().pushBuffer(new Buffer(file.getName(), source));
 			return;
 		}
 		

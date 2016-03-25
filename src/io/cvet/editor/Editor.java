@@ -1,13 +1,13 @@
 package io.cvet.editor;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.awt.GraphicsEnvironment;
 import java.nio.ByteBuffer;
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Set;
 
 import javax.swing.UIManager;
 
@@ -22,6 +22,7 @@ import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.commands.Command;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
@@ -38,7 +39,9 @@ public class Editor extends Component implements Runnable {
 			"Well, not yet... but you will be able to soon!\n";
 	private String OS = System.getProperty("os.name");
 
-	private Stack<Buffer> buffers;
+	private HashMap<String, Buffer> buffers;
+	private String currentBufferName;
+	
 	private Thread thread;
 	private CommandPalette palette;
 	private int frameRate = 0;
@@ -79,7 +82,7 @@ public class Editor extends Component implements Runnable {
 			children.get(RNG.cap(children.size())).setFocus(true);
 		}
 		
-		buffers = new Stack<Buffer>();
+		buffers = new HashMap<String, Buffer>();
 		
 		palette = new CommandPalette();
 		palette.setVisible(false);
@@ -109,7 +112,7 @@ public class Editor extends Component implements Runnable {
 	}
 	
 	public void render() {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		
 		RenderContext.colour(Theme.BASE);
 		RenderContext.rect(0, 0, Display.getWidth(), Display.getHeight());
@@ -139,9 +142,6 @@ public class Editor extends Component implements Runnable {
 		
 		if (DEBUG_MODE) {
 			Input.render();
-		}
-
-		if (DEBUG_MODE) {
 			RenderContext.colour(Colour.YELLOW);
 			String framerate = "fps: " + frameRate;
 			int padding = 10;
@@ -198,12 +198,11 @@ public class Editor extends Component implements Runnable {
 	// TODO: hashmap for this for them O(1)s...
 	public void closeCurrentBuffer() {
 		// nothing to do
-		if (buffers.empty()) {
+		if (buffers.size() == 0) {
 			return;
 		}
 		
-		Buffer buff = buffers.pop();
-		children.remove(buff);
+		children.remove(getCurrentBuffer());
 		
 		// no areas left to focus
 		if (buffers.isEmpty()) {
@@ -212,16 +211,48 @@ public class Editor extends Component implements Runnable {
 		
 		// give the last textarea focus
 		// if it exists
-		if (!buffers.empty()) {
-			buffers.peek().setFocus(true);
+		if (buffers.size() != 0) {
+			buffers.get(currentBufferName).setFocus(true);
 		}
 	}
 	
-	public void setCurrentBuffer(Buffer buff) {
+	public boolean bufferWithNameExists(String name) {
+		return buffers.containsKey(name);
+	}
+	
+	
+	public void loadBuffer(String name) {
+		if (bufferWithNameExists(name)) {
+			Buffer buff = buffers.get(name);
+			addChild(buff);
+			currentBufferName = name;
+		} else {
+			System.err.println("shit!! we dont handle buffer collisions yet!");
+			return;
+		}
+	}
+	
+	// New buffer that is given focus
+	public void pushBuffer(Buffer buff) {
 		clearFocus();
+		// TODO: dont add it multiple times
+		// remove other buffers that aren't in view?
 		addChild(buff);
-		buffers.push(buff);
+		
+		String name = buff.getName();
+		if (!bufferWithNameExists(name)) {
+			buffers.put(buff.getName(), buff);
+			currentBufferName = name;
+		} else {
+			System.err.println("shit!! we dont handle buffer collisions yet!");
+			return;
+		}
+		
 		buff.setFocus(true);
+	}
+	
+	public Buffer getCurrentBuffer() {
+		return buffers.get(currentBufferName);
 	}
 	
 	public static void main(String[] args) {
@@ -248,16 +279,20 @@ public class Editor extends Component implements Runnable {
 		glViewport(0, 0, Display.getWidth(), Display.getHeight());
 	}
 	
-	public Buffer getCurrentBuffer() {
-		return buffers.peek();
-	}
-
 	public void showCommandPalette(String input) {
 		palette.setVisible(true);
 		palette.setFocus(true);
 		
 		// add a cheeky space in there
 		palette.setText(input);
+	}
+
+	public Set<String> getBufferNames() {
+		return buffers.keySet();
+	}
+
+	public HashMap<String, Buffer> getBuffers() {
+		return buffers;
 	}
 
 }
