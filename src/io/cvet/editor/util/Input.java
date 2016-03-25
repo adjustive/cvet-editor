@@ -24,6 +24,10 @@ public class Input {
 		}
 	}
 	
+	public static boolean controlCombo(int keyCode) {
+		return isControlModifierDown() && Input.getKey(keyCode);
+	}
+	
 	public static boolean getKey(int keyCode) {
 		return Keyboard.isKeyDown(keyCode);
 	}

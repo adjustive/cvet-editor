@@ -5,7 +5,6 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.awt.GraphicsEnvironment;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -23,7 +22,6 @@ import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.commands.CommandPalette;
-import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.RNG;
 import io.cvet.editor.util.Theme;
@@ -91,8 +89,7 @@ public class Editor extends Component implements Runnable {
 			resize();
 		}
 		
-		if (!palette.isVisible() && 
-				Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Input.getKeyPressed(Keyboard.KEY_P)) {
+		if (!palette.isVisible() && Input.controlCombo(Keyboard.KEY_P)) {
 			showCommandPalette("");
 		}
 		

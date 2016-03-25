@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -194,18 +195,20 @@ public class CommandPalette extends Component implements CursorAction {
 			// our "final" time entering
 			else {
 				String[] command = buffer.getLine().toString().split(" ");
+				command[0] = command[0].trim();
 				
-				// show commands
-				if (command.equals("?")) {
+				switch (command[0]) {
+				case "?":
 					for (String c : commands.keySet()) {
 						suggestions.add(new PaletteSuggestion(commands.get(c).name, SuggestionType.Command));
 					}
 					return true;
-				}
-				
-				// show open files
-				if (command[0].equals("!")) {
-					for (String buffName : Editor.getInstance().getBufferNames()) {
+				case "!":
+					Set<String> bufferNames = Editor.getInstance().getBufferNames();
+					if (bufferNames.size() == 0) {
+						return true;
+					}
+					for (String buffName : bufferNames) {
 						suggestions.add(new PaletteSuggestion(buffName, SuggestionType.Buffer));
 					}
 					return true;

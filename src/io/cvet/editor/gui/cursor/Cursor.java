@@ -445,6 +445,23 @@ public class Cursor extends Component {
 		yOffset += owner.getFont().getHeight() * y;
 	}
 
+	public void set(int x, int y) {
+		if (x < 0 || y < 0) {
+			set(0, 0);
+			return;
+		}
+		if (x > owner.getCharacterCount() || y > owner.getLineCount()) {
+			set(owner.getCharacterCount(), owner.getLineCount());
+			return;
+		}
+		
+		ix = x;
+		iy = y;
+		int cw = owner.getFont().getWidth(" ");
+		xOffset = cw * x;
+		yOffset = owner.getFont().getHeight() * y;
+	}
+	
 	public void setOffset(int padding) {
 		this.padding = padding;
 	}
@@ -468,5 +485,5 @@ public class Cursor extends Component {
 	public TrueTypeFont getFont() {
 		return owner.getFont();
 	}
-	
+
 }

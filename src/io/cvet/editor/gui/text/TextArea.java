@@ -240,7 +240,7 @@ public class TextArea extends Component {
 	}
 	
 	public int getLineCount() {
-		return buffer.size();
+		return buffer.size() - 1;
 	}
 
 	public int tab(int ix, int iy) {

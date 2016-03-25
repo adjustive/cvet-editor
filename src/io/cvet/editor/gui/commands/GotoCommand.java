@@ -10,16 +10,15 @@ public class GotoCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		int lineNumber = Integer.parseInt(arguments[0]);
-		int currentX = Editor.getInstance().getCurrentBuffer().getCaret().x;
-		int currentY = Editor.getInstance().getCurrentBuffer().getCaret().y;
-		int delta = 0;
-		if (lineNumber >= currentY) {
-			delta += lineNumber - currentY - 1;
-		} else {
-			delta -= Math.abs(currentY - lineNumber);
+		int lineNumber;
+		try {
+			lineNumber = Integer.parseInt(arguments[0]);
+		} catch (Exception e) {
+			// cheeky cunt might've put a NaN or some shit
+			return;
 		}
-		Editor.getInstance().getCurrentBuffer().getCaret().move(currentX, delta);
+		int currentX = Editor.getInstance().getCurrentBuffer().getCaret().x;
+		Editor.getInstance().getCurrentBuffer().getCaret().set(currentX, lineNumber - 1);
 	}
 
 	@Override
