@@ -194,6 +194,29 @@ public class Cursor extends Component {
 					break;
 				case Keyboard.KEY_RIGHT: // right word
 					break;
+				case Keyboard.KEY_TAB: // shift tab!
+					// can't shift tab!
+					if (ix == 0) {
+						break;
+					}
+					
+					String currentLine = getCurrentLine().substring(0, ix);
+					int trimmedLen = currentLine.trim().length();
+					
+					// we're at the start of our line
+					// and there is enough space to shift+tab
+					if (trimmedLen == 0 
+							&& currentLine.length() >= owner.getTabSize()) {
+						for (int i = 0; i < owner.getTabSize(); i++) {
+							owner.backspace(this);
+						}
+					}
+					// were not at the start, we need to remove
+					// goto the start and remove -4
+					else {
+						
+					}
+					break;
 				default:
 					handleKeyCode(keyCode);
 					break;

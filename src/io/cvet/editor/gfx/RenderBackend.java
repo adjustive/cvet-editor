@@ -44,9 +44,6 @@ public abstract class RenderBackend {
 
 	public abstract void colour(float r, float g, float b, float a);
 	public abstract void colour(float r, float g, float b);
-	public abstract void colour(float[] col);
-	
-	public abstract void flush();
 	
 	public void type(GeometricType type) {
 		this.type = type;

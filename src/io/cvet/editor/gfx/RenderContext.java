@@ -14,7 +14,6 @@ public class RenderContext {
 	}
 	
 	public static void rect(int x, int y, int w, int h) {
-		// colour bind
 		backend.type(GeometricType.Quad);
 		backend.vertex(x, y);
 		backend.vertex(x + w, y);
@@ -36,28 +35,24 @@ public class RenderContext {
 	}
 
 	public static void colour(Colour colour) {
+		backend.currentColour = colour;
 		backend.colour(colour.r, colour.g, colour.b);
 	}
 
 	public static void font(TrueTypeFont font) {
-		// TODO
+		RenderBackend.CURRENT_FONT = font;
 	}
 
-	public static void drawString(String suggName, int i, int j) {
-		// TODO
+	public static void drawString(String suggName, int x, int y) {
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderBackend.CURRENT_FONT.drawString(x, y, suggName, backend.currentColour.getStupidFuckingColour());
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	public static void init(int w, int h) {
-		backend = new BatchRenderer();
+		backend = new ImmediateRenderer();
 		backend.init(w, h);
 	}
 
-	public static void flush() {
-		backend.flush();
-	}
-
-	public static void loadIdentity() {
-		GL11.glLoadIdentity();
-	}
-	
 }

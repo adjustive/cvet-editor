@@ -110,7 +110,6 @@ public class Editor extends Component implements Runnable {
 	
 	public void render() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		RenderContext.loadIdentity();
 		
 		RenderContext.colour(Theme.BASE);
 		RenderContext.rect(0, 0, Display.getWidth(), Display.getHeight());
@@ -148,8 +147,6 @@ public class Editor extends Component implements Runnable {
 			int padding = 10;
 			RenderContext.drawString(framerate, Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - padding, Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
 		}
-		
-		RenderContext.flush();
 	}
 	
 	public void run() {
