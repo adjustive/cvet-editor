@@ -60,6 +60,7 @@ public class CommandPalette extends Component implements CursorAction {
 		buffer.setBackground(Theme.ACCENT);
 		buffer.setFocus(true);
 		buffer.setFont(ImmediateRenderer.EDITING_FONT);
+		
 		caret.setCursorAction(this);
 		caret.setColour(Theme.BASE);
 		caret.setCursorStyle(CursorStyle.Line);

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 
 import io.cvet.editor.Layout;
 import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.util.Input;
 
 public abstract class Component {
@@ -20,6 +20,7 @@ public abstract class Component {
 	
 	// components dimensions
 	public int x, y, w, h;
+	protected Layer layer = Layer.BOTTOM;
 	
 	protected boolean focus = true;
 	protected boolean visible = true;
@@ -63,21 +64,6 @@ public abstract class Component {
 		return focusable;
 	}
 	
-	// LAYOUT
-	
-	private int nextX = 0;
-	private int nextY = 0;
-	
-	private int findTallestComponent() {
-		int tallest = 0;
-		for (Component c : children) {
-			if (c.h > tallest) {
-				tallest = c.h;
-			}
-		}
-		return tallest;
-	}
-	
 	private Component getLastComponent() {
 		if (children.size() > 2) {
 			return children.get(children.size() - 1);
@@ -88,47 +74,12 @@ public abstract class Component {
 	// todo: modular layout?
 	public void addChild(Component c, Layout layout) {
 		switch (layout) {
-		case Left:
-			// if our row will be greater than
-			// the width, reset row width
-			// and shift down
-			if (nextX + c.w >= this.w) {
-				nextX = 0;
-				nextY += findTallestComponent();
-			} else if (children.size() != 0) {
-				nextX += getLastComponent().w;
-			}
-			c.y = nextY;
-			c.x = nextX;
-			children.add(c);
-		case Halves:
-			children.add(c);
-			if (children.size() != 0) {
-				// before we add it, we half the previous
-				int idx = 0;
-				for (Component child : children) {
-					child.w = Display.getWidth() / children.size();
-					child.x = idx * child.w;
-					idx += 1;
-				}
-			} else {
-				c.w = Display.getWidth();
-			}
-			break;
-		case VerticalHalves:
-			children.add(c);
-			// FIXME
-			if (children.size() > 2) {
-				int newH = getLastComponent().h / 2;
-				getLastComponent().h = newH;
-			}
-			break;
 		case Child:
 			c.x = this.x;
 			c.y = children.size() != 0 ? c.y += getLastComponent().h : this.y;
 			children.add(c);
 			break;
-		default:
+		default: 
 			children.add(c);
 			break;
 		}
@@ -185,9 +136,12 @@ public abstract class Component {
 		}
 	}
 	
-	public void renderChildren(List<Component> children) {
+	public void renderLayer(List<Component> children, Layer target) {
 		for (int i = 0; i < children.size(); i++) {
 			Component c = children.get(i);
+			if (c.layer != target) {
+				continue;
+			}
 
 			RenderContext.startClip(c.x, c.y, c.w, c.h);
 			if (c.isVisible()) {
@@ -201,6 +155,12 @@ public abstract class Component {
 				RenderContext.rect(c.x, c.y + c.h - 2, c.w, 2);
 			}
 		}
+	}
+	
+	public void renderChildren(List<Component> children) {
+		renderLayer(children, Layer.BOTTOM);
+		renderLayer(children, Layer.MIDDLE);
+		renderLayer(children, Layer.TOP);
 	}
 	
 	public void clearFocus() {
@@ -224,6 +184,10 @@ public abstract class Component {
 	
 	public boolean isVisible() {
 		return visible;
+	}
+	
+	public void setLayer(Layer layer) {
+		this.layer = layer;
 	}
 	
 	public void setPosition(int x, int y, int w, int h) {
