@@ -9,8 +9,10 @@ import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.cursor.Mark.Span;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.FileUtil;
@@ -30,6 +32,8 @@ public class Cursor extends Component {
 	public int ix, iy;
 	public int xOffset, yOffset;
 	public int padding;
+	
+	private Mark selection;
 
 	private boolean hungryBackspace;
 	private boolean matchBraces;
@@ -39,7 +43,7 @@ public class Cursor extends Component {
 		this.cursorStyle = style;
 		this.ix = iy = 0;
 		this.h = ImmediateRenderer.EDITING_FONT.getHeight();
-
+		
 		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
 	}
@@ -107,9 +111,11 @@ public class Cursor extends Component {
 	public void handleControlCombo() {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
+				Editor.commands = "CTRL + ";
 				// TODO: clean this up, hashmap for easier
 				// binding?
 				int keyCode = Keyboard.getEventKey();
+				Editor.commands += Keyboard.getKeyName(keyCode).toUpperCase();
 				switch (keyCode) {
 				case Keyboard.KEY_C: // copy
 					// TODO:
@@ -127,8 +133,10 @@ public class Cursor extends Component {
 					Editor.getInstance().closeCurrentBuffer();
 					break;
 				case Keyboard.KEY_S: // save
-					Editor.getInstance().getCurrentBuffer().save();
-					// TODO:
+					Buffer b = Editor.getInstance().getCurrentBuffer();
+					if (b != null) {
+						b.save();
+					}
 					break;
 				case Keyboard.KEY_L: // line goto
 					System.err.println("todo");
@@ -187,13 +195,26 @@ public class Cursor extends Component {
 	}
 
 	public void handleShiftCombo() {
+		if (selection == null) {
+			selection = new Mark(this, new Span(ix, iy));
+		}
+		
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
+				Editor.commands = "SHIFT + ";
+				// TODO: clean this up, hashmap for easier
+				// binding?
 				int keyCode = Keyboard.getEventKey();
+				Editor.commands += Keyboard.getKeyName(keyCode).toUpperCase();
 				switch (keyCode) {
-				case Keyboard.KEY_LEFT: // left word
+				case Keyboard.KEY_LEFT: // left word select
+					selection.end.x -= RenderBackend.CHARACTER_WIDTH;
+					move(-1, 0);
 					break;
-				case Keyboard.KEY_RIGHT: // right word
+				case Keyboard.KEY_RIGHT: // right word select
+					selection.end.x += RenderBackend.CHARACTER_WIDTH;
+					move(1, 0);
+					System.out.println("hey");
 					break;
 				case Keyboard.KEY_TAB: // shift tab!
 					// can't shift tab!
@@ -320,10 +341,12 @@ public class Cursor extends Component {
 		case Keyboard.KEY_LEFT:
 			setLast();
 			move(ix > 0 ? -1 : 0, 0);
+			selection = null;
 			break;
 		case Keyboard.KEY_RIGHT:
 			setLast();
 			move(ix < getCurrentLine().length() ? 1 : 0, 0);
+			selection = null;
 			break;
 		case Keyboard.KEY_DELETE:
 			owner.delete(ix, iy);
@@ -407,6 +430,10 @@ public class Cursor extends Component {
 			handleShiftCombo();
 		}
 
+		if (selection != null) {
+			selection.update();
+		}
+		
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				int keyCode = Keyboard.getEventKey();
@@ -423,6 +450,10 @@ public class Cursor extends Component {
 	public void render() {
 		RenderContext.colour(colour);
 		RenderContext.rect(x + xOffset + padding, y + yOffset + padding, w, h);
+		
+		if (selection != null) {
+			selection.render();
+		}
 	}
 
 	public void carriageReturn() {

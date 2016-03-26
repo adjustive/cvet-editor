@@ -30,12 +30,9 @@ public class Editor extends Component implements Runnable {
 
 	public static boolean DEBUG_MODE = false;
 	private static Editor instance;
-	private final String MOTD = "Press `CLTR+P` to open the command palette.\n"
-			+ "If you are stuck, type `help` for a buffer of commands.\n"
-			+ "P.S. You can change this message in the configuration file.\n"
-			+ "Well, not yet... but you will be able to soon!\n";
 	private String OS = System.getProperty("os.name");
-
+	public static String commands = "";
+	
 	private HashMap<String, Buffer> buffers;
 	private String currentBufferName;
 
@@ -105,36 +102,14 @@ public class Editor extends Component implements Runnable {
 
 		renderChildren(children);
 
-		// everything after we render in a nice
-		// sans-serif font... for now this mostly
-		// means the welcome motd and the fps
+		RenderContext.colour(Colour.YELLOW);
+		String framerate = "fps: " + frameRate;
+		int padding = 60;
+		RenderContext.drawString(framerate,
+				Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - padding,
+				Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
 		
-		// TODO: label for this
-		RenderContext.font(RenderBackend.INTERFACE_FONT);
-		if (children.size() == 0) {
-			String[] splitMOTD = MOTD.split("\n");
-			int blockHeight = splitMOTD.length * RenderBackend.EDITING_FONT.getHeight();
-			int blockOffset = (Display.getHeight() / 2) - (blockHeight / 2);
-			int idx = 0;
-			for (String line : splitMOTD) {
-				int lineWidth = RenderBackend.CURRENT_FONT.getWidth(line);
-				RenderContext.colour(Colour.WHITE);
-				RenderContext.drawString(line, (Display.getWidth() / 2) - (lineWidth / 2),
-						blockOffset + (idx * RenderBackend.CURRENT_FONT.getHeight()));
-				idx++;
-			}
-		}
-
-		// TODO: LABEL
-		if (DEBUG_MODE) {
-			Input.render();
-			RenderContext.colour(Colour.YELLOW);
-			String framerate = "fps: " + frameRate;
-			int padding = 10;
-			RenderContext.drawString(framerate,
-					Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - padding,
-					Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
-		}
+		RenderContext.drawString("[" + commands + "]", 40, Display.getHeight() - padding);
 	}
 
 	public void run() {
@@ -151,10 +126,11 @@ public class Editor extends Component implements Runnable {
 			delta += (now - last) / ns;
 			last = now;
 
+			render();
+			frames++;
+
 			if (delta >= 1) {
 				update();
-				render();
-				frames++;
 				delta--;
 			}
 
