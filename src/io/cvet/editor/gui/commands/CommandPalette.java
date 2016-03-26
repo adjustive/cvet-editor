@@ -45,6 +45,7 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("help", new HelpCommand());
 		commands.put("goto", new GotoCommand());
 		commands.put("buff", new BuffCommand());
+		commands.put("rename", new RenameCommand());
 	}
 	
 	public CommandPalette() {

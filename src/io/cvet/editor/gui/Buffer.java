@@ -3,6 +3,7 @@ package io.cvet.editor.gui;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
@@ -23,10 +24,10 @@ public class Buffer extends TextArea implements CursorAction {
 	private Label title;
 	private int padding = 10;
 	private long timer;
-	
+
 	public Buffer(String name) {
 		this.name = name;
-		
+
 		String bufferInformation = "#" + lineNum + " " + name;
 		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
 		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
@@ -35,7 +36,7 @@ public class Buffer extends TextArea implements CursorAction {
 		this.timer = System.currentTimeMillis();
 		this.getCaret().setCursorAction(this);
 	}
-	
+
 	public Buffer(String name, String contents) {
 		this(name);
 		buffer.clear();
@@ -43,7 +44,7 @@ public class Buffer extends TextArea implements CursorAction {
 			buffer.add(new Line(s));
 		}
 	}
-	
+
 	public Buffer(File file) {
 		this(file.getName());
 		this.saved = true;
@@ -51,21 +52,20 @@ public class Buffer extends TextArea implements CursorAction {
 		buffer.clear();
 		this.loadFile(file);
 	}
-	
+
 	public void update() {
 		super.update();
 		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
-		
+
 		// save every second
 		// TODO: config for this.
 		// maybe even config for save rate in seconds?
-		if (System.currentTimeMillis() - timer > 1000 
-				&& hasBeenSaved()) {
+		if (System.currentTimeMillis() - timer > 1000 && hasBeenSaved()) {
 			save();
 			timer += 1000;
 		}
 	}
-	
+
 	public void render() {
 		renderChildren(children);
 		super.render();
@@ -87,12 +87,12 @@ public class Buffer extends TextArea implements CursorAction {
 				return;
 			}
 		}
-		
+
 		if (file == null) {
 			System.err.println("this shouldn't happen\n");
 			return;
 		}
-		
+
 		// write contents of buffer
 		// into the file
 		try {
@@ -103,24 +103,40 @@ public class Buffer extends TextArea implements CursorAction {
 			}
 			bw.close();
 			saved = true;
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("failed 2 write :(");
 		}
-		
+
 		saved = true;
 	}
-	
+
 	public boolean hasBeenSaved() {
 		return file != null;
 	}
-	
+
 	public boolean isSaved() {
 		return saved && file != null;
 	}
-	
+
 	public String getName() {
 		return name;
+	}
+
+	public void rename(String newName) {
+		this.name = newName;
+		File oldFile = file;
+		String newFilePath = oldFile.getAbsolutePath().replace(oldFile.getName(), "") + newName;
+		File newFile = new File(newFilePath);
+		try {
+			file.renameTo(newFile);
+			this.file = newFile;
+			oldFile.delete();
+		} catch (Exception e) {
+			// :(
+			System.err.println("Couldn't move file!");
+			this.file = oldFile;
+			this.name = file.getName();
+		}
 	}
 
 	public void setFile(File file) {
@@ -129,19 +145,15 @@ public class Buffer extends TextArea implements CursorAction {
 
 	@Override
 	public boolean keyPress(int keyCode) {
-		// TODO: clean this up
+		// TODO: improve
 		switch (keyCode) {
-		case Keyboard.KEY_LEFT:
-		case Keyboard.KEY_RIGHT:
-		case Keyboard.KEY_UP:
-		case Keyboard.KEY_DOWN:
-		case Keyboard.KEY_LCONTROL:
-		case Keyboard.KEY_RCONTROL:
-		case Keyboard.KEY_LSHIFT:
-		case Keyboard.KEY_RSHIFT:
-			break;
+		case Keyboard.KEY_DELETE:
+		case Keyboard.KEY_BACK:
 		default:
-			saved = false;
+			if (Character.isAlphabetic(Keyboard.getEventCharacter())
+					|| Character.isDigit(Keyboard.getEventCharacter())) {
+				saved = false;
+			}
 			break;
 		}
 		return false;

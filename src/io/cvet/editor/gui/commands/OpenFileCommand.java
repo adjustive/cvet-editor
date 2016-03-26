@@ -1,12 +1,14 @@
 package io.cvet.editor.gui.commands;
 
-import io.cvet.editor.Editor;
-import io.cvet.editor.gui.Buffer;
-import io.cvet.editor.util.FileUtil;
-
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
+
+import io.cvet.editor.Editor;
+import io.cvet.editor.gui.Buffer;
+import io.cvet.editor.util.FileUtil;
+import javafx.stage.FileChooser;
 
 public class OpenFileCommand extends Command {
 
@@ -17,11 +19,19 @@ public class OpenFileCommand extends Command {
 	@Override
 	public void action(String[] arguments) {
 		if (arguments.length == 0) {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setVisible(true);
-			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
-				Editor.getInstance().pushBuffer(new Buffer(file));
+			try {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						JFileChooser chooser = new JFileChooser();
+						if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+							File file = chooser.getSelectedFile();
+							Editor.getInstance().pushBuffer(new Buffer(file));
+						}
+					}
+				});
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return;
 		} 

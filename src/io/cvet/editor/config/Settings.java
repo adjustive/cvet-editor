@@ -24,7 +24,9 @@ public class Settings {
 			"hungry_backspace = false\n" +
 			"tab_size = 4\n" +
 			"match_braces = false\n" +
-			"anti_alias = true\n";
+			"anti_alias = true\n"
+			+ "blink_cursor = false\n"
+			+ "cursor_blink_latency = 1000";
 	
 	private static HashMap<String, Object> DEFAULT_SETTING_LOOKUP;
 	private static HashMap<String, Object> USER_SETTING_LOOKUP;

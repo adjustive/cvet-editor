@@ -38,14 +38,22 @@ public class Cursor extends Component {
 	private boolean hungryBackspace;
 	private boolean matchBraces;
 
+	private boolean shouldBlink;
+	private int blinkLatencyMS;
+	private boolean showCursor = true;
+	private long timer;
+	
 	public Cursor(TextArea owner, CursorStyle style) {
 		this.owner = owner;
 		this.cursorStyle = style;
 		this.ix = iy = 0;
 		this.h = ImmediateRenderer.EDITING_FONT.getHeight();
 		
+		this.blinkLatencyMS = (int) Settings.getSetting("cursor_blink_latency");
+		this.shouldBlink = (boolean) Settings.getSetting("blink_cursor");
 		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
+		timer = System.currentTimeMillis();
 	}
 
 	@Override
@@ -216,6 +224,10 @@ public class Cursor extends Component {
 					selection.end.x += RenderBackend.CHARACTER_WIDTH;
 					move(1, 0);
 					System.out.println("hey");
+					break;
+				case Keyboard.KEY_DOWN:
+					selection.end.y += RenderBackend.CHARACTER_HEIGHT;
+					move(0, 1);
 					break;
 				case Keyboard.KEY_TAB: // shift tab!
 					// can't shift tab!
@@ -425,6 +437,7 @@ public class Cursor extends Component {
 		this.visible = owner.isVisible();
 		this.w = cursorStyle == CursorStyle.Block ? RenderBackend.CHARACTER_WIDTH : 1;
 
+		
 		if (Input.isControlModifierDown()) {
 			handleControlCombo();
 		} else if (Input.isShiftModifierDown()) {
@@ -445,12 +458,19 @@ public class Cursor extends Component {
 				handleKeyCode(keyCode);
 			}
 		}
+
+		if (System.currentTimeMillis() - timer > blinkLatencyMS) {
+			showCursor = shouldBlink ? !showCursor : true;
+			timer += blinkLatencyMS;
+		}
 	}
 
 	@Override
 	public void render() {
 		RenderContext.colour(colour);
-		RenderContext.rect(x + xOffset + padding, y + yOffset + padding, w, h);
+		if (showCursor) {
+			RenderContext.rect(x + xOffset + padding, y + yOffset + padding, w, h);
+		}
 		
 		if (selection != null) {
 			selection.render();
@@ -472,7 +492,7 @@ public class Cursor extends Component {
 		}
 		ix += x;
 		iy += y;
-
+		
 		// TODO: FIXME
 		int cw = owner.getFont().getWidth(" ");
 		xOffset += cw * x;

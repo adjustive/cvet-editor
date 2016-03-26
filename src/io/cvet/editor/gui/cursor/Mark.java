@@ -1,6 +1,5 @@
 package io.cvet.editor.gui.cursor;
 
-import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 
@@ -21,7 +20,7 @@ public class Mark {
 	
 	public void render() {
 		RenderContext.colour(255, 0, 255);
-		RenderContext.rect(start.x + caret.padding, start.y + caret.padding, end.x - start.x, RenderBackend.CHARACTER_HEIGHT);
+		RenderContext.rect(start.x + caret.padding, start.y + caret.padding, end.x - start.x, end.y - start.y);
 	}
 	
 	public static class Span {
@@ -41,12 +40,10 @@ public class Mark {
 		}
 		
 		public int getX() {
-			// FIXME fml
 			return x / RenderBackend.CHARACTER_WIDTH;
 		}
 		
 		public int getY() {
-			// FIXME fml
 			return y / RenderBackend.CHARACTER_HEIGHT;
 		}
 	}
