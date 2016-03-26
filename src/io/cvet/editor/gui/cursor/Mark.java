@@ -21,7 +21,7 @@ public class Mark {
 	
 	public void render() {
 		RenderContext.colour(255, 0, 255);
-		RenderContext.rect(start.x + caret.padding, start.y + caret.padding, end.x, RenderBackend.EDITING_FONT.getHeight());
+		RenderContext.rect(start.x + caret.padding, start.y + caret.padding, end.x - start.x, RenderBackend.CHARACTER_HEIGHT);
 	}
 	
 	public static class Span {
@@ -33,7 +33,7 @@ public class Mark {
 		}
 		
 		public Span(Span end) {
-			this(end.x, end.y);
+			this(end.getX(), end.getY());
 		}
 		
 		public Span() {
@@ -42,12 +42,12 @@ public class Mark {
 		
 		public int getX() {
 			// FIXME fml
-			return x / ImmediateRenderer.EDITING_FONT.getWidth(" ");
+			return x / RenderBackend.CHARACTER_WIDTH;
 		}
 		
 		public int getY() {
 			// FIXME fml
-			return y / ImmediateRenderer.EDITING_FONT.getHeight();
+			return y / RenderBackend.CHARACTER_HEIGHT;
 		}
 	}
 

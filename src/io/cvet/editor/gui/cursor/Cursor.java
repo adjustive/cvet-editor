@@ -197,6 +197,7 @@ public class Cursor extends Component {
 	public void handleShiftCombo() {
 		if (selection == null) {
 			selection = new Mark(this, new Span(ix, iy));
+			System.out.println(ix + " <- is the ix");
 		}
 		
 		while (Keyboard.next()) {
