@@ -7,6 +7,7 @@ import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.util.Theme;
 
 public class Tab extends Component {
 
@@ -39,11 +40,11 @@ public class Tab extends Component {
 	
 	public void renderTab(int x, int y) {
 		RenderContext.font(font);
-		RenderContext.colour(255, 0, 255);
+		RenderContext.colour(Theme.ACCENT);
 		RenderContext.rect(x, y, w, h);
 		
 		// render tab name in a center alignment
-		int tabNameWidth = font.getWidth(name);
+		int tabNameWidth = font.getWidth(name) + (padding / 2);
 		RenderContext.colour(Colour.WHITE);
 		RenderContext.drawString(name, x + ((w / 2) - (tabNameWidth / 2)), y + ((h / 2) - (font.getHeight() / 2)));
 	}

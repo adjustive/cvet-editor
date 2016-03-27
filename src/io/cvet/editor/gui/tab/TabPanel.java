@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.util.Theme;
 
 public class TabPanel extends Component {
 
@@ -29,7 +30,10 @@ public class TabPanel extends Component {
 
 	@Override
 	public void render() {
-		RenderContext.colour(225, 0, 220);
+		RenderContext.colour(Theme.DARK_BASE);
+		RenderContext.rect(x, y, Display.getWidth() + 2, 24 + 2);
+		
+		RenderContext.colour(Theme.DARK_ACCENT);
 		RenderContext.rect(x, y, Display.getWidth(), 24);
 		
 		int size = 0;
