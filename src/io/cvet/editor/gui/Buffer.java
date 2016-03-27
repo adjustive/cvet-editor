@@ -41,7 +41,7 @@ public class Buffer extends TextArea implements CursorAction {
 		this(name);
 		buffer.clear();
 		for (String s : contents.split("\n")) {
-			append(s);
+			buffer.add(new Line(s));
 		}
 	}
 

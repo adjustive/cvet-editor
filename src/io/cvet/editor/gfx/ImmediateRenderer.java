@@ -11,7 +11,9 @@ public class ImmediateRenderer extends RenderBackend {
 
 	@Override
 	public void init(final int width, final int height) {
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		System.out.println("Initializing OpenGL Renderer");
+		
+//		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);

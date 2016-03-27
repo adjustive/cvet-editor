@@ -13,6 +13,7 @@ import javax.swing.UIManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
 
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
@@ -95,7 +96,7 @@ public class Editor extends Component implements Runnable {
 	}
 
 	public void render() {
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		RenderContext.colour(Theme.BASE);
 		RenderContext.rect(0, 0, Display.getWidth(), Display.getHeight());

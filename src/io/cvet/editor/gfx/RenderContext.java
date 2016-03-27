@@ -14,6 +14,9 @@ public class RenderContext {
 	}
 	
 	public static void rect(int x, int y, int w, int h) {
+		// this fixes weird opacity problems somehow
+//		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
 		backend.type(GeometricType.Quad);
 		backend.vertex(x, y);
 		backend.vertex(x + w, y);
@@ -44,10 +47,12 @@ public class RenderContext {
 	}
 
 	public static void drawString(String suggName, int x, int y) {
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		RenderBackend.CURRENT_FONT.drawString(x, y, suggName, backend.currentColour.getStupidFuckingColour());
 		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 
 	public static void init(int w, int h) {
