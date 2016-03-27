@@ -44,7 +44,6 @@ public class CommandPalette extends Component implements CursorAction {
 		commands.put("configure", new EditSettingsCommand());
 		commands.put("help", new HelpCommand());
 		commands.put("goto", new GotoCommand());
-		commands.put("buff", new BuffCommand());
 		commands.put("rename", new RenameCommand());
 	}
 	
@@ -181,8 +180,9 @@ public class CommandPalette extends Component implements CursorAction {
 					buffer.setLineAndMove(new Line(suggested.key));
 					break;
 				case Buffer:
-					buffer.setLineAndMove(new Line("buff " + suggested.key));
-					break;
+					Editor.getInstance().mainView.setTab(suggested.key);
+					hide();
+					return true;
 				}
 
 				Command cmd = suggestions.getCurrentSuggestion().lookupCommand();

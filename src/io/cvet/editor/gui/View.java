@@ -51,9 +51,12 @@ public class View extends Component {
 		return pane.getCurrentTab();
 	}
 
-	public void focusTab(Buffer buff) {
-		int t = pane.findTabIndex(buff.getName());
-		pane.currentTabIdx = t;
+	public void setTab(Buffer buff) {
+		setTab(buff.getName());
+	}
+
+	public void setTab(String key) {
+		pane.currentTabIdx = pane.findTabIndex(key);
 	}
 	
 }
