@@ -1,14 +1,17 @@
 package io.cvet.editor.gui.text;
 
-import io.cvet.editor.gfx.Colour;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import io.cvet.editor.gfx.Colour;
 
 public class Line {
 
 	public List<Glyph> value;
 	public Colour defaultColouring = Colour.WHITE;
+	
+	// TODO: current colour?
+	public static Glyph WRAP_GLYPH = new Glyph(Colour.WHITE, '\n');
 	
 	public Line() {
 		this(0);
@@ -45,6 +48,10 @@ public class Line {
 	
 	public void append(char c) {
 		append(defaultColouring, c);
+	}
+	
+	public void append(Glyph g) {
+		value.add(g);
 	}
 	
 	public void append(Colour colouring, char c) {

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.TrueTypeFont;
@@ -13,6 +14,7 @@ import org.newdawn.slick.TrueTypeFont;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.cursor.Cursor;
@@ -35,6 +37,7 @@ public class TextArea extends Component {
 	private int tabSize;
 	private int charHeight = ImmediateRenderer.EDITING_FONT.getHeight();
 	private int wheelDelta = 0;
+	private boolean insertMode = false;
 	
 	public TextArea(int w, int h) {
 		this.w = w;
@@ -71,6 +74,10 @@ public class TextArea extends Component {
 			yOffset += wheelDelta ;
 		}
 		
+		if (Input.getKeyPressed(Keyboard.KEY_INSERT)) {
+			insertMode = !insertMode;
+		}
+		
 		updateChildren(children);
 	}
 	
@@ -84,6 +91,7 @@ public class TextArea extends Component {
 		RenderContext.colour(foreground);
 		int line = 0;
 		RenderContext.font(font);
+		
 		for (Line s : buffer) {
 			int glyph = 0;
 			for (Glyph g : s.value) {
@@ -95,7 +103,7 @@ public class TextArea extends Component {
 			line++;
 		}
 	}
-
+	
 	public void append(char c) {
 		Line l = getLine();
 		l.append(c);
@@ -103,9 +111,9 @@ public class TextArea extends Component {
 	}
 	
 	public void append(String s) {
-		Line l = getLine();
-		l.append(s);
-		setLine(l, buffer.size() - 1);
+		for (char c : s.toCharArray()) {
+			append(c);
+		}
 	}
 
 	public Line getLine(int lineNum) {
@@ -133,12 +141,12 @@ public class TextArea extends Component {
 	public void insert(char c, int ix, int iy) {
 		Line line = getLine(iy);
 		line.setCharAt(ix, c);
+		System.out.println("insert");
 		setLine(line, iy);
 	}
 	
 	public void place(String s, int ix, int iy) {
 		int idx = 0;
-		System.out.println("got " + s);
 		for (char c : s.toCharArray()) {
 			place(c, ix + idx, iy);
 			idx++;
@@ -154,7 +162,11 @@ public class TextArea extends Component {
 		if (ix >= line.length()) {
 			line.append(c);
 		} else {
-			line.insert(ix, c);
+			if (insertMode) {
+				line.setCharAt(ix, c);
+			} else {
+				line.insert(ix, c);
+			}
 		}
 		setLine(line, iy);
 	}

@@ -322,6 +322,8 @@ public class Cursor extends Component {
 		case Keyboard.KEY_RMENU:
 		case Keyboard.KEY_F2:
 		case Keyboard.KEY_ESCAPE:
+		case Keyboard.KEY_CAPITAL:
+		case Keyboard.KEY_INSERT:
 			// nothing
 			break;
 		case Keyboard.KEY_BACK:
