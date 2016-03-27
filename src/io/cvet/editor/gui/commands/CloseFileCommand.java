@@ -2,8 +2,6 @@ package io.cvet.editor.gui.commands;
 
 import javax.swing.JOptionPane;
 
-import org.lwjgl.opengl.Display;
-
 import io.cvet.editor.Editor;
 import io.cvet.editor.gui.Buffer;
 

@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import io.cvet.editor.Editor;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.util.FileUtil;
-import javafx.stage.FileChooser;
 
 public class OpenFileCommand extends Command {
 
