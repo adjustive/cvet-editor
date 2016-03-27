@@ -25,7 +25,7 @@ public class OpenFileCommand extends Command {
 						JFileChooser chooser = new JFileChooser();
 						if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 							File file = chooser.getSelectedFile();
-							Editor.getInstance().pushBuffer(new Buffer(file));
+							Editor.getInstance().mainView.addTab(new Buffer(file));
 						}
 					}
 				});
@@ -37,7 +37,7 @@ public class OpenFileCommand extends Command {
 		
 		File potentialFile = new File(arguments[0]);
 		if (potentialFile.isFile()) {
-			Editor.getInstance().pushBuffer(new Buffer(potentialFile));
+			Editor.getInstance().mainView.addTab(new Buffer(potentialFile));
 			return;
 		}
 		
@@ -48,7 +48,7 @@ public class OpenFileCommand extends Command {
 			// TODO: check actual scheme
 			String source = FileUtil.LoadFromUrl(arguments[0]);
 			File file = new File(arguments[0]);
-			Editor.getInstance().pushBuffer(new Buffer(file.getName(), source));
+			Editor.getInstance().mainView.addTab(new Buffer(file.getName(), source));
 			return;
 		}
 		

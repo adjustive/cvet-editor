@@ -126,6 +126,10 @@ public class Buffer extends TextArea implements CursorAction {
 	public void rename(String newName) {
 		this.name = newName;
 		File oldFile = file;
+		
+		// TODO: oldFile is null we can't
+		// rename a non-created file
+		
 		String newFilePath = oldFile.getAbsolutePath().replace(oldFile.getName(), "") + newName;
 		File newFile = new File(newFilePath);
 		try {

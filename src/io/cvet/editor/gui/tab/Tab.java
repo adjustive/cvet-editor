@@ -18,13 +18,13 @@ public class Tab extends Component {
 	private int padding = 10;
 	
 	public Tab(int index, String name, Buffer buff) {
-		setFont(RenderBackend.INTERFACE_FONT);
+		setFont(RenderBackend.EDITING_FONT);
 		
 		this.index = index;
 		this.name = name;
 		this.buff = buff;
 		this.w = font.getWidth(name) + (padding * 2);
-		this.h = 24;
+		this.h = font.getHeight() + (padding);
 		addChild(buff);
 	}
 
@@ -52,7 +52,7 @@ public class Tab extends Component {
 	@Override
 	public void render() {
 		GL11.glPushMatrix();
-		GL11.glTranslatef(0, 24, 0);
+		GL11.glTranslatef(0, this.h, 0);
 		renderChildren(children);
 		GL11.glPopMatrix();
 	}

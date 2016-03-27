@@ -25,7 +25,7 @@ public class PaletteSuggestion {
 	}
 	
 	public Buffer lookupBuffer() {
-		return Editor.getInstance().getBuffers().get(key);
+		return Editor.getInstance().mainView.getBuffer(key);
 	}
 	
 }

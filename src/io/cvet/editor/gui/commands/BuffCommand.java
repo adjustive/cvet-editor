@@ -12,12 +12,12 @@ public class BuffCommand extends Command {
 	@Override
 	public void action(String[] arguments) {
 		String buffer = arguments[0];
-		Buffer buff = Editor.getInstance().getBuffers().get(buffer);
+		Buffer buff = Editor.getInstance().mainView.getBuffer(buffer);
 		if (buff == null) {
 			System.err.println("buffer " + buffer + " no exist :(");
 			return;
 		}
-		Editor.getInstance().pushBuffer(buff);
+		Editor.getInstance().mainView.addTab(buff);
 	}
 
 	@Override

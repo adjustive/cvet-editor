@@ -138,10 +138,10 @@ public class Cursor extends Component {
 //					Editor.getInstance().showCommandPalette("new ");
 					break;
 				case Keyboard.KEY_W: // close file
-					Editor.getInstance().closeCurrentBuffer();
+					Editor.getInstance().mainView.closeCurrentTab();
 					break;
 				case Keyboard.KEY_S: // save
-					Buffer b = Editor.getInstance().getCurrentBuffer();
+					Buffer b = Editor.getInstance().mainView.getCurrentTab().buff;
 					if (b != null) {
 						b.save();
 					}

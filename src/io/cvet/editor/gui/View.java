@@ -1,6 +1,9 @@
 package io.cvet.editor.gui;
 
-import io.cvet.editor.config.Settings;
+import java.util.ArrayList;
+import java.util.Set;
+
+import io.cvet.editor.gui.tab.Tab;
 import io.cvet.editor.gui.tab.TabPanel;
 
 public class View extends Component {
@@ -10,9 +13,6 @@ public class View extends Component {
 	public View() {
 		pane = new TabPanel();
 		addChild(pane);
-
-		// testing tabs
-		pane.addTab(new Buffer(Settings.defaultEditorConfig));
 	}
 	
 	public void init() {
@@ -25,6 +25,35 @@ public class View extends Component {
 	
 	public void render() {
 		renderChildren(children);
+	}
+
+	public void addTab(Buffer buffer) {
+		pane.addTab(buffer);
+	}
+	
+	public Tab getTab(String tabName) {
+		return pane.findTab(tabName);
+	}
+
+	public Buffer getBuffer(String key) {
+		return pane.tabs.peek().buff;
+	}
+
+	public ArrayList<String> getBufferNames() {
+		ArrayList<String> buffers = new ArrayList<String>(pane.tabs.size());
+		for (int i = 0; i < pane.tabs.size(); i++) {
+			buffers.add(pane.tabs.get(i).name);
+		}
+		return buffers;
+	}
+
+	public void closeCurrentTab() {
+		System.out.println("Closing tab " + pane.getCurrentTab().buff.getName());
+		pane.removeTab(pane.getCurrentTab());
+	}
+
+	public Tab getCurrentTab() {
+		return pane.getCurrentTab();
 	}
 	
 }

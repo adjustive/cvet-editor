@@ -17,8 +17,8 @@ public class GotoCommand extends Command {
 			// cheeky cunt might've put a NaN or some shit
 			return;
 		}
-		int currentX = Editor.getInstance().getCurrentBuffer().getCaret().x;
-		Editor.getInstance().getCurrentBuffer().getCaret().set(currentX, lineNumber - 1);
+		int currentX = Editor.getInstance().mainView.getCurrentTab().buff.getCaret().x;
+		Editor.getInstance().mainView.getCurrentTab().buff.getCaret().set(currentX, lineNumber - 1);
 	}
 
 	@Override

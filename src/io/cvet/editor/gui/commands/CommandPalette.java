@@ -206,7 +206,7 @@ public class CommandPalette extends Component implements CursorAction {
 					}
 					return true;
 				case "!":
-					Set<String> bufferNames = Editor.getInstance().getBufferNames();
+					ArrayList<String> bufferNames = Editor.getInstance().mainView.getBufferNames();
 					if (bufferNames.size() == 0) {
 						return true;
 					}
