@@ -1,7 +1,6 @@
 package io.cvet.editor.gui;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import io.cvet.editor.gui.tab.Tab;
 import io.cvet.editor.gui.tab.TabPanel;
@@ -36,15 +35,11 @@ public class View extends Component {
 	}
 
 	public Buffer getBuffer(String key) {
-		return pane.tabs.peek().buff;
+		return pane.findTab(key).buff;
 	}
 
-	public ArrayList<String> getBufferNames() {
-		ArrayList<String> buffers = new ArrayList<String>(pane.tabs.size());
-		for (int i = 0; i < pane.tabs.size(); i++) {
-			buffers.add(pane.tabs.get(i).name);
-		}
-		return buffers;
+	public ArrayList<Tab> getTabList() {
+		return pane.tabs;
 	}
 
 	public void closeCurrentTab() {
@@ -54,6 +49,11 @@ public class View extends Component {
 
 	public Tab getCurrentTab() {
 		return pane.getCurrentTab();
+	}
+
+	public void focusTab(Buffer buff) {
+		int t = pane.findTabIndex(buff.getName());
+		pane.currentTabIdx = t;
 	}
 	
 }

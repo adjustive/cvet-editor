@@ -17,7 +17,8 @@ public class BuffCommand extends Command {
 			System.err.println("buffer " + buffer + " no exist :(");
 			return;
 		}
-		Editor.getInstance().mainView.addTab(buff);
+		// TODO: fix
+		Editor.getInstance().mainView.focusTab(buff);
 	}
 
 	@Override

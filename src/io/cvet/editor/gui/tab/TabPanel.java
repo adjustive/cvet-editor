@@ -1,10 +1,9 @@
 package io.cvet.editor.gui.tab;
 
-import java.util.Stack;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.Display;
 
-import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
@@ -13,7 +12,8 @@ import io.cvet.editor.util.Theme;
 
 public class TabPanel extends Component {
 
-	public Stack<Tab> tabs = new Stack<Tab>();
+	public ArrayList<Tab> tabs = new ArrayList<Tab>();
+	public int currentTabIdx = 0;
 	private int lastTabIndex = 0;
 	private int padding = 5;
 	
@@ -61,20 +61,31 @@ public class TabPanel extends Component {
 		System.out.println("adding " + buff.getName());
 		
 		Tab t = new Tab(lastTabIndex++, buff.getName(), buff);
-		tabs.push(t);
+		tabs.add(t);
+		currentTabIdx = tabs.size() - 1;
 	}
 	
 	public Tab getCurrentTab() {
 		if (tabs.size() == 0) {
 			return null;
 		}
-		return tabs.peek();
+		return tabs.get(currentTabIdx);
 	}
 	
 	public void removeTab(Tab t) {
 		tabs.remove(t);
+		currentTabIdx -= 1;
 	}
 
+	public int findTabIndex(String tabName) {
+		for (int i = 0; i < tabs.size(); i++) {
+			if (tabs.get(i).name.equals(tabName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public Tab findTab(String tabName) {
 		for (int i = 0; i < tabs.size(); i++) {
 			if (tabs.get(i).name.equals(tabName)) {

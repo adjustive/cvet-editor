@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -21,6 +20,7 @@ import io.cvet.editor.gui.commands.palette.PaletteSuggestion.SuggestionType;
 import io.cvet.editor.gui.commands.palette.PaletteSuggestionList;
 import io.cvet.editor.gui.cursor.Cursor;
 import io.cvet.editor.gui.cursor.Cursor.CursorStyle;
+import io.cvet.editor.gui.tab.Tab;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Theme;
@@ -206,12 +206,12 @@ public class CommandPalette extends Component implements CursorAction {
 					}
 					return true;
 				case "!":
-					ArrayList<String> bufferNames = Editor.getInstance().mainView.getBufferNames();
+					ArrayList<Tab> bufferNames = Editor.getInstance().mainView.getTabList();
 					if (bufferNames.size() == 0) {
 						return true;
 					}
-					for (String buffName : bufferNames) {
-						suggestions.add(new PaletteSuggestion(buffName, SuggestionType.Buffer));
+					for (Tab tab : bufferNames) {
+						suggestions.add(new PaletteSuggestion(tab.buff.getName(), SuggestionType.Buffer));
 					}
 					return true;
 				}
