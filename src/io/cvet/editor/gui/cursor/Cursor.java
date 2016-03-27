@@ -30,8 +30,8 @@ public class Cursor extends Component {
 	private CursorAction cursorAction = null;
 
 	public int ix, iy;
-	public int xOffset, yOffset;
 	public int padding;
+	private int xOffset, yOffset;
 	
 	private Mark selection;
 
@@ -205,7 +205,6 @@ public class Cursor extends Component {
 	public void handleShiftCombo() {
 		if (selection == null) {
 			selection = new Mark(this, new Span(ix, iy));
-			System.out.println(ix + " <- is the ix");
 		}
 		
 		while (Keyboard.next()) {
@@ -487,7 +486,7 @@ public class Cursor extends Component {
 	public void setCursorAction(CursorAction action) {
 		this.cursorAction = action;
 	}
-
+	
 	public void move(int x, int y) {
 		if (ix == 0 && Math.signum(x) < 0) {
 			return;
@@ -495,9 +494,8 @@ public class Cursor extends Component {
 		ix += x;
 		iy += y;
 		
-		// TODO: FIXME
 		int cw = owner.getFont().getWidth(" ");
-		xOffset += cw * x;
+		xOffset += x * cw;
 		yOffset += owner.getFont().getHeight() * y;
 	}
 

@@ -3,14 +3,15 @@ package io.cvet.editor.gui;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.ImmediateRenderer;
+import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Theme;
@@ -25,12 +26,14 @@ public class Buffer extends TextArea implements CursorAction {
 	private int padding = 10;
 	private long timer;
 
+	private boolean autoSave = (boolean) Settings.getSetting("auto_save");
+	private int saveRateMS = (int) Settings.getSetting("save_rate");
+	
 	public Buffer(String name) {
 		this.name = name;
-
 		String bufferInformation = "#" + lineNum + " " + name;
 		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
-		title.setPosition(Display.getWidth() - title.w - padding, padding, title.w, title.h);
+		title.setPosition(Display.getWidth() - title.w - (padding * 2), padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title);
 		this.timer = System.currentTimeMillis();
@@ -41,7 +44,7 @@ public class Buffer extends TextArea implements CursorAction {
 		this(name);
 		buffer.clear();
 		for (String s : contents.split("\n")) {
-			append(s);
+			buffer.add(new Line(s));
 		}
 	}
 
@@ -56,13 +59,11 @@ public class Buffer extends TextArea implements CursorAction {
 	public void update() {
 		super.update();
 		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
-
-		// save every second
-		// TODO: config for this.
-		// maybe even config for save rate in seconds?
-		if (System.currentTimeMillis() - timer > 1000 && hasBeenSaved()) {
+		title.x = Display.getWidth() - RenderBackend.CURRENT_FONT.getWidth(title.getValue()) - (padding * 2);
+		
+		if (autoSave && System.currentTimeMillis() - timer > saveRateMS && hasBeenSaved()) {
 			save();
-			timer += 1000;
+			timer += saveRateMS;
 		}
 	}
 

@@ -14,7 +14,6 @@ import org.newdawn.slick.TrueTypeFont;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
-import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.cursor.Cursor;
@@ -28,17 +27,17 @@ public class TextArea extends Component {
 	protected List<Line> buffer;
 	private Cursor caret;
 	private TrueTypeFont font;
-	
+
 	private Colour background = Colour.WHITE;
 	private Colour foreground = Colour.BLACK;
-	
-	private int xOffset, yOffset;
+
+	public int xOffset, yOffset;
 	private int padding = 5;
 	private int tabSize;
 	private int charHeight = ImmediateRenderer.EDITING_FONT.getHeight();
 	private int wheelDelta = 0;
 	private boolean insertMode = false;
-	
+
 	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;
@@ -47,69 +46,70 @@ public class TextArea extends Component {
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
-		
+
 		setBackground(Theme.BASE);
 		setCursorColour(Theme.ACCENT);
 		setForeground(Colour.PINK);
 		setFont(ImmediateRenderer.EDITING_FONT);
-		
+
 		this.buffer.add(new Line());
 	}
-	
+
 	public TextArea() {
 		this(Display.getWidth(), Display.getHeight());
 	}
-	
+
 	@Override
 	public void init() {
-		
+
 	}
 
 	@Override
 	public void update() {
 		wheelDelta = Mouse.getDWheel();
-		
+
 		// only scroll if we are inside of the textarea
 		if (Input.intersects(this) && wheelDelta != 0) {
-			yOffset += wheelDelta ;
+			yOffset += wheelDelta;
 		}
-		
+
 		if (Input.getKeyPressed(Keyboard.KEY_INSERT)) {
 			insertMode = !insertMode;
 		}
-		
+
 		updateChildren(children);
 	}
-	
+
 	@Override
 	public void render() {
 		RenderContext.colour(background);
 		RenderContext.rect(x, y, w, h);
 
 		renderChildren(children);
-		
+
 		RenderContext.colour(foreground);
 		int line = 0;
 		RenderContext.font(font);
-		
+
 		for (Line s : buffer) {
 			int glyph = 0;
 			for (Glyph g : s.value) {
 				int charWidth = ImmediateRenderer.CURRENT_FONT.getWidth(String.valueOf(g.value));
 				RenderContext.colour(g.colouring);
-				RenderContext.drawString(String.valueOf(g.value), x + xOffset + padding + (glyph * charWidth), y + yOffset + padding + (line * charHeight));
+				RenderContext.drawString(String.valueOf(g.value), x + padding + (glyph * charWidth),
+						y + padding + (line * charHeight));
 				glyph++;
 			}
 			line++;
 		}
 	}
-	
+
 	public void append(char c) {
 		Line l = getLine();
 		l.append(c);
 		setLine(l, buffer.size() - 1);
 	}
-	
+
 	public void append(String s) {
 		for (char c : s.toCharArray()) {
 			append(c);
@@ -119,32 +119,32 @@ public class TextArea extends Component {
 	public Line getLine(int lineNum) {
 		return buffer.get(lineNum);
 	}
-	
+
 	public Line getLine() {
 		return buffer.get(buffer.size() - 1);
 	}
-	
+
 	public void setLine(Line to, int lineNum) {
 		buffer.set(lineNum, to);
 	}
-	
+
 	public void setLine(Line to) {
 		buffer.set(buffer.size() - 1, to);
 	}
-	
+
 	public void setLineAndMove(Line to) {
 		int oldLen = buffer.get(buffer.size() - 1).length();
 		buffer.set(buffer.size() - 1, to);
 		moveCursor(to.length() - oldLen, 0);
 	}
-	
+
 	public void insert(char c, int ix, int iy) {
 		Line line = getLine(iy);
 		line.setCharAt(ix, c);
 		System.out.println("insert");
 		setLine(line, iy);
 	}
-	
+
 	public void place(String s, int ix, int iy) {
 		int idx = 0;
 		for (char c : s.toCharArray()) {
@@ -152,12 +152,12 @@ public class TextArea extends Component {
 			idx++;
 		}
 	}
-	
+
 	public void place(char c, int ix, int iy) {
 		if (ix == 0 && iy == 0 && buffer.size() == 0) {
 			buffer.add(new Line(1));
 		}
-		
+
 		Line line = getLine(iy);
 		if (ix >= line.length()) {
 			line.append(c);
@@ -177,11 +177,11 @@ public class TextArea extends Component {
 			buffer.add(iy + 1, new Line());
 			return;
 		}
-		
+
 		if (ix < 0 || ix > currentLine.length()) {
 			return;
 		}
-		
+
 		Line first = currentLine.substring(0, ix);
 		Line excess = currentLine.substring(ix);
 		buffer.set(iy, first);
@@ -189,23 +189,21 @@ public class TextArea extends Component {
 	}
 
 	/*
-	 * Will remove the end of the line
-	 * returns if true if the cursor can
-	 * go left a spot, if not will return
-	 * false.
+	 * Will remove the end of the line returns if true if the cursor can go left
+	 * a spot, if not will return false.
 	 */
 	public void backspace(Cursor caret) {
 		int ix = caret.ix;
 		int iy = caret.iy;
-		
+
 		Line current = getLine(iy);
-		
+
 		if (ix == 0) {
 			// top left, nothing to do
 			if (iy == 0) {
 				return;
 			}
-			
+
 			Line above = getLine(iy - 1);
 			int aboveInitialLength = above.length();
 			above.append(current.toString());
@@ -214,14 +212,13 @@ public class TextArea extends Component {
 			caret.move(aboveInitialLength, -1);
 			return;
 		}
-		
+
 		current.deleteCharAt(ix - 1);
 		setLine(current, iy);
 		caret.move(-1, 0);
 		return;
 	}
 
-	
 	// TODO: FIXME optimize for HUGE files.
 	// how?
 	// load the file, cut it into pieces
@@ -241,8 +238,7 @@ public class TextArea extends Component {
 			}
 			System.out.println("done");
 			br.close();
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("todo");
 		}
 	}
@@ -250,7 +246,7 @@ public class TextArea extends Component {
 	public int getCharacterCount() {
 		return getLine().length();
 	}
-	
+
 	public int getLineCount() {
 		return buffer.size();
 	}
@@ -269,11 +265,11 @@ public class TextArea extends Component {
 	public void setBackground(Colour background) {
 		this.background = background;
 	}
-	
+
 	public void setForeground(Colour foreground) {
 		this.foreground = foreground;
 	}
-	
+
 	public List<Line> getLines() {
 		return buffer;
 	}

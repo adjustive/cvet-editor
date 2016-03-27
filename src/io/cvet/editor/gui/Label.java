@@ -68,4 +68,8 @@ public class Label extends Component {
 		this.font = font;
 	}
 
+	public String getValue() {
+		return value;
+	}
+
 }

@@ -26,7 +26,9 @@ public class Settings {
 			"match_braces = false\n" +
 			"anti_alias = true\n"
 			+ "blink_cursor = false\n"
-			+ "cursor_blink_latency = 1000";
+			+ "cursor_blink_latency = 1000\n"
+			+ "auto_save = true\n"
+			+ "save_rate = 1000\n";
 	
 	private static HashMap<String, Object> DEFAULT_SETTING_LOOKUP;
 	private static HashMap<String, Object> USER_SETTING_LOOKUP;
