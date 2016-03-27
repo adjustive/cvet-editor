@@ -22,9 +22,6 @@ public abstract class RenderBackend {
 	public static boolean ANTI_ALIAS;
 	public static int FONT_SIZE;
 	public static String FONT_FACE;
-	static {
-		loadFont();
-	}
 	
 	public static void loadFont() {
 		ANTI_ALIAS = (boolean) Settings.getSetting("anti_alias");

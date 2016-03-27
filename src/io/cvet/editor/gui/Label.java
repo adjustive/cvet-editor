@@ -5,6 +5,7 @@ import org.newdawn.slick.TrueTypeFont;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.util.Theme;
 
 public class Label extends Component {
 
@@ -38,8 +39,10 @@ public class Label extends Component {
 	@Override
 	public void render() {
 		if (background != null) {
-			RenderContext.colour(Colour.BLACK);
+			// drop shadow
+			RenderContext.colour(Theme.DARK_BASE);
 			RenderContext.rect(x - xPad, y + yPad, w + 2, h + 2);
+
 			RenderContext.colour(background);
 			RenderContext.rect(x - xPad, y + yPad, w, h);
 		}

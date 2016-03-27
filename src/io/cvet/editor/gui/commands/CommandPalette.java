@@ -53,7 +53,7 @@ public class CommandPalette extends Component implements CursorAction {
 		this.w = Display.getWidth() / 3;
 		this.h = defaultHeight;
 		this.x = (Display.getWidth() / 2) - (this.w / 2);
-		this.y = 5;
+		this.y = Display.getHeight() / 8;
 		
 		this.buffer = new TextArea(this.w, defaultHeight);
 		this.caret = buffer.getCaret();

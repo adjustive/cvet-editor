@@ -14,7 +14,7 @@ public class Settings {
 
 	private static Toml toml;
 	private static File editorDir = new File(defaultDirectory() + "/.nate-editor");
-	private static File defaultEditorConfig = new File(editorDir + "/config.toml");
+	public static File defaultEditorConfig = new File(editorDir + "/config.toml");
 	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
 	
 	// this is the default config file

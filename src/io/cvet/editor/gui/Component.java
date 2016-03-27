@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.TrueTypeFont;
 
 import io.cvet.editor.Layout;
+import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.util.Input;
@@ -22,6 +24,7 @@ public abstract class Component {
 	public int x, y, w, h;
 	protected Layer layer = Layer.BOTTOM;
 	
+	protected TrueTypeFont font = RenderBackend.EDITING_FONT;
 	protected boolean focus = true;
 	protected boolean visible = true;
 	
@@ -188,6 +191,10 @@ public abstract class Component {
 	
 	public void setLayer(Layer layer) {
 		this.layer = layer;
+	}
+	
+	public void setFont(TrueTypeFont font) {
+		this.font = font;
 	}
 	
 	public void setPosition(int x, int y, int w, int h) {

@@ -21,6 +21,7 @@ import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.gui.View;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.util.Input;
@@ -36,6 +37,8 @@ public class Editor extends Component implements Runnable {
 	
 	private HashMap<String, Buffer> buffers;
 	private String currentBufferName;
+		
+	private View mainView;
 
 	private Thread thread;
 	private CommandPalette palette;
@@ -68,6 +71,7 @@ public class Editor extends Component implements Runnable {
 		this.w = Display.getWidth();
 		this.h = Display.getHeight();
 
+		RenderBackend.loadFont();
 		RenderContext.init(w, h);
 
 		// pick a random child to focus lol
@@ -82,6 +86,9 @@ public class Editor extends Component implements Runnable {
 		palette.setKeyboardTrigger(Modifier.Super, Keyboard.KEY_P);
 		palette.setLayer(Layer.TOP);
 		addChild(palette);
+		
+		mainView = new View();
+		addChild(mainView);
 	}
 
 	public void update() {
@@ -185,15 +192,16 @@ public class Editor extends Component implements Runnable {
 		return buffers.containsKey(name);
 	}
 
+	// TODO:
 	public void loadBuffer(String name) {
-		if (bufferWithNameExists(name)) {
-			Buffer buff = buffers.get(name);
-			addChild(buff);
-			currentBufferName = name;
-		} else {
-			System.err.println("shit!! we dont handle buffer collisions yet!");
-			return;
-		}
+//		if (bufferWithNameExists(name)) {
+//			Buffer buff = buffers.get(name);
+//			addChild(buff);
+//			currentBufferName = name;
+//		} else {
+//			System.err.println("shit!! we dont handle buffer collisions yet!");
+//			return;
+//		}
 	}
 
 	// New buffer that is given focus

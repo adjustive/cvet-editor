@@ -80,7 +80,7 @@ public class Cursor extends Component {
 		int initialX = ix;
 		for (int i = ix - 1; i >= 0; i--) {
 			char c = line.charAt(i);
-			if (c == ' ' && i != initialX - 1) {
+			if ((!Character.isLetter(c) || c == ' ') && i != initialX - 1) {
 				break;
 			}
 			result.append(c);
@@ -107,7 +107,7 @@ public class Cursor extends Component {
 		int initialX = ix;
 		for (int i = initialX; i < line.length(); i++) {
 			char c = line.charAt(i);
-			if (c == ' ' && i != initialX) {
+			if ((!Character.isLetter(c) || c == ' ') && i != initialX) {
 				break;
 			}
 			result.append(c);
