@@ -13,7 +13,7 @@ import me.grison.jtoml.impl.Toml;
 public class Settings {
 
 	private static Toml toml;
-	private static File editorDir = new File(System.getenv("APPDATA") + "/.nate-editor");
+	private static File editorDir = new File(defaultDirectory() + "/.nate-editor");
 	private static File defaultEditorConfig = new File(editorDir + "/config.toml");
 	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
 	
@@ -114,6 +114,18 @@ public class Settings {
 
 	public static File getUserConfigFile() {
 		return userEditorConfig;
+	}
+	
+	private static String defaultDirectory() {
+	    String OS = System.getProperty("os.name").toUpperCase();
+	    if (OS.contains("WIN"))
+	        return System.getenv("APPDATA");
+	    else if (OS.contains("MAC"))
+	        return System.getProperty("user.home") + "/Library/Application "
+	                + "Support";
+	    else if (OS.contains("NUX"))
+	        return System.getProperty("user.home");
+	    return System.getProperty("user.dir");
 	}
 	
 }
