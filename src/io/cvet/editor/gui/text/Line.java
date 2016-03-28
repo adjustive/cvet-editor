@@ -38,6 +38,10 @@ public class Line {
 		value.set(where, new Glyph(colouring, c)); 
 	}
 
+	public void insert(int where, Glyph g) {
+		value.add(where, g);
+	}
+	
 	public void insert(int where, char c) {
 		insert(defaultColouring, c, where);
 	}
@@ -130,6 +134,22 @@ public class Line {
 
 	public char charAt(int ix) {
 		return value.get(ix).value;
+	}
+
+	public void insert(int where, Line prevWord) {
+		for (int i = 0; i < prevWord.value.size(); i++) {
+			insert(where + i, prevWord.value.get(i));
+		}
+	}
+	
+	public void setGlyphAt(int where, Glyph g) {
+		value.set(where, g);
+	}
+	
+	public void set(int where, Line prevWord) {
+		for (int i = 0; i < prevWord.value.size(); i++) {
+			setGlyphAt(where + i, prevWord.value.get(i));
+		}
 	}
 	
 }

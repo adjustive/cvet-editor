@@ -1,5 +1,7 @@
 package io.cvet.editor.gui.cursor;
 
+import java.util.regex.Pattern;
+
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -361,6 +363,34 @@ public class Cursor extends Component {
 			move(ix > 0 ? -1 : 0, 0);
 			selection = null;
 			break;
+		case Keyboard.KEY_SPACE:
+			String bef = getWordBefore(ix).trim();
+			System.out.println("word before is " + bef);
+			
+			Line line = owner.getLine(iy);
+			Line prevWord = line.substring(ix - bef.length(), ix);
+			System.out.println("hey " + prevWord.toString() + " " + bef.length() + ", " + line.toString());
+			
+			if (isKeyword(bef)) {
+				for (int i = 0; i < prevWord.value.size(); i++) {
+					prevWord.setColouringAt(Theme.KEYWORD, i);
+				}
+				line.set(ix - bef.length(), prevWord);
+				owner.setLine(line, iy);			
+			} else if (isType(bef)) {
+				for (int i = 0; i < prevWord.value.size(); i++) {
+					prevWord.setColouringAt(Theme.TYPE, i);
+				}
+				line.set(ix - bef.length(), prevWord);
+				owner.setLine(line, iy);			
+			} else if (Pattern.matches("'([^']|'')*'", bef)) {
+				
+			}
+			
+			// insert the space
+			owner.place(Keyboard.getEventCharacter(), ix, iy);
+			move(1, 0);
+			break;
 		case Keyboard.KEY_RIGHT:
 			setLast();
 			move(ix < getCurrentLine().length() ? 1 : 0, 0);
@@ -564,6 +594,33 @@ public class Cursor extends Component {
 
 	public void setHighlightCurrentLine(boolean highlightCurrentLine) {
 		this.highlightCurrentLine = highlightCurrentLine; 
+	}
+	
+	private String[] keywords = new String[] {
+		"return", "const", "if", "else", "goto",
+		"include",
+	};
+	
+	private String[] types = new String[] {
+		"int", "void", "char", "struct",
+	};
+	
+	public boolean isKeyword(String kw) {
+		for (String s : keywords) {
+			if (s.equals(kw)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isType(String typ) {
+		for (String s : types) {
+			if (s.equals(typ)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

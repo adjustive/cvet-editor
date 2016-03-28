@@ -101,7 +101,7 @@ public class TextArea extends Component {
 				int charWidth = ImmediateRenderer.CURRENT_FONT.getWidth(String.valueOf(g.value));
 				RenderContext.colour(g.colouring);
 				RenderContext.drawString(String.valueOf(g.value), x + padding + (glyph * charWidth),
-						y + caret.yOffset + padding + (line * charHeight));
+						y + padding + (line * charHeight));
 				glyph++;
 			}
 			line++;
