@@ -7,13 +7,9 @@ import java.io.FileWriter;
 import javax.swing.JFileChooser;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
 
 import io.cvet.editor.Editor;
-import io.cvet.editor.Layout;
 import io.cvet.editor.config.Settings;
-import io.cvet.editor.gfx.ImmediateRenderer;
-import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.gui.menu.Menu;
 import io.cvet.editor.gui.menu.MenuAction;
@@ -21,16 +17,12 @@ import io.cvet.editor.gui.menu.MenuItem;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.Input;
-import io.cvet.editor.util.Theme;
 
 public class Buffer extends TextArea implements CursorAction {
 
 	private String name;
 	private File file;
 	private boolean saved;
-	private int lineNum = 1;
-	private Label title;
-	private int padding = 10;
 	private long timer;
 
 	private boolean autoSave;
@@ -39,15 +31,9 @@ public class Buffer extends TextArea implements CursorAction {
 	public Buffer(String name) {
 		loadSettings();
 		this.name = name;
-		String bufferInformation = "#" + lineNum + " " + name;
 		this.timer = System.currentTimeMillis();
 		this.getCaret().setCursorAction(this);
 
-		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
-		title.setBounds(Display.getWidth() - title.w - (padding * 2), padding, title.w, title.h);
-		title.setBackground(Theme.ACCENT);
-		addChild(title, Layout.Child);
-		
 		context = new Menu();
 		context.setLayer(Layer.TOP);
 		context.setVisible(false);
@@ -85,8 +71,6 @@ public class Buffer extends TextArea implements CursorAction {
 
 	public void update() {
 		super.update();
-		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
-		title.x = Display.getWidth() - RenderBackend.CURRENT_FONT.getWidth(title.getValue()) - (padding * 2);
 		
 		if (!saved && autoSave && System.currentTimeMillis() - timer > saveRateMS) {
 			save();

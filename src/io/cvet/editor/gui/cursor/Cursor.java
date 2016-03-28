@@ -34,7 +34,7 @@ public class Cursor extends Component {
 	private boolean showCursor = true;
 	public int ix, iy;
 	public int padding;
-	private int xOffset, yOffset;
+	public int xOffset, yOffset;
 	private long timer;
 
 	private boolean hungryBackspace;

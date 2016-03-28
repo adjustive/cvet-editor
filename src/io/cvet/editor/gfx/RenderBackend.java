@@ -27,7 +27,7 @@ public abstract class RenderBackend {
 		FONT_SIZE = (int) Settings.getSetting("font_size");
 		FONT_FACE = (String) Settings.getSetting("font_face");
 		EDITING_FONT = new TrueTypeFont(new Font(FONT_FACE, Font.PLAIN, FONT_SIZE).deriveFont(FONT_SIZE), ANTI_ALIAS);
-		INTERFACE_FONT = new TrueTypeFont(new Font("Arial", Font.PLAIN, 14), ANTI_ALIAS);
+		INTERFACE_FONT = new TrueTypeFont(new Font("Roboto", Font.PLAIN, 14), ANTI_ALIAS);
 		CHARACTER_WIDTH = EDITING_FONT.getWidth("a");
 		CHARACTER_HEIGHT = EDITING_FONT.getHeight();
 		CURRENT_FONT = EDITING_FONT;

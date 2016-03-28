@@ -73,6 +73,10 @@ public class Input {
 		return getKey(Keyboard.KEY_LSHIFT) || getKey(Keyboard.KEY_RSHIFT);
 	}
 	
+	public static boolean isAltModifierDown() {
+		return getKey(Keyboard.KEY_LMETA) || getKey(Keyboard.KEY_RMETA);
+	}
+	
 	public static boolean isControlModifier(int key) {
 		return key == Keyboard.KEY_LCONTROL || key == Keyboard.KEY_RCONTROL;
 	}

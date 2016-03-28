@@ -21,7 +21,7 @@ public class Tab extends Component {
 	private int padding = 10;
 	
 	public Tab(String name, Buffer buff) {
-		setFont(RenderBackend.EDITING_FONT);
+		setFont(RenderBackend.INTERFACE_FONT);
 		
 		this.name = name;
 		this.buff = buff;
@@ -79,10 +79,10 @@ public class Tab extends Component {
 	public void renderTab(int x, int y) {
 		RenderContext.font(font);
 		RenderContext.colour(Theme.ACCENT);
-		RenderContext.rect(x, y, w, h);
+		RenderContext.rect(x, y, w, h - 1);
 		
 		// render tab name in a center alignment
-		int tabNameWidth = font.getWidth(name) + (padding / 2);
+		int tabNameWidth = font.getWidth(name);
 		RenderContext.colour(Colour.WHITE);
 		RenderContext.drawString(name, x + ((w / 2) - (tabNameWidth / 2)), y + ((h / 2) - (font.getHeight() / 2)));
 	}

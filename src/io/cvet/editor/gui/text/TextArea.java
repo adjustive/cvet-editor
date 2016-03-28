@@ -74,7 +74,7 @@ public class TextArea extends Component {
 
 		// only scroll if we are inside of the textarea
 		if (Input.intersects(this) && wheelDelta != 0) {
-			yOffset += wheelDelta;
+			yOffset -= wheelDelta;
 		}
 
 		if (Input.getKeyPressed(Keyboard.KEY_INSERT)) {
@@ -101,7 +101,7 @@ public class TextArea extends Component {
 				int charWidth = ImmediateRenderer.CURRENT_FONT.getWidth(String.valueOf(g.value));
 				RenderContext.colour(g.colouring);
 				RenderContext.drawString(String.valueOf(g.value), x + padding + (glyph * charWidth),
-						y + padding + (line * charHeight));
+						y + caret.yOffset + padding + (line * charHeight));
 				glyph++;
 			}
 			line++;

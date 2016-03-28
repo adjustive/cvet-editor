@@ -226,4 +226,8 @@ public abstract class Component {
 		this.mouseTrigger = mouseTrigger;
 	}
 	
+	public TrueTypeFont getFont() {
+		return font;
+	}
+	
 }

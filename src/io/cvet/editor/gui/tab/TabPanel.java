@@ -18,7 +18,7 @@ public class TabPanel extends Component {
 	private int padding = 5;
 	
 	public TabPanel() {
-		this.h = RenderBackend.CHARACTER_HEIGHT + (padding * 2);
+		this.h = RenderBackend.CHARACTER_HEIGHT + (padding * 2) + 2;
 	}
 	
 	@Override
@@ -47,11 +47,12 @@ public class TabPanel extends Component {
 
 	@Override
 	public void render() {
-		RenderContext.colour(Theme.DARK_BASE);
-		RenderContext.rect(x, y, Display.getWidth() + 2, this.h + 2);
 		
+		RenderContext.colour(Theme.DARK_BASE);
+		RenderContext.rect(x, y, Display.getWidth() + 2, this.h);
+
 		RenderContext.colour(Theme.DARK_ACCENT);
-		RenderContext.rect(x, y, Display.getWidth(), this.h);
+		RenderContext.rect(x, y, Display.getWidth(), this.h - 6);
 		
 		int size = 0;
 		for (int i = 0; i < tabs.size(); i++) {
@@ -61,12 +62,12 @@ public class TabPanel extends Component {
 			// underline
 			if (getCurrentTab() != null && getCurrentTab().name.equals(tab.name)) {
 				RenderContext.colour(230, 201, 115);
-				RenderContext.rect(size, this.h - 1, tab.w, 2);
+				RenderContext.rect(size, getCurrentTab().h - 2, tab.w, 1);
 				tab.x = size;
 				tab.y = y;
 			}
 			
-			size += tab.w + 1;
+			size += tab.w;
 		}
 		
 		if (getCurrentTab() != null) {

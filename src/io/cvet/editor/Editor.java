@@ -40,7 +40,7 @@ public class Editor extends Component implements Runnable {
 	private Thread thread;
 	private CommandPalette palette;
 	private int frameRate = 0;
-
+	
 	public Editor() {
 		instance = this;
 	}
