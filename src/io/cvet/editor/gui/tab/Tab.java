@@ -1,5 +1,6 @@
 package io.cvet.editor.gui.tab;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import io.cvet.editor.gfx.Colour;
@@ -7,6 +8,7 @@ import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
+import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
 public class Tab extends Component {

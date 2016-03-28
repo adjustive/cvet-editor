@@ -37,7 +37,7 @@ public class TextArea extends Component {
 	private int charHeight = ImmediateRenderer.EDITING_FONT.getHeight();
 	private int wheelDelta = 0;
 	private boolean insertMode = false;
-
+	
 	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;

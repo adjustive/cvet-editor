@@ -13,6 +13,7 @@ public class Input {
 	public static int x, y;
 	public static int w = 16, h = 16;
 
+	private static boolean[] lastMouse = new boolean[3];
 	private static boolean[] lastKeys = new boolean[256];
 	
 	public static void update() {
@@ -22,14 +23,26 @@ public class Input {
 		for (int i = 0; i < lastKeys.length; i++) {
 			lastKeys[i] = getKey(i);
 		}
+		
+		for (int i = 0; i < lastMouse.length; i++) {
+			lastMouse[i] = getMouse(i);
+		}
 	}
 	
 	public static boolean controlCombo(int keyCode) {
 		return isControlModifierDown() && Input.getKey(keyCode);
 	}
 	
+	public static boolean getMouse(int mouseCode) {
+		return Mouse.isButtonDown(mouseCode);
+	}
+	
 	public static boolean getKey(int keyCode) {
 		return Keyboard.isKeyDown(keyCode);
+	}
+	
+	public static boolean getMouseClicked(int mouseCode) {
+		return getMouse(mouseCode) && !lastMouse[mouseCode];
 	}
 	
 	public static boolean getKeyPressed(int keyCode) {

@@ -464,13 +464,15 @@ public class Cursor extends Component {
 		}
 		
 		// no key is pressed, we can blink!
-		if (!Keyboard.getEventKeyState()) {
-			if (System.currentTimeMillis() - timer > blinkLatencyMS) {
-				showCursor = !showCursor;
-				timer += blinkLatencyMS;
+		if (shouldBlink) {
+			if (!Keyboard.getEventKeyState()) {
+				if (System.currentTimeMillis() - timer > blinkLatencyMS) {
+					showCursor = !showCursor;
+					timer += blinkLatencyMS;
+				}
+			} else {
+				showCursor = true;
 			}
-		} else {
-			showCursor = true;
 		}
 	}
 
@@ -507,8 +509,6 @@ public class Cursor extends Component {
 		}
 		ix += x;
 		iy += y;
-		
-		shouldBlink = false;
 		
 		int cw = owner.getFont().getWidth(" ");
 		xOffset += x * cw;
