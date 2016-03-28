@@ -407,6 +407,12 @@ public class Cursor extends Component {
 		case Keyboard.KEY_TAB:
 			move(owner.tab(ix, iy), 0);
 			break;
+		case Keyboard.KEY_PRIOR: // pgup
+			set(0, 0);
+			break;
+		case Keyboard.KEY_NEXT: // pgdown
+			set(0, owner.getLineCount() - 1);
+			break;
 		default:
 			owner.place(Keyboard.getEventCharacter(), ix, iy);
 			move(1, 0);
