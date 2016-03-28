@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
 import java.awt.GraphicsEnvironment;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import javax.swing.UIManager;
@@ -23,6 +24,7 @@ import io.cvet.editor.gui.View;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.gui.tab.Tab;
+import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
@@ -55,6 +57,16 @@ public class Editor extends Component implements Runnable {
 			int offset = OS.startsWith("Windows") ? 40 : 0;
 			Display.setLocation((mode.getWidth() / 2) - (w / 2), (mode.getHeight() / 2) - (h / 2) - offset);
 			Display.setResizable(true);
+			
+			Display.setIcon(new ByteBuffer[] {
+				FileUtil.loadIcon("/icon16.png"),					
+				FileUtil.loadIcon("/icon32.png"),					
+				FileUtil.loadIcon("/icon64.png"),					
+				FileUtil.loadIcon("/icon128.png"),					
+				FileUtil.loadIcon("/icon256.png"),					
+				FileUtil.loadIcon("/icon512.png"),					
+			});
+
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("Well this is awkward.");

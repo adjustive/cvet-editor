@@ -10,6 +10,7 @@ import io.cvet.editor.Layout;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.layers.Layer;
+import io.cvet.editor.gui.menu.Menu;
 import io.cvet.editor.util.Input;
 
 public abstract class Component {
@@ -24,6 +25,7 @@ public abstract class Component {
 	public int x, y, w, h;
 	protected Layer layer = Layer.BOTTOM;
 	
+	protected Menu context;
 	protected TrueTypeFont font = RenderBackend.EDITING_FONT;
 	protected boolean focus = true;
 	protected boolean visible = true;
@@ -101,11 +103,12 @@ public abstract class Component {
 	}
 
 	public void processTrigger() {
-		if (!isVisible() && mouseTrigger != -1) {
+		if (context != null && !context.isVisible() && mouseTrigger != -1) {
+			System.out.println("listening for context");
 			if (Input.intersects(this) && Input.getMouseClicked(mouseTrigger)) {
-				setPosition(Input.x, Input.y);
-				setVisible(true);
-				setFocus(true);
+				context.setPosition(Input.x, Input.y);
+				context.setVisible(true);
+				context.setFocus(true);
 				return;
 			}
 		}

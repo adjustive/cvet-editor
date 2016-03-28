@@ -69,16 +69,9 @@ public class PaletteSuggestionList extends Component {
 			// only show help msg if command
 			Command c = CommandPalette.getCommands().get(suggName);
 			if (c != null) {
-				StringBuilder help = new StringBuilder(c.getShortHelp());
-				int helpWidth = RenderBackend.CURRENT_FONT.getWidth(suggName + " - " + help);
-				if (helpWidth > w) {
-					int splitIndex = (helpWidth / RenderBackend.CHARACTER_WIDTH) - (w / RenderBackend.CHARACTER_WIDTH);
-					help.insert(help.length() - splitIndex - 1, '\n');
-				}
-				
 				// and the message
 				RenderContext.colour(Colour.GRAY);
-				RenderContext.drawString(" - " + help.toString(),
+				RenderContext.drawString(" - " + c.getShortHelp(),
 						x + 5 + owner.getCaret().getFont().getWidth(suggName), y + 4 + (i * h));
 			}
 		}

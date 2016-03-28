@@ -17,7 +17,6 @@ public class Tab extends Component {
 
 	public String name;
 	public Buffer buff;
-	private Menu context;
 	
 	private int padding = 10;
 	
@@ -75,10 +74,6 @@ public class Tab extends Component {
 	@Override
 	public void update() {
 		updateChildren(children);
-
-		if (context.isVisible() && !Input.intersects(context)) {
-			context.hide();
-		}
 	}
 	
 	public void renderTab(int x, int y) {

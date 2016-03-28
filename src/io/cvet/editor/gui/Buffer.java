@@ -14,8 +14,13 @@ import io.cvet.editor.Layout;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderBackend;
+import io.cvet.editor.gui.layers.Layer;
+import io.cvet.editor.gui.menu.Menu;
+import io.cvet.editor.gui.menu.MenuAction;
+import io.cvet.editor.gui.menu.MenuItem;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
+import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
 public class Buffer extends TextArea implements CursorAction {
@@ -30,7 +35,7 @@ public class Buffer extends TextArea implements CursorAction {
 
 	private boolean autoSave;
 	private int saveRateMS;
-	
+
 	public Buffer(String name) {
 		loadSettings();
 		this.name = name;
@@ -42,6 +47,18 @@ public class Buffer extends TextArea implements CursorAction {
 		title.setBounds(Display.getWidth() - title.w - (padding * 2), padding, title.w, title.h);
 		title.setBackground(Theme.ACCENT);
 		addChild(title, Layout.Child);
+		
+		context = new Menu();
+		context.setLayer(Layer.TOP);
+		context.setVisible(false);
+		context.addItem(new MenuItem(context, "Paste", new MenuAction() {
+			@Override
+			public void perform() {
+				System.out.println("paste pls");
+			}
+		}));
+		context.setMouseTrigger(Input.MOUSE_RIGHT);
+		addChild(context);
 	}
 
 	public Buffer(String name, String contents) {
@@ -75,6 +92,8 @@ public class Buffer extends TextArea implements CursorAction {
 			save();
 			timer += saveRateMS;
 		}
+		
+		context.loseFocus();
 	}
 
 	public void render() {

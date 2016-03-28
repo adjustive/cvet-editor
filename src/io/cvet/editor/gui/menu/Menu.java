@@ -59,14 +59,18 @@ public class Menu extends Component {
 	}
 	
 	public void hide() {
-		setFocus(false);
 		setVisible(false);
+		setFocus(false);
 	}
 
-	public void show(int x, int y) {
-		setPosition(Input.x, Input.y);
-		setVisible(true);
-		setFocus(true);
+	/**
+	 * If we leave the boundaries of the menu
+	 * then lose focus and hide it
+	 */
+	public void loseFocus() {
+		if (isVisible() && !Input.intersects(this)) {
+			hide();
+		}		
 	}
 
 }
