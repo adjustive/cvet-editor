@@ -28,7 +28,8 @@ public class Settings {
 			+ "blink_cursor = false\n"
 			+ "cursor_blink_latency = 1000\n"
 			+ "auto_save = true\n"
-			+ "save_rate = 1000\n";
+			+ "save_rate = 1000\n"
+			+ "highlight_current_line = true\n";
 	
 	private static HashMap<String, Object> DEFAULT_SETTING_LOOKUP;
 	private static HashMap<String, Object> USER_SETTING_LOOKUP;

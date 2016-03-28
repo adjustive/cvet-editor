@@ -65,6 +65,7 @@ public class CommandPalette extends Component implements CursorAction {
 		caret.setColour(Theme.BASE);
 		caret.setCursorStyle(CursorStyle.Line);
 		caret.setHungryBackspace(false);
+		caret.setHighlightCurrentLine(false);
 		
 		suggestions = new PaletteSuggestionList(this);
 		addChild(buffer, Layout.Child);

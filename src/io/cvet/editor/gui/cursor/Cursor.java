@@ -17,6 +17,7 @@ import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
+import io.cvet.editor.util.Theme;
 
 public class Cursor extends Component {
 
@@ -28,20 +29,19 @@ public class Cursor extends Component {
 	private Colour colour = new Colour(30, 30, 30);
 	private CursorStyle cursorStyle;
 	private CursorAction cursorAction = null;
+	private Mark selection;
 
+	private boolean showCursor = true;
 	public int ix, iy;
 	public int padding;
 	private int xOffset, yOffset;
-	
-	private Mark selection;
+	private long timer;
 
 	private boolean hungryBackspace;
 	private boolean matchBraces;
-
+	private boolean highlightCurrentLine;
 	private boolean shouldBlink;
 	private int blinkLatencyMS;
-	private boolean showCursor = true;
-	private long timer;
 	
 	public Cursor(TextArea owner, CursorStyle style) {
 		this.owner = owner;
@@ -53,6 +53,7 @@ public class Cursor extends Component {
 		this.shouldBlink = (boolean) Settings.getSetting("blink_cursor");
 		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
+		this.highlightCurrentLine = (boolean) Settings.getSetting("highlight_current_line");
 		timer = System.currentTimeMillis();
 	}
 
@@ -468,8 +469,14 @@ public class Cursor extends Component {
 
 	@Override
 	public void render() {
-		RenderContext.colour(colour);
+
+		if (highlightCurrentLine) {
+			RenderContext.colour(Theme.DARK_BASE);
+			RenderContext.rect(owner.x + padding, y + yOffset + padding, owner.w, h);
+		}
+
 		if (showCursor) {
+			RenderContext.colour(colour);
 			RenderContext.rect(x + xOffset + padding, y + yOffset + padding, w, h);
 		}
 		
@@ -538,6 +545,10 @@ public class Cursor extends Component {
 
 	public TrueTypeFont getFont() {
 		return owner.getFont();
+	}
+
+	public void setHighlightCurrentLine(boolean highlightCurrentLine) {
+		this.highlightCurrentLine = highlightCurrentLine; 
 	}
 
 }
