@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
 import io.cvet.editor.Editor;
+import io.cvet.editor.Layout;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderBackend;
@@ -34,12 +35,13 @@ public class Buffer extends TextArea implements CursorAction {
 		loadSettings();
 		this.name = name;
 		String bufferInformation = "#" + lineNum + " " + name;
-		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
-		title.setPosition(Display.getWidth() - title.w - (padding * 2), padding, title.w, title.h);
-		title.setBackground(Theme.ACCENT);
-		addChild(title);
 		this.timer = System.currentTimeMillis();
 		this.getCaret().setCursorAction(this);
+
+		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
+		title.setBounds(Display.getWidth() - title.w - (padding * 2), padding, title.w, title.h);
+		title.setBackground(Theme.ACCENT);
+		addChild(title, Layout.Child);
 	}
 
 	public Buffer(String name, String contents) {
@@ -162,7 +164,7 @@ public class Buffer extends TextArea implements CursorAction {
 
 	@Override
 	public boolean keyPress(int keyCode) {
-		// TODO: improve
+		// FIXME
 		switch (keyCode) {
 		case Keyboard.KEY_DELETE:
 		case Keyboard.KEY_BACK:

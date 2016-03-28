@@ -50,6 +50,13 @@ public class Colour {
 		this.b *= (1 - 0.1);
 		return this;
 	}
+	
+	public Colour lighter() {
+		this.r *= (1 + 0.1);
+		this.g *= (1 + 0.1);
+		this.b *= (1 + 0.1);
+		return this;
+	}
 
 	public Color getStupidFuckingColour() {
 		return fuckingSlick;
@@ -58,5 +65,5 @@ public class Colour {
 	public String toString() {
 		return r + ", " + g + ", " + b + ", " + a;
 	}
-	
+
 }

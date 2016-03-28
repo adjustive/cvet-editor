@@ -10,7 +10,7 @@ public class RenameCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().mainView.getCurrentTab().buff.rename(arguments[0]);
+		Editor.getMainView().getCurrentTab().buff.rename(arguments[0]);
 	}
 
 	@Override

@@ -37,6 +37,10 @@ public class RenderContext {
 	}
 
 	public static void colour(int r, int g, int b) {
+		if (backend.currentColour == null) {
+			backend.currentColour = new Colour(r, g, b);
+			System.out.println("set");
+		}
 		backend.colour(r, g, b);
 	}
 

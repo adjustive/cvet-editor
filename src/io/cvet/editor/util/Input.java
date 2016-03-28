@@ -11,8 +11,11 @@ import io.cvet.editor.gui.Component;
 public class Input {
 
 	public static int x, y;
-	public static int w = 16, h = 16;
-
+	public static int w = 1, h = 1;
+	public static final int MOUSE_MIDDLE = 2;
+	public static final int MOUSE_LEFT = 1;
+	public static final int MOUSE_RIGHT = 0;
+	
 	private static boolean[] lastMouse = new boolean[3];
 	private static boolean[] lastKeys = new boolean[256];
 	

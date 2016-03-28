@@ -11,7 +11,7 @@ public class NewFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().mainView.addTab(new Buffer(arguments[0]));
+		Editor.getMainView().addTab(new Buffer(arguments[0]));
 	}
 
 	@Override

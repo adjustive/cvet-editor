@@ -15,7 +15,6 @@ public class TabPanel extends Component {
 
 	public ArrayList<Tab> tabs = new ArrayList<Tab>();
 	public int currentTabIdx = 0;
-	private int lastTabIndex = 0;
 	private int padding = 5;
 	
 	public TabPanel() {
@@ -58,12 +57,15 @@ public class TabPanel extends Component {
 		for (int i = 0; i < tabs.size(); i++) {
 			Tab tab = tabs.get(i);
 			tab.renderTab(size, y);
+			
+			// underline
 			if (getCurrentTab() != null && getCurrentTab().name.equals(tab.name)) {
 				RenderContext.colour(230, 201, 115);
 				RenderContext.rect(size, this.h - 1, tab.w, 2);
 				tab.x = size;
 				tab.y = y;
 			}
+			
 			size += tab.w + 1;
 		}
 		
@@ -72,12 +74,14 @@ public class TabPanel extends Component {
 		}
 	}
 	
-	public void addTab(Buffer buff) {
+	public Tab addTab(Buffer buff) {
 		System.out.println("adding " + buff.getName());
+		buff.setPosition(x, y + this.h);
 		
-		Tab t = new Tab(lastTabIndex++, buff.getName(), buff);
+		Tab t = new Tab(buff.getName(), buff);
 		tabs.add(t);
 		currentTabIdx = tabs.size() - 1;
+		return t;
 	}
 	
 	public Tab getCurrentTab() {

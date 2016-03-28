@@ -164,29 +164,33 @@ public class Editor extends Component implements Runnable {
 		new Editor().start();
 	}
 
-	public static Editor getInstance() {
-		return instance;
-	}
-
 	public void exit() {
 		Display.destroy();
 		stop();
 	}
 
 	public void resize() {
-		System.out.println("todo");
+
 	}
 
 	public static void loadEverything() {
 		RenderBackend.loadFont();
 		Settings.loadSettings();
 		
-		ArrayList<Tab> tabs = Editor.getInstance().mainView.getTabList();
+		ArrayList<Tab> tabs = Editor.getMainView().getTabList();
 		for (Tab t : tabs) {
 			Buffer buff = t.buff;
 			buff.loadSettings();
 			buff.getCaret().loadSettings();
 		}
+	}
+	
+	public static View getMainView() {
+		return instance.mainView;
+	}
+	
+	public static Editor getInstance() {
+		return instance;
 	}
 	
 }

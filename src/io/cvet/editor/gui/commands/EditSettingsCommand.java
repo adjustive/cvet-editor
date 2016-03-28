@@ -12,7 +12,7 @@ public class EditSettingsCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().mainView.addTab(new Buffer(Settings.getUserConfigFile()));
+		Editor.getMainView().addTab(new Buffer(Settings.getUserConfigFile()));
 	}
 	
 	@Override

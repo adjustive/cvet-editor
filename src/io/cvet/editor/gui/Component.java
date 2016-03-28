@@ -30,6 +30,7 @@ public abstract class Component {
 	
 	protected Modifier mod = Modifier.Super;
 	public int trigger = -1;
+	protected int mouseTrigger = -1;
 	
 	// if the focus can be changed
 	protected boolean focusable;
@@ -100,6 +101,15 @@ public abstract class Component {
 	}
 
 	public void processTrigger() {
+		if (!isVisible() && mouseTrigger != -1) {
+			if (Input.intersects(this) && Input.getMouseClicked(mouseTrigger)) {
+				setPosition(Input.x, Input.y);
+				setVisible(true);
+				setFocus(true);
+				return;
+			}
+		}
+		
 		if (!isVisible() && trigger != -1) {
 			switch (mod) {
 			case Super:
@@ -197,11 +207,20 @@ public abstract class Component {
 		this.font = font;
 	}
 	
-	public void setPosition(int x, int y, int w, int h) {
+	public void setPosition(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	public void setBounds(int x, int y, int w, int h) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
 		this.h = h;
+	}
+	
+	public void setMouseTrigger(int mouseTrigger) {
+		this.mouseTrigger = mouseTrigger;
 	}
 	
 }

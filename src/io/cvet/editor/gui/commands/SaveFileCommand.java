@@ -10,7 +10,7 @@ public class SaveFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Editor.getInstance().mainView.getCurrentTab().buff.save();
+		Editor.getMainView().getCurrentTab().buff.save();
 	}
 
 	@Override

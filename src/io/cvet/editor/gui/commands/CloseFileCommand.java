@@ -11,11 +11,11 @@ public class CloseFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Buffer buff = Editor.getInstance().mainView.getCurrentTab().buff;
+		Buffer buff = Editor.getMainView().getCurrentTab().buff;
 		if (!buff.hasBeenSaved()) {
 			// TODO: panel for y/n option
 		}
-		Editor.getInstance().mainView.closeCurrentTab();
+		Editor.getMainView().closeCurrentTab();
 	}
 	
 	@Override

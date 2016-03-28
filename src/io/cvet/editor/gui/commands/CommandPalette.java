@@ -181,7 +181,7 @@ public class CommandPalette extends Component implements CursorAction {
 					buffer.setLineAndMove(new Line(suggested.key));
 					break;
 				case Buffer:
-					Editor.getInstance().mainView.setTab(suggested.key);
+					Editor.getMainView().setTab(suggested.key);
 					hide();
 					return true;
 				}
@@ -207,7 +207,7 @@ public class CommandPalette extends Component implements CursorAction {
 					}
 					return true;
 				case "!":
-					ArrayList<Tab> bufferNames = Editor.getInstance().mainView.getTabList();
+					ArrayList<Tab> bufferNames = Editor.getMainView().getTabList();
 					if (bufferNames.size() == 0) {
 						return true;
 					}
