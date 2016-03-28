@@ -14,7 +14,6 @@ public abstract class RenderBackend {
 	protected Colour currentColour;
 	protected GeometricType type;
 
-	// TODO: move into Settings, or some shit like that?
 	public static TrueTypeFont EDITING_FONT;
 	public static TrueTypeFont INTERFACE_FONT;
 	public static TrueTypeFont CURRENT_FONT;

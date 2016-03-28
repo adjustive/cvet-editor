@@ -2,9 +2,9 @@ package io.cvet.editor;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glViewport;
 
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 
 import javax.swing.UIManager;
 
@@ -17,12 +17,13 @@ import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
+import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.View;
 import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.gui.layers.Layer;
+import io.cvet.editor.gui.tab.Tab;
 import io.cvet.editor.util.Input;
-import io.cvet.editor.util.RNG;
 import io.cvet.editor.util.Theme;
 
 public class Editor extends Component implements Runnable {
@@ -44,33 +45,24 @@ public class Editor extends Component implements Runnable {
 
 	public void init() {
 		java.awt.DisplayMode mode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
-		final int width = mode.getWidth() / 12 * 9;
-		final int height = mode.getHeight() / 12 * 9;
+		this.w = mode.getWidth() / 12 * 9;
+		this.h = mode.getHeight() / 12 * 9;
 
 		// setup the display
 		try {
-			Display.setDisplayMode(new DisplayMode(width, height));
+			Display.setDisplayMode(new DisplayMode(w, h));
 			Display.setTitle("nate");
-
 			int offset = OS.startsWith("Windows") ? 40 : 0;
-			Display.setLocation((mode.getWidth() / 2) - (width / 2), (mode.getHeight() / 2) - (height / 2) - offset);
-
+			Display.setLocation((mode.getWidth() / 2) - (w / 2), (mode.getHeight() / 2) - (h / 2) - offset);
+			Display.setResizable(true);
 			Display.create();
 		} catch (Exception e) {
 			System.err.println("Well this is awkward.");
 			return;
 		}
 
-		this.w = Display.getWidth();
-		this.h = Display.getHeight();
-
 		RenderBackend.loadFont();
 		RenderContext.init(w, h);
-
-		// pick a random child to focus lol
-		if (children.size() != 0) {
-			children.get(RNG.cap(children.size())).setFocus(true);
-		}
 
 		palette = new CommandPalette();
 		palette.setVisible(false);
@@ -165,9 +157,10 @@ public class Editor extends Component implements Runnable {
 		} catch (Exception e) {
 		}
 		Keyboard.enableRepeatEvents(true);
-
+		
 		Settings.setupEditor();
 		Settings.loadSettings();
+		
 		new Editor().start();
 	}
 
@@ -181,7 +174,19 @@ public class Editor extends Component implements Runnable {
 	}
 
 	public void resize() {
-		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		System.out.println("todo");
 	}
 
+	public static void loadEverything() {
+		RenderBackend.loadFont();
+		Settings.loadSettings();
+		
+		ArrayList<Tab> tabs = Editor.getInstance().mainView.getTabList();
+		for (Tab t : tabs) {
+			Buffer buff = t.buff;
+			buff.loadSettings();
+			buff.getCaret().loadSettings();
+		}
+	}
+	
 }

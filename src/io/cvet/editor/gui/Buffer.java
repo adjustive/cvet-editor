@@ -9,6 +9,7 @@ import javax.swing.JFileChooser;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 
+import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderBackend;
@@ -26,10 +27,11 @@ public class Buffer extends TextArea implements CursorAction {
 	private int padding = 10;
 	private long timer;
 
-	private boolean autoSave = (boolean) Settings.getSetting("auto_save");
-	private int saveRateMS = (int) Settings.getSetting("save_rate");
+	private boolean autoSave;
+	private int saveRateMS;
 	
 	public Buffer(String name) {
+		loadSettings();
 		this.name = name;
 		String bufferInformation = "#" + lineNum + " " + name;
 		this.title = new Label(bufferInformation, ImmediateRenderer.EDITING_FONT);
@@ -55,13 +57,19 @@ public class Buffer extends TextArea implements CursorAction {
 		buffer.clear();
 		this.loadFile(file);
 	}
+	
+	public void loadSettings() {
+		super.loadSettings();
+		autoSave = (boolean) Settings.getSetting("auto_save");
+		saveRateMS = (int) Settings.getSetting("save_rate");
+	}
 
 	public void update() {
 		super.update();
 		title.setValue((saved ? name : "*" + name) + " #" + (getCaret().iy + 1));
 		title.x = Display.getWidth() - RenderBackend.CURRENT_FONT.getWidth(title.getValue()) - (padding * 2);
 		
-		if (autoSave && System.currentTimeMillis() - timer > saveRateMS && hasBeenSaved()) {
+		if (!saved && autoSave && System.currentTimeMillis() - timer > saveRateMS) {
 			save();
 			timer += saveRateMS;
 		}
@@ -106,6 +114,10 @@ public class Buffer extends TextArea implements CursorAction {
 			saved = true;
 		} catch (Exception e) {
 			System.err.println("failed 2 write :(");
+		}
+		
+		if (file == Settings.getUserConfigFile()) {
+			Editor.loadEverything();
 		}
 
 		saved = true;
@@ -162,6 +174,10 @@ public class Buffer extends TextArea implements CursorAction {
 			break;
 		}
 		return false;
+	}
+
+	public File getFile() {
+		return file;
 	}
 
 }

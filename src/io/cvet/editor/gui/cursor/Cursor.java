@@ -48,15 +48,18 @@ public class Cursor extends Component {
 		this.cursorStyle = style;
 		this.ix = iy = 0;
 		this.h = ImmediateRenderer.EDITING_FONT.getHeight();
-		
+		timer = System.currentTimeMillis();
+		loadSettings();
+	}
+
+	public void loadSettings() {
 		this.blinkLatencyMS = (int) Settings.getSetting("cursor_blink_latency");
 		this.shouldBlink = (boolean) Settings.getSetting("blink_cursor");
 		this.hungryBackspace = (boolean) Settings.getSetting("hungry_backspace");
 		this.matchBraces = (boolean) Settings.getSetting("match_braces");
 		this.highlightCurrentLine = (boolean) Settings.getSetting("highlight_current_line");
-		timer = System.currentTimeMillis();
 	}
-
+	
 	@Override
 	public void init() {
 
@@ -438,7 +441,6 @@ public class Cursor extends Component {
 		this.y = owner.y;
 		this.visible = owner.isVisible();
 		this.w = cursorStyle == CursorStyle.Block ? RenderBackend.CHARACTER_WIDTH : 1;
-
 		
 		if (Input.isControlModifierDown()) {
 			handleControlCombo();
@@ -460,10 +462,15 @@ public class Cursor extends Component {
 				handleKeyCode(keyCode);
 			}
 		}
-
-		if (System.currentTimeMillis() - timer > blinkLatencyMS) {
-			showCursor = shouldBlink ? !showCursor : true;
-			timer += blinkLatencyMS;
+		
+		// no key is pressed, we can blink!
+		if (!Keyboard.getEventKeyState()) {
+			if (System.currentTimeMillis() - timer > blinkLatencyMS) {
+				showCursor = !showCursor;
+				timer += blinkLatencyMS;
+			}
+		} else {
+			showCursor = true;
 		}
 	}
 
@@ -500,6 +507,8 @@ public class Cursor extends Component {
 		}
 		ix += x;
 		iy += y;
+		
+		shouldBlink = false;
 		
 		int cw = owner.getFont().getWidth(" ");
 		xOffset += x * cw;

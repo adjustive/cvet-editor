@@ -41,8 +41,8 @@ public class TextArea extends Component {
 	public TextArea(int w, int h) {
 		this.w = w;
 		this.h = h;
-		this.tabSize = (int) Settings.getSetting("tab_size");
 		this.buffer = new ArrayList<Line>();
+		loadSettings();
 		caret = new Cursor(this, CursorStyle.Block);
 		caret.setOffset(padding);
 		addChild(caret);
@@ -53,6 +53,10 @@ public class TextArea extends Component {
 		setFont(ImmediateRenderer.EDITING_FONT);
 
 		this.buffer.add(new Line());
+	}
+	
+	public void loadSettings() {
+		this.tabSize = (int) Settings.getSetting("tab_size");
 	}
 
 	public TextArea() {

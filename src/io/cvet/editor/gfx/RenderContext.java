@@ -8,7 +8,7 @@ import io.cvet.editor.gfx.RenderBackend.GeometricType;
 
 public class RenderContext {
 
-	private static RenderBackend backend;
+	public static RenderBackend backend;
 	
 	public void setRenderBackend(RenderBackend backend) {
 		RenderContext.backend = backend;
@@ -61,5 +61,5 @@ public class RenderContext {
 		backend = new ImmediateRenderer();
 		backend.init(w, h);
 	}
-
+	
 }
