@@ -14,6 +14,7 @@ import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
 import io.cvet.editor.gui.CursorAction;
+import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.gui.cursor.Mark.Span;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
@@ -139,10 +140,12 @@ public class Cursor extends Component {
 					owner.place(s, ix, iy);
 					owner.moveCursor(s.length(), 0);
 					break;
-				case Keyboard.KEY_N:
-					System.err.println("todo");
-//					Editor.getInstance().showCommandPalette("new ");
+				case Keyboard.KEY_N: {
+					CommandPalette palette = Editor.getInstance().palette;
+					palette.setText("new ");
+					palette.show();
 					break;
+				}
 				case Keyboard.KEY_W: // close file
 					Editor.getMainView().closeCurrentTab();
 					break;
@@ -153,8 +156,9 @@ public class Cursor extends Component {
 					}
 					break;
 				case Keyboard.KEY_L: // line goto
-					System.err.println("todo");
-//					Editor.getInstance().showCommandPalette("goto ");
+					CommandPalette palette = Editor.getInstance().palette;
+					palette.setText("goto ");
+					palette.show();
 					break;
 				case Keyboard.KEY_LEFT: // left word
 					String previousWord = getWordBefore(ix);
@@ -365,11 +369,8 @@ public class Cursor extends Component {
 			break;
 		case Keyboard.KEY_SPACE:
 			String bef = getWordBefore(ix).trim();
-			System.out.println("word before is " + bef);
-			
 			Line line = owner.getLine(iy);
 			Line prevWord = line.substring(ix - bef.length(), ix);
-			System.out.println("hey " + prevWord.toString() + " " + bef.length() + ", " + line.toString());
 			
 			if (isKeyword(bef)) {
 				for (int i = 0; i < prevWord.value.size(); i++) {

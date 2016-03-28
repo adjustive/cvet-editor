@@ -22,4 +22,50 @@ The configuration file itself is `user_config.toml` in this directory.
 	save_rate					integer			1000			ms			the rate to save files
 	highlight_current_line 	boolean			true						highlights the current line
 
-## Syntax Highlighting
+## Language Definitions
+Languages are defined in an EBNF-like form. A language definition is made up of
+a variety of production rules. Each production rule is exported for use by a syntax
+highlighting definition.
+
+For example, the definition for a sequence of digits could be:
+
+	digit = "0" ... "9"; # numbers 0-9
+	number = { digit };
+	
+We can then say an identifier is made up like so:
+
+	letter = "a" ... "Z"; # letters a-z and A-Z
+	
+	# an identifier must start with a letter
+	# it can then contain a series of letters, digits or underscores
+	identifier = letter, { letter | digit | "_" };
+
+Finally, we can make up language constructs for unique highlighting cases:
+
+	# c types
+	type = "void" | "int" | "char" | "bool";
+	
+	# c modifiers
+	modifier = "const" | "static";
+
+	param = [modifier], type, identifier;
+
+	# c functions
+	function = [modifier], type, identifier, "(", param, [ { ",", param }, ], ")" 
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

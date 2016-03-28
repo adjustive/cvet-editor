@@ -233,12 +233,10 @@ public class TextArea extends Component {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = "";
-			int currentLine = 1;
 			while ((line = br.readLine()) != null) {
 				// convert our \t into a string of {tabSize} amount of spaces
-				buffer.add(new Line(line.replaceAll("\t", new String(new char[tabSize]).replace('\0', ' '))));
-				System.out.println("# " + currentLine + " : " + line);
-				currentLine++;
+				String lineFormatted = line.replaceAll("\t", new String(new char[tabSize]).replace('\0', ' '));
+				buffer.add(new Line(lineFormatted));
 			}
 			System.out.println("done");
 			br.close();

@@ -1,7 +1,6 @@
 package io.cvet.editor.gui;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import io.cvet.editor.gui.tab.Tab;
 import io.cvet.editor.gui.tab.TabPanel;
@@ -10,33 +9,9 @@ public class View extends Component {
 
 	public TabPanel pane;
 	
-	private static String getWhen() {
-		Calendar c = Calendar.getInstance();
-		int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
-		if (timeOfDay >= 0 && timeOfDay < 12) {
-			return "Good Morning!";
-		} else if (timeOfDay >= 12 && timeOfDay < 16) {
-			return "Good Afternoon!";
-		} else if (timeOfDay >= 16 && timeOfDay < 21) {
-			return "Good Evening!";
-		} else if (timeOfDay >= 21 && timeOfDay < 24) {
-			return "Good Night!";
-		}
-		return "Hello!";
-	}
-	
-	private String DEFAULT_BUFFER_MESSAGE = "Todo List: \n"
-			+ "* Fix blinking cursor\n";
-	
-	private boolean showDefaultMessage = true;
-	
 	public View() {
 		pane = new TabPanel();
 		addChild(pane);
-		
-		if (showDefaultMessage) {
-			addTab(new Buffer(getWhen(), DEFAULT_BUFFER_MESSAGE));
-		}
 	}
 	
 	public void init() {
@@ -50,7 +25,7 @@ public class View extends Component {
 	public void render() {
 		renderChildren(children);
 	}
-
+	
 	public void addTab(Buffer buffer) {
 		pane.addTab(buffer);
 	}

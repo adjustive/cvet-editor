@@ -13,11 +13,33 @@ import me.grison.jtoml.impl.Toml;
 public class Settings {
 
 	private static Toml toml;
-	private static File editorDir = new File(defaultDirectory() + "/.nate-editor");
-	public static File defaultEditorConfig = new File(editorDir + "/config.toml");
-	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
 	
-	// this is the default config file
+	/** folder that contains all of our configs */
+	private static File editorDir = new File(defaultDirectory() + "/.nate-editor");
+	
+	/** default config files */
+	private static File defaultEditorConfig = new File(editorDir + "/config.toml");
+	private static File userEditorConfig = new File(editorDir + "/user_config.toml");
+	private static File defaultKeybindingConfig = new File(editorDir + "/keybindings.toml");
+	
+	private static String defaultKeybinding = "[new]\n"
+			+ "keys = \"super+n\"\n"
+			+ "[open]\n"
+			+ "keys = \"super+o\""
+			+ "[close]\n"
+			+ "keys = \"super+w\""
+			+ "[exit]\n"
+			+ "keys = \"alt+f4\""
+			+ "[save]\n"
+			+ "keys = \"super+s\""
+			+ "[configure]\n"
+			+ "keys = \"alt+enter\""
+			+ "[help]\n"
+			+ "keys = \"f1\""
+			+ "[goto]\n"
+			+ "super = \"super+l\""
+			+ "[rename]\n"
+			+ "super = \"f2\"\n";
 	private static String defaultConfig = "[editor]\n" +
 			"font_face = \"Monospaced\"\n" +
 			"font_size = 14\n" +
@@ -86,6 +108,9 @@ public class Settings {
 		
 		newFile(defaultEditorConfig, defaultConfig);
 		newFile(userEditorConfig, defaultConfig);
+	}
+	
+	public static void loadKeybindings() {
 	}
 	
 	public static void loadSettings() {

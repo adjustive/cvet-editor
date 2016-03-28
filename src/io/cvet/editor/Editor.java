@@ -32,13 +32,13 @@ public class Editor extends Component implements Runnable {
 
 	public static boolean DEBUG_MODE = false;
 	private static Editor instance;
+	public CommandPalette palette;
 	private String OS = System.getProperty("os.name");
 	public static String commands = "";
 	
 	public View mainView;
 
 	private Thread thread;
-	private CommandPalette palette;
 	private int frameRate = 0;
 	
 	public Editor() {

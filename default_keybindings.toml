@@ -1,0 +1,18 @@
+[new]
+keys = "super+n"
+[open]
+keys = "super+o"
+[close]
+keys = "super+w"
+[exit]
+keys = "alt+f4"
+[save]
+keys = "super+s"
+[configure]
+keys = "alt+enter"
+[help]
+keys = "f1"
+[goto]
+super = "super+l"
+[rename]
+super = "f2"

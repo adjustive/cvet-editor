@@ -11,6 +11,7 @@ import org.lwjgl.opengl.Display;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.Layout;
+import io.cvet.editor.config.KeyBindings;
 import io.cvet.editor.gfx.ImmediateRenderer;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Component;
@@ -33,19 +34,6 @@ public class CommandPalette extends Component implements CursorAction {
 	
 	private int defaultHeight;
 	private boolean enteredCommand = false;
-	
-	private static HashMap<String, Command> commands = new HashMap<String, Command>();
-	static {
-		commands.put("new", new NewFileCommand());
-		commands.put("open", new OpenFileCommand());
-		commands.put("close", new CloseFileCommand());
-		commands.put("exit", new ExitCommand());
-		commands.put("save", new SaveFileCommand());
-		commands.put("configure", new EditSettingsCommand());
-		commands.put("help", new HelpCommand());
-		commands.put("goto", new GotoCommand());
-		commands.put("rename", new RenameCommand());
-	}
 	
 	public CommandPalette() {
 		this.defaultHeight = ImmediateRenderer.EDITING_FONT.getHeight() + 10;
@@ -104,7 +92,7 @@ public class CommandPalette extends Component implements CursorAction {
 		String commandName = command[0];
 		System.out.println("Processing command " + commandName);
 		
-		Command cmd = commands.get(commandName);
+		Command cmd = KeyBindings.commands.get(commandName);
 		if (cmd != null) {
 			String args[] = Arrays.copyOfRange(command, 1, command.length);
 			if (cmd.getArgumentCount() <= args.length) {
@@ -202,8 +190,8 @@ public class CommandPalette extends Component implements CursorAction {
 				
 				switch (command[0]) {
 				case "?":
-					for (String c : commands.keySet()) {
-						suggestions.add(new PaletteSuggestion(commands.get(c).name, SuggestionType.Command));
+					for (String c : KeyBindings.commands.keySet()) {
+						suggestions.add(new PaletteSuggestion(KeyBindings.commands.get(c).name, SuggestionType.Command));
 					}
 					return true;
 				case "!":
@@ -244,7 +232,7 @@ public class CommandPalette extends Component implements CursorAction {
 	}
 	
 	public static HashMap<String, Command> getCommands() {
-		return commands;
+		return KeyBindings.commands;
 	}
 
 	public void setText(String input) {
@@ -263,6 +251,11 @@ public class CommandPalette extends Component implements CursorAction {
 
 	public boolean enteredCommand() {
 		return enteredCommand;
+	}
+
+	public void show() {
+		setVisible(true);
+		setFocus(true);
 	}
 	
 }
