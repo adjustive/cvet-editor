@@ -40,6 +40,7 @@ public class Settings {
 			+ "super = \"super+l\""
 			+ "[rename]\n"
 			+ "super = \"f2\"\n";
+	
 	private static String defaultConfig = "[editor]\n" +
 			"font_face = \"Monospaced\"\n" +
 			"font_size = 14\n" +
@@ -49,7 +50,11 @@ public class Settings {
 			"anti_alias = true\n"
 			+ "blink_cursor = false\n"
 			+ "cursor_blink_latency = 1000\n"
-			+ "auto_save = true\n"
+			
+			// NOTE: auto save is disabled because
+			// the save dialog option is never focused
+			// and makes the editor seem to "hang"
+			+ "auto_save = false\n"
 			+ "save_rate = 1000\n"
 			+ "highlight_current_line = true\n";
 	

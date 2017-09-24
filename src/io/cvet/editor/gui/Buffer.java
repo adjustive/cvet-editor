@@ -109,6 +109,7 @@ public class Buffer extends TextArea implements CursorAction {
 
 		// write contents of buffer
 		// into the file
+		// FIXME:
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 			for (Line builtString : buffer) {

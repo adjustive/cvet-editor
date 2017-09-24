@@ -58,14 +58,14 @@ public class Editor extends Component implements Runnable {
 			Display.setLocation((mode.getWidth() / 2) - (w / 2), (mode.getHeight() / 2) - (h / 2) - offset);
 			Display.setResizable(true);
 			
-			Display.setIcon(new ByteBuffer[] {
-				FileUtil.loadIcon("/icon16.png"),					
-				FileUtil.loadIcon("/icon32.png"),					
-				FileUtil.loadIcon("/icon64.png"),					
-				FileUtil.loadIcon("/icon128.png"),					
-				FileUtil.loadIcon("/icon256.png"),					
-				FileUtil.loadIcon("/icon512.png"),					
-			});
+//			Display.setIcon(new ByteBuffer[] {
+//				FileUtil.loadIcon("/icon16.png"),					
+//				FileUtil.loadIcon("/icon32.png"),					
+//				FileUtil.loadIcon("/icon64.png"),					
+//				FileUtil.loadIcon("/icon128.png"),					
+//				FileUtil.loadIcon("/icon256.png"),					
+//				FileUtil.loadIcon("/icon512.png"),					
+//			});
 
 			Display.create();
 		} catch (Exception e) {
