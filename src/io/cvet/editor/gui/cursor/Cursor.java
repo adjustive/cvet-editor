@@ -125,12 +125,16 @@ public class Cursor extends Component {
 
 	public void handleControlCombo() {
 		while (Keyboard.next()) {
+			
+			// clean this bad boy up
+			
 			if (Keyboard.getEventKeyState()) {
 				Editor.commands = "CTRL + ";
 				// TODO: clean this up, hashmap for easier
 				// binding?
 				int keyCode = Keyboard.getEventKey();
 				Editor.commands += Keyboard.getKeyName(keyCode).toUpperCase();
+				
 				switch (keyCode) {
 				case Keyboard.KEY_C: // copy
 					// TODO:

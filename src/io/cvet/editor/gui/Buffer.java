@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
+import io.cvet.editor.gui.commands.CommandPalette;
 import io.cvet.editor.gui.layers.Layer;
 import io.cvet.editor.gui.menu.Menu;
 import io.cvet.editor.gui.menu.MenuAction;
@@ -89,17 +90,10 @@ public class Buffer extends TextArea implements CursorAction {
 		// we haven't before, so we need
 		// to set where to save.
 		if (!hasBeenSaved()) {
-			// TODO: store the last directory we saved
-			// in, and set the default location to that
-			JFileChooser chooser = new JFileChooser(System.getenv("HOME"));
-			chooser.setDialogTitle("Save File \"" + name + "\"");
-			chooser.setSelectedFile(new File(name));
-			if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-				file = chooser.getSelectedFile();
-			} else {
-				System.err.println("choose a file next time fuckboy");
-				return;
-			}
+			CommandPalette palette = Editor.getInstance().palette;
+			palette.setText(System.getProperty("user.home") + File.separatorChar);
+			palette.show();
+			return;
 		}
 
 		if (file == null) {
