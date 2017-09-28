@@ -21,6 +21,7 @@ import io.cvet.editor.gui.text.TextArea;
 import io.cvet.editor.util.FileUtil;
 import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
+import jdk.internal.org.objectweb.asm.tree.TableSwitchInsnNode;
 
 public class Cursor extends Component {
 
@@ -36,6 +37,7 @@ public class Cursor extends Component {
 
 	private boolean showCursor = true;
 	public int ix, iy;
+	public int tabDepth = 0;
 	public int padding;
 	public int xOffset, yOffset;
 	private long timer;
@@ -438,8 +440,20 @@ public class Cursor extends Component {
 			owner.newline(ix, iy);
 			move(-ix, 1);
 			carriageReturn();
+			
+			// this is weird to handle because its not as simple as
+			// this need to take into account backspaces and shit/removing tabs etc.
+			if (1 == 0) { // TODO:
+				// smart tab
+				if (ix == 0) {
+					for (int i = 0; i < tabDepth; i++) {
+						move(owner.tab(ix, iy), 0);
+					}
+				}
+			}
 			break;
 		case Keyboard.KEY_TAB:
+			tabDepth++;
 			move(owner.tab(ix, iy), 0);
 			break;
 		case Keyboard.KEY_PRIOR: // pgup
@@ -545,6 +559,10 @@ public class Cursor extends Component {
 	}
 	
 	public void move(int x, int y) {
+		if (ix > 0 && tabDepth > 0) {
+			tabDepth--;
+		}
+		
 		if (ix == 0 && Math.signum(x) < 0) {
 			return;
 		}

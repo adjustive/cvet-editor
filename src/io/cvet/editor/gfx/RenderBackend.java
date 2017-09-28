@@ -19,20 +19,24 @@ public abstract class RenderBackend {
 	public static TrueTypeFont CURRENT_FONT;
 	public static int CHARACTER_WIDTH, CHARACTER_HEIGHT;
 	public static boolean ANTI_ALIAS;
-	public static int FONT_SIZE;
-	public static String FONT_FACE;
+	public static int CODE_FONT_SIZE, UI_FONT_SIZE;
+	public static String CODE_FONT_FACE, UI_FONT_FACE;
 	
 	public static void loadFont() {
 		ANTI_ALIAS = (boolean) Settings.getSetting("anti_alias");
-		FONT_SIZE = (int) Settings.getSetting("font_size");
-		FONT_FACE = (String) Settings.getSetting("font_face");
-		EDITING_FONT = new TrueTypeFont(new Font(FONT_FACE, Font.PLAIN, FONT_SIZE).deriveFont(FONT_SIZE), ANTI_ALIAS);
-		INTERFACE_FONT = new TrueTypeFont(new Font("Roboto", Font.PLAIN, 14), ANTI_ALIAS);
+
+		UI_FONT_SIZE = (int) Settings.getSetting("ui_font_size");
+		UI_FONT_FACE = (String) Settings.getSetting("ui_font_face");
+		
+		CODE_FONT_SIZE = (int) Settings.getSetting("font_size");
+		CODE_FONT_FACE = (String) Settings.getSetting("font_face");
+
+		EDITING_FONT = new TrueTypeFont(new Font(CODE_FONT_FACE, Font.PLAIN, CODE_FONT_SIZE).deriveFont(CODE_FONT_SIZE), ANTI_ALIAS);
+		INTERFACE_FONT = new TrueTypeFont(new Font(UI_FONT_FACE, Font.PLAIN, UI_FONT_SIZE).deriveFont(UI_FONT_SIZE), ANTI_ALIAS);
 		
 		// this is ONE OF THE reasons why non monospaced fonts
 		// dont work!
 		CHARACTER_WIDTH = EDITING_FONT.getWidth("a");
-		
 		CHARACTER_HEIGHT = EDITING_FONT.getHeight();
 		CURRENT_FONT = EDITING_FONT;
 	}

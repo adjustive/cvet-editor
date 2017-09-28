@@ -42,6 +42,8 @@ public class Settings {
 			+ "super = \"f2\"\n";
 	
 	private static String defaultConfig = "[editor]\n" +
+			"ui_font_face = \"Arial\"\n" + 
+			"ui_font_size = 14\n" + 
 			"font_face = \"Monospaced\"\n" +
 			"font_size = 14\n" +
 			"hungry_backspace = false\n" +
