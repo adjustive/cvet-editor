@@ -2,6 +2,7 @@ package io.cvet.editor.gui.commands;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.gui.Buffer;
+import io.cvet.editor.gui.tab.Tab;
 
 public class CloseFileCommand extends Command {
 
@@ -11,7 +12,13 @@ public class CloseFileCommand extends Command {
 
 	@Override
 	public void action(String[] arguments) {
-		Buffer buff = Editor.getMainView().getCurrentTab().buff;
+		// there might be no tabs open
+		Tab currTab = Editor.getMainView().getCurrentTab(); 
+		if (currTab == null) {
+			return;
+		}
+		
+		Buffer buff = currTab.buff;
 		if (!buff.hasBeenSaved()) {
 			// TODO: panel for y/n option
 		}

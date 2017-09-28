@@ -93,6 +93,11 @@ public class TabPanel extends Component {
 	}
 	
 	public void removeTab(Tab t) {
+		// FIXME: this is hacky?
+		if (t == null) {
+			return;
+		}
+		
 		tabs.remove(t);
 		currentTabIdx -= 1;
 	}
