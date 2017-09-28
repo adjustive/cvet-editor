@@ -114,7 +114,7 @@ public class Editor extends Component implements Runnable {
 		RenderContext.drawString(framerate,
 				Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - (padding * 2),
 				Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
-		RenderContext.drawString("[" + commands + "]", padding, Display.getHeight() - padding);
+		RenderContext.drawString("[" + commands + "]", padding, Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
 	}
 
 	public void run() {
