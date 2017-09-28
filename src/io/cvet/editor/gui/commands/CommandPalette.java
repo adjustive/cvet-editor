@@ -45,7 +45,7 @@ public class CommandPalette extends Component implements CursorAction {
 		this.buffer = new TextArea(this.w, defaultHeight);
 		this.caret = buffer.getCaret();
 		
-		buffer.setBackground(Theme.ACCENT);
+		buffer.setBackground(Theme.SECONDARY);
 		buffer.setFocus(true);
 		buffer.setFont(ImmediateRenderer.EDITING_FONT);
 		

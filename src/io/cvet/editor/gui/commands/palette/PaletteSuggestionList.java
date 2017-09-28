@@ -57,7 +57,7 @@ public class PaletteSuggestionList extends Component {
 
 			// render the background +
 			// set the colour if its selected
-			RenderContext.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.ACCENT);
+			RenderContext.colour(selectedSuggestion == i ? Theme.DARK_ACCENT : Theme.SECONDARY);
 			RenderContext.rect(x, y + (i * h), w, h);
 
 			// render the command name

@@ -12,15 +12,15 @@ public class Tab extends Component {
 	public String name;
 	public Buffer buff;
 	
-	private int padding = 10;
+	private final int padding = 5;
 	
 	public Tab(String name, Buffer buff) {
 		setFont(RenderBackend.INTERFACE_FONT);
 		
 		this.name = name;
 		this.buff = buff;
-		this.w = font.getWidth(name) + (padding * 2);
-		this.h = font.getHeight() + (padding);
+		this.w = font.getWidth(name) + (padding * 4);
+		this.h = font.getHeight() + (padding * 3);
 		
 		addChild(buff);
 		buff.setPosition(buff.x, this.h);
@@ -36,10 +36,10 @@ public class Tab extends Component {
 		updateChildren(children);
 	}
 	
-	public void renderTab(int x, int y) {
+	public void renderTab() {
 		RenderContext.font(font);
-		RenderContext.colour(Theme.ACCENT);
-		RenderContext.rect(x, y, w, h - 1);
+		RenderContext.colour(Theme.SECONDARY);
+		RenderContext.rect(x, y, w, h);
 		
 		// render tab name in a center alignment
 		int tabNameWidth = font.getWidth(name);

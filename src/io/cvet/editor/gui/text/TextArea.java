@@ -48,7 +48,7 @@ public class TextArea extends Component {
 		addChild(caret);
 
 		setBackground(Theme.BASE);
-		setCursorColour(Theme.ACCENT);
+		setCursorColour(Theme.SECONDARY);
 		setForeground(Colour.PINK);
 		setFont(ImmediateRenderer.EDITING_FONT);
 

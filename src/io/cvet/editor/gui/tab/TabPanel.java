@@ -18,7 +18,7 @@ public class TabPanel extends Component {
 	private int padding = 5;
 	
 	public TabPanel() {
-		this.h = RenderBackend.CHARACTER_HEIGHT + (padding * 2) + 2;
+		this.h = RenderBackend.CHARACTER_HEIGHT + (padding * 3);
 	}
 	
 	@Override
@@ -31,14 +31,6 @@ public class TabPanel extends Component {
 		if (getCurrentTab() != null) {
 			getCurrentTab().update();
 		}
-		for (int i = 0; i < tabs.size(); i++) {
-			Tab t = tabs.get(i);
-			if (Input.intersects(t)) {
-				if (Input.getMouseClicked(0)) {
-					currentTabIdx = i;
-				}
-			}
-		}
 		
 		if (currentTabIdx < 0) {
 			currentTabIdx = 0;
@@ -47,32 +39,16 @@ public class TabPanel extends Component {
 
 	@Override
 	public void render() {
-		
-		RenderContext.colour(Theme.DARK_BASE);
-		RenderContext.rect(x, y, Display.getWidth() + 2, this.h);
-
 		RenderContext.colour(Theme.DARK_ACCENT);
-		RenderContext.rect(x, y, Display.getWidth(), this.h - 6);
+		RenderContext.rect(x, y, Display.getWidth(), this.h);
 		
-		int size = 0;
-		for (int i = 0; i < tabs.size(); i++) {
-			Tab tab = tabs.get(i);
-			tab.renderTab(size, y);
-			
-			// underline
-			if (getCurrentTab() != null && getCurrentTab().name.equals(tab.name)) {
-				RenderContext.colour(230, 201, 115);
-				RenderContext.rect(size, getCurrentTab().h - 2, tab.w, 1);
-				tab.x = size;
-				tab.y = y;
-			}
-			
-			size += tab.w;
+		if (getCurrentTab() == null) {
+			return;
 		}
 		
-		if (getCurrentTab() != null) {
-			getCurrentTab().render();
-		}
+		Tab tab = getCurrentTab();
+		tab.renderTab();
+		tab.render();
 	}
 	
 	public Tab addTab(Buffer buff) {
