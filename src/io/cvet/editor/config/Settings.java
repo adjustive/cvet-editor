@@ -51,6 +51,11 @@ public class Settings {
 			+ "blink_cursor = false\n"
 			+ "cursor_blink_latency = 1000\n"
 			
+			// TODO: FIX MY TIMESTEP
+			// interpolate all the "physics" of the cursor movements, etc.
+			+ "framerate_cap = 60\n"
+			+ "vsync = true\n"
+			
 			// NOTE: auto save is disabled because
 			// the save dialog option is never focused
 			// and makes the editor seem to "hang"

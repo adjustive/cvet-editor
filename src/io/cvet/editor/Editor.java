@@ -35,13 +35,16 @@ public class Editor extends Component implements Runnable {
 	public CommandPalette palette;
 	private String OS = System.getProperty("os.name");
 	public static String commands = "";
+
+	public static double FRAME_RATE = 60.0;
 	
 	public View mainView;
 
 	private Thread thread;
-	private int frameRate = 0;
+	private int frameRate = 0, tickRate = 0;
 	
 	public Editor() {
+		// FIXME jesus
 		instance = this;
 	}
 
@@ -50,7 +53,6 @@ public class Editor extends Component implements Runnable {
 		this.w = mode.getWidth() / 12 * 9;
 		this.h = mode.getHeight() / 12 * 9;
 
-		// setup the display
 		try {
 			Display.setDisplayMode(new DisplayMode(w, h));
 			Display.setTitle("nate");
@@ -76,6 +78,8 @@ public class Editor extends Component implements Runnable {
 		RenderBackend.loadFont();
 		RenderContext.init(w, h);
 
+		FRAME_RATE = (int) Settings.getSetting("framerate_cap");
+		
 		palette = new CommandPalette();
 		palette.setVisible(false);
 		palette.setKeyboardTrigger(Modifier.Super, Keyboard.KEY_P);
@@ -102,44 +106,51 @@ public class Editor extends Component implements Runnable {
 
 		RenderContext.colour(Theme.BASE);
 		RenderContext.rect(0, 0, Display.getWidth(), Display.getHeight());
-
 		renderChildren(children);
 
 		RenderContext.colour(Colour.YELLOW);
-		String framerate = "fps: " + frameRate;
-		int padding = 60;
+		final String framerate = "fps: " + frameRate + ", ticks: " + tickRate;
+		final int padding = 60;
 		RenderContext.drawString(framerate,
-				Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - padding,
+				Display.getWidth() - RenderBackend.INTERFACE_FONT.getWidth(framerate) - (padding * 2),
 				Display.getHeight() - RenderBackend.INTERFACE_FONT.getHeight() - padding);
-		
-		RenderContext.drawString("[" + commands + "]", 40, Display.getHeight() - padding);
+		RenderContext.drawString("[" + commands + "]", padding, Display.getHeight() - padding);
 	}
 
 	public void run() {
 		init();
 
 		long timer = System.currentTimeMillis();
-		int frames = 0;
-		double ns = 1000000000.0 / 60.0;
+		int frames = 0, updates = 0;
+		double ns = 1000000000.0 / (double) FRAME_RATE;
 		double delta = 0;
 		long last = System.nanoTime();
-
+		boolean vsync = (boolean) Settings.getSetting("vsync");
+		
 		while (!Display.isCloseRequested()) {
 			long now = System.nanoTime();
 			delta += (now - last) / ns;
 			last = now;
 
-			render();
-			frames++;
+			if (!vsync) {
+				render();
+				frames++;
+			}
 
 			if (delta >= 1) {
+				if (vsync) {
+					render();
+					frames++;
+				}
 				update();
+				updates++;
 				delta--;
 			}
 
 			if (System.currentTimeMillis() - timer > 1000) {
 				timer += 1000;
 				this.frameRate = frames;
+				this.tickRate = updates;
 				frames = 0;
 			}
 
