@@ -4,20 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 
-import javax.swing.JFileChooser;
-
 import org.lwjgl.input.Keyboard;
 
 import io.cvet.editor.Editor;
 import io.cvet.editor.config.Settings;
 import io.cvet.editor.gui.commands.CommandPalette;
-import io.cvet.editor.gui.layers.Layer;
-import io.cvet.editor.gui.menu.Menu;
-import io.cvet.editor.gui.menu.MenuAction;
-import io.cvet.editor.gui.menu.MenuItem;
 import io.cvet.editor.gui.text.Line;
 import io.cvet.editor.gui.text.TextArea;
-import io.cvet.editor.util.Input;
 
 public class Buffer extends TextArea implements CursorAction {
 
@@ -34,18 +27,6 @@ public class Buffer extends TextArea implements CursorAction {
 		this.name = name;
 		this.timer = System.currentTimeMillis();
 		this.getCaret().setCursorAction(this);
-
-		context = new Menu();
-		context.setLayer(Layer.TOP);
-		context.setVisible(false);
-		context.addItem(new MenuItem(context, "Paste", new MenuAction() {
-			@Override
-			public void perform() {
-				System.out.println("paste pls");
-			}
-		}));
-		context.setMouseTrigger(Input.MOUSE_RIGHT);
-		addChild(context);
 	}
 
 	public Buffer(String name, String contents) {
@@ -78,7 +59,6 @@ public class Buffer extends TextArea implements CursorAction {
 			timer += saveRateMS;
 		}
 		
-		context.loseFocus();
 	}
 
 	public void render() {

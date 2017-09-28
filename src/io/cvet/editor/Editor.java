@@ -138,12 +138,14 @@ public class Editor extends Component implements Runnable {
 			}
 
 			if (delta >= 1) {
+				update();
+				updates++;
+
 				if (vsync) {
 					render();
 					frames++;
 				}
-				update();
-				updates++;
+				
 				delta--;
 			}
 
@@ -151,6 +153,7 @@ public class Editor extends Component implements Runnable {
 				timer += 1000;
 				this.frameRate = frames;
 				this.tickRate = updates;
+				updates = 0;
 				frames = 0;
 			}
 

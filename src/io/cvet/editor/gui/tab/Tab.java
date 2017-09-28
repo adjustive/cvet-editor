@@ -1,16 +1,10 @@
 package io.cvet.editor.gui.tab;
 
-import io.cvet.editor.Editor;
 import io.cvet.editor.gfx.Colour;
 import io.cvet.editor.gfx.RenderBackend;
 import io.cvet.editor.gfx.RenderContext;
 import io.cvet.editor.gui.Buffer;
 import io.cvet.editor.gui.Component;
-import io.cvet.editor.gui.layers.Layer;
-import io.cvet.editor.gui.menu.Menu;
-import io.cvet.editor.gui.menu.MenuAction;
-import io.cvet.editor.gui.menu.MenuItem;
-import io.cvet.editor.util.Input;
 import io.cvet.editor.util.Theme;
 
 public class Tab extends Component {
@@ -30,40 +24,6 @@ public class Tab extends Component {
 		
 		addChild(buff);
 		buff.setPosition(buff.x, this.h);
-
-		// context menu
-		this.context = new Menu();
-		context.setLayer(Layer.TOP);
-		context.setVisible(false);
-		addChild(context);
-		
-		// because we can't do this inside of the
-		// interfaces :(
-		final Tab t = this;
-		
-		context.setMouseTrigger(Input.MOUSE_LEFT);
-		
-		context.addItem(new MenuItem(context, "Close", new MenuAction() {
-			public void perform() {
-				Editor.getMainView().pane.removeTab(t);
-			}
-		}));
-		
-		// close every tab other than this one.
-		context.addItem(new MenuItem(context, "Close Others", new MenuAction() {
-			@Override
-			public void perform() {
-				Editor.getMainView().removeTabOtherThan(t);
-			}
-		}));
-		
-		// close every tab, including this one.
-		context.addItem(new MenuItem(context, "Close All", new MenuAction() {
-			@Override
-			public void perform() {
-				Editor.getMainView().clearTabs();
-			}
-		}));
 	}
 
 	@Override
